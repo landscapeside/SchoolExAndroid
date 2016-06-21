@@ -3,7 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SchoolExAndroid.iml" filepath="$PROJECT_DIR$/SchoolExAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/aoplibrary/aoplibrary.iml" filepath="$PROJECT_DIR$/aoplibrary/aoplibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/schoolExAdnrd.iml" filepath="$PROJECT_DIR$/schoolExAdnrd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/utils/utils.iml" filepath="$PROJECT_DIR$/utils/utils.iml" />
     </modules>
   </component>
 </project>
