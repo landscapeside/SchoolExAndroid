@@ -1,5 +1,7 @@
 package com.landscape.schoolexandroid.api;
 
+import com.landscape.schoolexandroid.mode.account.UserAccount;
+
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -10,6 +12,6 @@ import rx.Observable;
  */
 public interface LoginApi {
     @GET("api/Account/Login")
-    Observable<String> accountLogin(@Query("loginName") String loginName,@Query("pwd") String pwd);
+    Observable<UserAccount> accountLogin(@Query("loginName") String loginName, @Query("pwd") String pwd);
 
 }

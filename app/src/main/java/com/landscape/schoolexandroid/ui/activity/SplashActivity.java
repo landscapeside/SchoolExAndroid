@@ -17,7 +17,7 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         userAccountDataSource = new UserAccountDataSource(this);
-        RxCounter.counter(3, 0).doOnCompleted(this::next);
+        RxCounter.counter(3, 0).doOnCompleted(this::next).subscribe();
     }
 
     public void next(){

@@ -1,5 +1,6 @@
 package com.landscape.schoolexandroid.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,6 +12,8 @@ import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.api.LoginApi;
 import com.landscape.schoolexandroid.api.RxService;
 import com.landscape.schoolexandroid.common.BaseActivity;
+import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
+import com.landscape.schoolexandroid.mode.account.UserAccount;
 import com.utils.behavior.ToastUtil;
 
 import butterknife.Bind;
@@ -23,6 +26,7 @@ import rx.schedulers.Schedulers;
 public class LoginActivity extends BaseActivity implements ILogin {
 
     ILogin mOptions;
+    UserAccountDataSource userAccountDataSource;
 
     @Bind(R.id.edit_username)
     EditText editUsername;
@@ -34,7 +38,8 @@ public class LoginActivity extends BaseActivity implements ILogin {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        mOptions = (ILogin) mProxy.createProxyInstance(ILogin.class);
+        mOptions = (ILogin) mProxy.createProxyInstance(this);
+        userAccountDataSource = new UserAccountDataSource(this);
     }
 
     private boolean check() {
@@ -63,14 +68,18 @@ public class LoginActivity extends BaseActivity implements ILogin {
                 .accountLogin(editUsername.getText().toString().trim(), editPasswd.getText().toString())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(throwable -> {
-                    RxService.netErr(throwable);
-                }).onErrorResumeNext(Observable.empty())
-                .subscribe(mOptions::loginResult);
+                .doOnError(throwable -> RxService.netErr(throwable)).onErrorResumeNext(Observable.empty())
+                .subscribe(this::loginResult);
     }
 
     @Override
-    public void loginResult(String result) {
-
+    public void loginResult(UserAccount result) {
+        if (result.isIsSuccess()) {
+            userAccountDataSource.saveUserAccount(result);
+            startActivity(new Intent(this,MainActivity.class));
+            finish();
+        } else {
+            ToastUtil.show(this,result.getMessage());
+        }
     }
 }
