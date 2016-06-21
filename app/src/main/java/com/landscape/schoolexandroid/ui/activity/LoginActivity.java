@@ -69,7 +69,7 @@ public class LoginActivity extends BaseActivity implements ILogin {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(throwable -> RxService.netErr(throwable)).onErrorResumeNext(Observable.empty())
-                .subscribe(this::loginResult);
+                .subscribe(mOptions::loginResult);
     }
 
     @Override
