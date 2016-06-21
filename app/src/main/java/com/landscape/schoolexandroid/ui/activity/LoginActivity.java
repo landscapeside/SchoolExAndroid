@@ -4,12 +4,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.landscape.netedge.account.ILogin;
 import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.api.LoginApi;
 import com.landscape.schoolexandroid.api.RxService;
-import com.landscape.schoolexandroid.common.AppConfig;
 import com.landscape.schoolexandroid.common.BaseActivity;
 import com.utils.behavior.ToastUtil;
 
@@ -39,18 +39,18 @@ public class LoginActivity extends BaseActivity implements ILogin {
 
     private boolean check() {
         if (TextUtils.isEmpty(editUsername.getText().toString().trim())) {
-            ToastUtil.show(this,editUsername.getHint());
+            ToastUtil.show(this, editUsername.getHint());
             return false;
         }
         if (TextUtils.isEmpty(editPasswd.getText().toString().trim())) {
-            ToastUtil.show(this,editPasswd.getHint());
+            ToastUtil.show(this, editPasswd.getHint());
             return false;
         }
         return true;
     }
 
     @OnClick(R.id.login)
-    void login(View view){
+    void login(View view) {
         //TODO
         if (check()) {
             mOptions.login();
@@ -60,7 +60,7 @@ public class LoginActivity extends BaseActivity implements ILogin {
     @Override
     public void login() {
         RxService.createApi(LoginApi.class)
-                .accountLogin(editUsername.getText().toString().trim(),editPasswd.getText().toString())
+                .accountLogin(editUsername.getText().toString().trim(), editPasswd.getText().toString())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(throwable -> {
@@ -70,7 +70,7 @@ public class LoginActivity extends BaseActivity implements ILogin {
     }
 
     @Override
-    public void loginResult(String result){
+    public void loginResult(String result) {
 
     }
 }
