@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.edge.proxy.NetProxy;
 import com.edge.reader.NetBuilder;
+import com.landscape.schoolexandroid.api.RetrofitService;
 import com.utils.behavior.ProgressUtils;
 
 /**
@@ -20,7 +21,9 @@ public class BaseActivity extends AppCompatActivity {
         mProxy = new NetProxy(new NetBuilder().register(new NetBuilder.NetEdge.INetListener() {
             @Override
             public void netBegin() {
-                ProgressUtils.showProgressDialog(BaseActivity.this,"请稍后",null);
+                ProgressUtils.showProgressDialog(BaseActivity.this, "请稍后", () -> {
+                    RetrofitService.cancel();
+                });
             }
 
             @Override

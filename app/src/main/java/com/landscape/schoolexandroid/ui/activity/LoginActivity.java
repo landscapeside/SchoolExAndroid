@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.landscape.netedge.account.ILogin;
 import com.landscape.schoolexandroid.R;
+import com.landscape.schoolexandroid.api.BaseCallBack;
 import com.landscape.schoolexandroid.api.LoginApi;
-import com.landscape.schoolexandroid.api.RxService;
+import com.landscape.schoolexandroid.api.RetrofitService;
 import com.landscape.schoolexandroid.common.BaseActivity;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
 import com.landscape.schoolexandroid.mode.account.UserAccount;
@@ -19,14 +19,20 @@ import com.utils.behavior.ToastUtil;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class LoginActivity extends BaseActivity implements ILogin {
 
     ILogin mOptions;
     UserAccountDataSource userAccountDataSource;
+
+    Call<UserAccount> call;
 
     @Bind(R.id.edit_username)
     EditText editUsername;
@@ -64,12 +70,15 @@ public class LoginActivity extends BaseActivity implements ILogin {
 
     @Override
     public void login() {
-        RxService.createApi(LoginApi.class)
-                .accountLogin(editUsername.getText().toString().trim(), editPasswd.getText().toString())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(throwable -> RxService.netErr(throwable)).onErrorResumeNext(Observable.empty())
-                .subscribe(mOptions::loginResult);
+        call = RetrofitService.createApi(LoginApi.class)
+                .accountLogin(editUsername.getText().toString().trim(), editPasswd.getText().toString());
+        RetrofitService.addCall(call);
+        call.enqueue(new BaseCallBack<UserAccount>() {
+            @Override
+            public void response(UserAccount response) {
+                mOptions.loginResult(response);
+            }
+        });
     }
 
     @Override
