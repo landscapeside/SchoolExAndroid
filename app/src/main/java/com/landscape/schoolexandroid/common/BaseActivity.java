@@ -21,9 +21,7 @@ public class BaseActivity extends AppCompatActivity {
         mProxy = new NetProxy(new NetBuilder().register(new NetBuilder.NetEdge.INetListener() {
             @Override
             public void netBegin() {
-                ProgressUtils.showProgressDialog(BaseActivity.this, "请稍后", () -> {
-                    RetrofitService.cancel();
-                });
+                ProgressUtils.showProgressDialog(BaseActivity.this, "请稍后", () -> RetrofitService.cancel());
             }
 
             @Override

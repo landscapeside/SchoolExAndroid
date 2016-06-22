@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="tabView" format="reference" />
+    <declare-styleable name="TabView">
+        <attr name="tabView" />
+    </declare-styleable>
+
+    <declare-styleable name="CleanEdit">
+        <attr name="drawLeft" format="reference" />
+        <attr name="drawRight" format="reference" />
+        <attr name="textColor" format="reference|color" />
+        <attr name="ignoreFilter" format="boolean" />
+        <attr name="inputFilter">
+            <flag name="en" value="1" />
+            <flag name="cn" value="2" />
+            <flag name="number" value="4" />
+            <flag name="line" value="8" />
+            <flag name="emoji" value="16" />
+        </attr>
+    </declare-styleable>
+</resources>

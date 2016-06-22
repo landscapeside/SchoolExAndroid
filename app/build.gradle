@@ -43,4 +43,6 @@ dependencies {
     compile 'com.joanzapata.android:base-adapter-helper:1.1.11'
     compile project(':aoplibrary')
     compile project(':utils')
+    compile project(':draglayout')
+    compile project(':pullrefresh')
 }

@@ -1,4 +1,4 @@
-package com.utils;
+package com.jsware.draglayout;
 
 import org.junit.Test;
 

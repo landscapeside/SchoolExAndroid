@@ -14,6 +14,7 @@ import com.landscape.schoolexandroid.api.RetrofitService;
 import com.landscape.schoolexandroid.common.BaseActivity;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
 import com.landscape.schoolexandroid.mode.account.UserAccount;
+import com.landscape.weight.CleanableEditText;
 import com.utils.behavior.ToastUtil;
 
 import butterknife.Bind;
@@ -35,9 +36,9 @@ public class LoginActivity extends BaseActivity implements ILogin {
     Call<UserAccount> call;
 
     @Bind(R.id.edit_username)
-    EditText editUsername;
+    CleanableEditText editUsername;
     @Bind(R.id.edit_passwd)
-    EditText editPasswd;
+    CleanableEditText editPasswd;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
