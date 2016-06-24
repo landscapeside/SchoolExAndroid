@@ -10,6 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/aoplibrary" />
+            <option value="$PROJECT_DIR$/apigatewaysign" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/draglayout" />
             <option value="$PROJECT_DIR$/pullrefresh" />
@@ -20,6 +21,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/aoplibrary" />
+            <option value="$PROJECT_DIR$/apigatewaysign" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/draglayout" />
             <option value="$PROJECT_DIR$/pullrefresh" />

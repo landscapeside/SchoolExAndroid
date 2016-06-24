@@ -45,4 +45,5 @@ dependencies {
     compile project(':utils')
     compile project(':draglayout')
     compile project(':pullrefresh')
+    compile project(':apigatewaysign')
 }

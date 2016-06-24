@@ -5,4 +5,6 @@
     android:gravity="center_vertical"
     android:paddingBottom="15dp"
     android:paddingTop="15dp"
-    android:textColor="#ffffff" />
+    android:drawablePadding="7dp"
+    android:textColor="@color/menu_item_text"
+    android:textSize="16dp"/>

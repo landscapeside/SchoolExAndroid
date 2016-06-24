@@ -9,4 +9,6 @@
     <color name="white">#FFFFFF</color>
     <color name="gray">#AFAFAF</color>
     <color name="red">#ff1717</color>
+
+    <color name="menu_item_text">#323232</color>
 </resources>

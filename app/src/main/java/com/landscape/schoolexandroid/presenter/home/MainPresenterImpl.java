@@ -27,6 +27,8 @@ import com.utils.behavior.AppFileUtils;
 import com.utils.behavior.ToastUtil;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -89,7 +91,16 @@ public class MainPresenterImpl implements MainPresenter {
         menuView.setLifeListener(new BaseView.ViewLifeListener() {
             @Override
             public void onInitialized() {
-                menuView.listData(new String[]{"作业本", "错题本", "丢分统计", "答题卡","收藏"});
+                String[] menuNames = new String[]{"作业本", "错题本", "丢分统计", "答题卡","收藏"};
+                int[] menuDrawResIds = new int[]{R.mipmap.icon_zyb,R.mipmap.icon_ctb,R.mipmap.icon_dftj,R.mipmap.icon_dtk,R.mipmap.icon_sc};
+                List<MenuView.MenuItemBean> menuItemBeanList = new ArrayList<>();
+                for (int i = 0;i<menuNames.length;i++) {
+                    MenuView.MenuItemBean bean = new MenuView.MenuItemBean();
+                    bean.name = menuNames[i];
+                    bean.drawResId = menuDrawResIds[i];
+                    menuItemBeanList.add(bean);
+                }
+                menuView.listData(menuItemBeanList);
             }
 
             @Override

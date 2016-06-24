@@ -1,7 +1,9 @@
 package com.landscape.schoolexandroid.ui.fragment;
 
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.joanzapata.android.BaseAdapterHelper;
 import com.joanzapata.android.QuickAdapter;
@@ -9,8 +11,11 @@ import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.common.BaseFragment;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
 import com.landscape.schoolexandroid.views.home.MenuView;
+import com.utils.image.ImageHelper;
+import com.utils.system.ScreenParam;
 
 import java.util.Arrays;
+import java.util.List;
 
 import butterknife.Bind;
 
@@ -37,12 +42,20 @@ public class MenuFragment extends BaseFragment implements MenuView<BasePresenter
     }
 
     @Override
-    public void listData(String[] listData) {
+    public void listData(List<MenuItemBean> listData) {
         if (adapter == null) {
-            adapter = new QuickAdapter<String>(getActivity(), R.layout.item_text, Arrays.asList(listData)) {
+            adapter = new QuickAdapter<MenuItemBean>(getActivity(), R.layout.item_text, listData) {
                 @Override
-                protected void convert(BaseAdapterHelper helper, String item) {
-                    helper.setText(R.id.text1, item);
+                protected void convert(BaseAdapterHelper helper, MenuItemBean item) {
+                    TextView textView = helper.getView(R.id.text1);
+                    textView.setText(item.name);
+                    // 设置图标
+                    Drawable mLeftDrawable = getActivity().getResources().getDrawable(item.drawResId);
+                    mLeftDrawable = ImageHelper.scaleDrawable(
+                            getResources(), mLeftDrawable,
+                            ((float) ScreenParam.dp2px(getActivity(), 30f)) / (float) mLeftDrawable.getMinimumHeight());
+                    mLeftDrawable.setBounds(0, 0, mLeftDrawable.getMinimumWidth(), mLeftDrawable.getMinimumHeight());
+                    textView.setCompoundDrawables(mLeftDrawable, null, null, null);
                 }
             };
             lv.setAdapter(adapter);

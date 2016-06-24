@@ -23,7 +23,9 @@ public class RetrofitService {
 
     private static List<Call> calls = new ArrayList<>();
 
-    private static OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor
+    private static OkHttpClient okHttpClient = new OkHttpClient.Builder()
+            .addInterceptor(new HeaderInterceptor())
+            .addInterceptor
             (new HttpLoggingInterceptor(message -> {
                 if (!TextUtils.isEmpty(message) && message.startsWith("{")) {
                     Logger.json(message);
