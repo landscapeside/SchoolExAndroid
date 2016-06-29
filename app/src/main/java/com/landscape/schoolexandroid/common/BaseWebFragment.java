@@ -54,7 +54,7 @@ public abstract class BaseWebFragment extends BaseFragment implements View.OnCli
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         mProgressBar.setMax(100);
         mWebView = (WebView) view.findViewById(R.id.webView);
-//        mWebView.canGoBack();
+        mWebView.canGoBack();
         mErrorLayout =(LinearLayout)view.findViewById(R.id.web_error_layout);
         note_online_error = view.findViewById(R.id.note_online_error);
         note_online_error.setOnClickListener(this);
