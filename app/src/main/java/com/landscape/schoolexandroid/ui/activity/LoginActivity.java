@@ -106,4 +106,10 @@ public class LoginActivity extends BaseActivity implements ILogin {
     public void netErr() {
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RetrofitService.cancel(call);
+    }
 }

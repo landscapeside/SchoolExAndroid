@@ -163,7 +163,7 @@ public class MainPresenterImpl implements MainPresenter {
                         workTaskListView.cancelRefresh();
                     }
                 };
-                workTaskListView.setRefreshListener(() -> workTaskDataSource.request(callBack));
+                workTaskListView.setRefreshListener(() -> workTaskDataSource.request(callBack.setContext(mainActivity)));
                 workTaskDataSource.request(callBack);
             }
 

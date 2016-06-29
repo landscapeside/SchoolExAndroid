@@ -7,6 +7,7 @@ import android.widget.RelativeLayout;
 import com.jsware.draglayout.DragContentLayout;
 import com.jsware.draglayout.DragLayout;
 import com.landscape.schoolexandroid.R;
+import com.landscape.schoolexandroid.api.RetrofitService;
 import com.landscape.schoolexandroid.common.BaseActivity;
 import com.landscape.schoolexandroid.presenter.home.MainPresenterImpl;
 import com.utils.behavior.FragmentsUtils;
@@ -52,6 +53,7 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         FragmentsUtils.unInstall();
+        RetrofitService.cancel();
         ButterKnife.unbind(this);
         presenter.remove();
     }

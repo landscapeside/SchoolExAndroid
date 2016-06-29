@@ -58,6 +58,11 @@ public abstract class BaseCallBack<T> implements Callback<T> {
         destroy();
     }
 
+    public BaseCallBack setContext(Context context) {
+        mContext = context;
+        return this;
+    }
+
     private void destroy() {
         mContext = null;
     }
