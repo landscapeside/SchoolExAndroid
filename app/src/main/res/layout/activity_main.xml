@@ -4,8 +4,7 @@
     android:id="@+id/dl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:tag="skin:bg_draglayout:background"
-    android:background="@mipmap/bg_draglayout"
+    android:background="@drawable/bg_draglayout"
     app:leftMenu="@+id/drag_menu"
     app:bodyContent="@+id/drag_content">
 
