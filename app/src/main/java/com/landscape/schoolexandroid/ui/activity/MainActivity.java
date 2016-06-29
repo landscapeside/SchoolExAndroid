@@ -9,7 +9,7 @@ import com.jsware.draglayout.DragLayout;
 import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.common.BaseActivity;
 import com.landscape.schoolexandroid.presenter.home.MainPresenterImpl;
-import com.utils.behavior.ActivityUtils;
+import com.utils.behavior.FragmentsUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -51,7 +51,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityUtils.unInstall();
+        FragmentsUtils.unInstall();
         ButterKnife.unbind(this);
         presenter.remove();
     }

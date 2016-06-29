@@ -12,10 +12,13 @@ import com.landscape.schoolexandroid.api.BaseCallBack;
 import com.landscape.schoolexandroid.api.LoginApi;
 import com.landscape.schoolexandroid.api.RetrofitService;
 import com.landscape.schoolexandroid.common.BaseActivity;
+import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
 import com.landscape.schoolexandroid.mode.account.UserAccount;
 import com.landscape.weight.CleanableEditText;
 import com.utils.behavior.ToastUtil;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -31,6 +34,7 @@ import rx.schedulers.Schedulers;
 public class LoginActivity extends BaseActivity implements ILogin {
 
     ILogin mOptions;
+    @Inject
     UserAccountDataSource userAccountDataSource;
 
     Call<UserAccount> call;
@@ -46,7 +50,7 @@ public class LoginActivity extends BaseActivity implements ILogin {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         mOptions = (ILogin) mProxy.createProxyInstance(this);
-        userAccountDataSource = new UserAccountDataSource(this);
+        ((BaseApp)getApplication()).getAppComponent().inject(this);
     }
 
     private boolean check() {
@@ -74,10 +78,15 @@ public class LoginActivity extends BaseActivity implements ILogin {
         call = RetrofitService.createApi(LoginApi.class)
                 .accountLogin(editUsername.getText().toString().trim(), editPasswd.getText().toString());
         RetrofitService.addCall(call);
-        call.enqueue(new BaseCallBack<UserAccount>() {
+        call.enqueue(new BaseCallBack<UserAccount>(this) {
             @Override
             public void response(UserAccount response) {
                 mOptions.loginResult(response);
+            }
+
+            @Override
+            public void err() {
+                mOptions.netErr();
             }
         });
     }
@@ -91,5 +100,10 @@ public class LoginActivity extends BaseActivity implements ILogin {
         } else {
             ToastUtil.show(this,result.getMessage());
         }
+    }
+
+    @Override
+    public void netErr() {
+
     }
 }

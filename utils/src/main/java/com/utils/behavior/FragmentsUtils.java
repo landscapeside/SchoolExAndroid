@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * This provides methods to help Activities load their UI.
  */
-public class ActivityUtils {
+public class FragmentsUtils {
 
     static List<WeakReference<Fragment>> loadedFragments = new ArrayList<>();
 

@@ -14,13 +14,18 @@ import com.utils.datahelper.JSONS;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * Created by 1 on 2016/6/21.
  */
+@Singleton
 public class UserAccountDataSource implements BaseDataSource {
 
     SharedPreferences preferences;
 
+    @Inject
     public UserAccountDataSource(Context context) {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }

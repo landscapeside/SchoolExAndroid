@@ -18,7 +18,8 @@
  */
 package com.landscape.apigatewaysign.util;
 
-import com.aliyun.api.gateway.demo.constant.Constants;
+import com.landscape.apigatewaysign.constant.Constants;
+
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.UnsupportedEncodingException;

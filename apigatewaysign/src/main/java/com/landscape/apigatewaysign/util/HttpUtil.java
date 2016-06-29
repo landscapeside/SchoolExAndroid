@@ -51,43 +51,43 @@ public class HttpUtil {
         headers = HeaderBuilder.initialBasicHeader(headers, appKey, appSecret, HttpMethod.GET, url, null, signHeaderPrefixList);
     }
 
-    /**
-     * HTTP POST表单
-     *
-     * @param url                  http://host+path+query
-     * @param headers              Http头
-     * @param formParam            表单参数
-     * @param appKey               APP KEY
-     * @param appSecret            APP密钥
-     * @param signHeaderPrefixList 自定义参与签名Header前缀
-     * @return 调用结果
-     * @throws Exception
-     */
-    public static void httpPost(String url, Map<String, String> headers, Map<String, String> formParam,String appKey, String appSecret, List<String> signHeaderPrefixList)
-            throws Exception {
-        if (headers == null) {
-            headers = new HashMap<String, String>();
-        }
-
-        headers.put(HttpHeader.HTTP_HEADER_CONTENT_TYPE, ContentType.CONTENT_TYPE_FORM);
-
-        headers = initialBasicHeader(headers, appKey, appSecret, HttpMethod.POST, url, formParam, signHeaderPrefixList);
-
-        HttpClient httpClient = new DefaultHttpClient();
-        httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, getTimeout(timeout));
-
-        HttpPost post = new HttpPost(url);
-        for (Map.Entry<String, String> e : headers.entrySet()) {
-            post.addHeader(e.getKey(), MessageDigestUtil.utf8ToIso88591(e.getValue()));
-        }
-
-        UrlEncodedFormEntity formEntity = buildFormEntity(formParam);
-        if (formEntity != null) {
-            post.setEntity(formEntity);
-        }
-
-        return httpClient.execute(post);
-    }
+//    /**
+//     * HTTP POST表单
+//     *
+//     * @param url                  http://host+path+query
+//     * @param headers              Http头
+//     * @param formParam            表单参数
+//     * @param appKey               APP KEY
+//     * @param appSecret            APP密钥
+//     * @param signHeaderPrefixList 自定义参与签名Header前缀
+//     * @return 调用结果
+//     * @throws Exception
+//     */
+//    public static void httpPost(String url, Map<String, String> headers, Map<String, String> formParam,String appKey, String appSecret, List<String> signHeaderPrefixList)
+//            throws Exception {
+//        if (headers == null) {
+//            headers = new HashMap<String, String>();
+//        }
+//
+//        headers.put(HttpHeader.HTTP_HEADER_CONTENT_TYPE, ContentType.CONTENT_TYPE_FORM);
+//
+//        headers = initialBasicHeader(headers, appKey, appSecret, HttpMethod.POST, url, formParam, signHeaderPrefixList);
+//
+//        HttpClient httpClient = new DefaultHttpClient();
+//        httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, getTimeout(timeout));
+//
+//        HttpPost post = new HttpPost(url);
+//        for (Map.Entry<String, String> e : headers.entrySet()) {
+//            post.addHeader(e.getKey(), MessageDigestUtil.utf8ToIso88591(e.getValue()));
+//        }
+//
+//        UrlEncodedFormEntity formEntity = buildFormEntity(formParam);
+//        if (formEntity != null) {
+//            post.setEntity(formEntity);
+//        }
+//
+//        return httpClient.execute(post);
+//    }
 
     /**
      * Http POST 字符串
@@ -105,144 +105,144 @@ public class HttpUtil {
         headers = HeaderBuilder.initialBasicHeader(headers, appKey, appSecret, HttpMethod.POST, url, null, signHeaderPrefixList);
     }
 
-    /**
-     * HTTP POST 字节数组
-     *
-     * @param url                  http://host+path+query
-     * @param headers              Http头
-     * @param bytes                字节数组请求体
-     * @param appKey               APP KEY
-     * @param appSecret            APP密钥
-     * @param timeout              超时时间（毫秒）
-     * @param signHeaderPrefixList 自定义参与签名Header前缀
-     * @return 调用结果
-     * @throws Exception
-     */
-    public static HttpResponse httpPost(String url, Map<String, String> headers, byte[] bytes, String appKey, String appSecret, int timeout, List<String> signHeaderPrefixList) throws Exception {
-        headers = initialBasicHeader(headers, appKey, appSecret, HttpMethod.POST, url, null, signHeaderPrefixList);
-        HttpClient httpClient = new DefaultHttpClient();
-        httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, getTimeout(timeout));
+//    /**
+//     * HTTP POST 字节数组
+//     *
+//     * @param url                  http://host+path+query
+//     * @param headers              Http头
+//     * @param bytes                字节数组请求体
+//     * @param appKey               APP KEY
+//     * @param appSecret            APP密钥
+//     * @param timeout              超时时间（毫秒）
+//     * @param signHeaderPrefixList 自定义参与签名Header前缀
+//     * @return 调用结果
+//     * @throws Exception
+//     */
+//    public static HttpResponse httpPost(String url, Map<String, String> headers, byte[] bytes, String appKey, String appSecret, int timeout, List<String> signHeaderPrefixList) throws Exception {
+//        headers = initialBasicHeader(headers, appKey, appSecret, HttpMethod.POST, url, null, signHeaderPrefixList);
+//        HttpClient httpClient = new DefaultHttpClient();
+//        httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, getTimeout(timeout));
+//
+//        HttpPost post = new HttpPost(url);
+//        for (Map.Entry<String, String> e : headers.entrySet()) {
+//            post.addHeader(e.getKey(), MessageDigestUtil.utf8ToIso88591(e.getValue()));
+//        }
+//
+//        if (bytes != null) {
+//            post.setEntity(new ByteArrayEntity(bytes));
+//
+//        }
+//
+//        return httpClient.execute(post);
+//    }
 
-        HttpPost post = new HttpPost(url);
-        for (Map.Entry<String, String> e : headers.entrySet()) {
-            post.addHeader(e.getKey(), MessageDigestUtil.utf8ToIso88591(e.getValue()));
-        }
+//    /**
+//     * HTTP PUT 字符串
+//     *
+//     * @param url                  http://host+path+query
+//     * @param headers              Http头
+//     * @param body                 字符串请求体
+//     * @param appKey               APP KEY
+//     * @param appSecret            APP密钥
+//     * @param timeout              超时时间（毫秒）
+//     * @param signHeaderPrefixList 自定义参与签名Header前缀
+//     * @return 调用结果
+//     * @throws Exception
+//     */
+//    public static HttpResponse httpPut(String url, Map<String, String> headers, String body, String appKey, String appSecret, int timeout, List<String> signHeaderPrefixList) throws Exception {
+//        headers = initialBasicHeader(headers, appKey, appSecret, HttpMethod.PUT, url, null, signHeaderPrefixList);
+//        HttpClient httpClient = new DefaultHttpClient();
+//        httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, getTimeout(timeout));
+//
+//        HttpPut put = new HttpPut(url);
+//        for (Map.Entry<String, String> e : headers.entrySet()) {
+//            put.addHeader(e.getKey(), MessageDigestUtil.utf8ToIso88591(e.getValue()));
+//        }
+//
+//        if (StringUtils.isNotBlank(body)) {
+//            put.setEntity(new StringEntity(body, Constants.ENCODING));
+//
+//        }
+//
+//        return httpClient.execute(put);
+//    }
+//
+//    /**
+//     * HTTP PUT字节数组
+//     *
+//     * @param url                  http://host+path+query
+//     * @param headers              Http头
+//     * @param bytes                字节数组请求体
+//     * @param appKey               APP KEY
+//     * @param appSecret            APP密钥
+//     * @param timeout              超时时间（毫秒）
+//     * @param signHeaderPrefixList 自定义参与签名Header前缀
+//     * @return 调用结果
+//     * @throws Exception
+//     */
+//    public static HttpResponse httpPut(String url, Map<String, String> headers, byte[] bytes, String appKey, String appSecret, int timeout, List<String> signHeaderPrefixList) throws Exception {
+//        headers = initialBasicHeader(headers, appKey, appSecret, HttpMethod.PUT, url, null, signHeaderPrefixList);
+//        HttpClient httpClient = new DefaultHttpClient();
+//        httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, getTimeout(timeout));
+//
+//        HttpPut put = new HttpPut(url);
+//        for (Map.Entry<String, String> e : headers.entrySet()) {
+//            put.addHeader(e.getKey(), MessageDigestUtil.utf8ToIso88591(e.getValue()));
+//        }
+//
+//        if (bytes != null) {
+//            put.setEntity(new ByteArrayEntity(bytes));
+//
+//        }
+//
+//        return httpClient.execute(put);
+//    }
+//
+//    /**
+//     * HTTP DELETE
+//     *
+//     * @param url                  http://host+path+query
+//     * @param headers              Http头
+//     * @param appKey               APP KEY
+//     * @param appSecret            APP密钥
+//     * @param timeout              超时时间（毫秒）
+//     * @param signHeaderPrefixList 自定义参与签名Header前缀
+//     * @return 调用结果
+//     * @throws Exception
+//     */
+//    public static HttpResponse httpDelete(String url, Map<String, String> headers, String appKey, String appSecret, int timeout, List<String> signHeaderPrefixList) throws Exception {
+//        headers = initialBasicHeader(headers, appKey, appSecret, HttpMethod.DELETE, url, null, signHeaderPrefixList);
+//        HttpClient httpClient = new DefaultHttpClient();
+//        httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, getTimeout(timeout));
+//
+//        HttpDelete delete = new HttpDelete(url);
+//        for (Map.Entry<String, String> e : headers.entrySet()) {
+//            delete.addHeader(e.getKey(), MessageDigestUtil.utf8ToIso88591(e.getValue()));
+//        }
+//
+//        return httpClient.execute(delete);
+//    }
 
-        if (bytes != null) {
-            post.setEntity(new ByteArrayEntity(bytes));
-
-        }
-
-        return httpClient.execute(post);
-    }
-
-    /**
-     * HTTP PUT 字符串
-     *
-     * @param url                  http://host+path+query
-     * @param headers              Http头
-     * @param body                 字符串请求体
-     * @param appKey               APP KEY
-     * @param appSecret            APP密钥
-     * @param timeout              超时时间（毫秒）
-     * @param signHeaderPrefixList 自定义参与签名Header前缀
-     * @return 调用结果
-     * @throws Exception
-     */
-    public static HttpResponse httpPut(String url, Map<String, String> headers, String body, String appKey, String appSecret, int timeout, List<String> signHeaderPrefixList) throws Exception {
-        headers = initialBasicHeader(headers, appKey, appSecret, HttpMethod.PUT, url, null, signHeaderPrefixList);
-        HttpClient httpClient = new DefaultHttpClient();
-        httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, getTimeout(timeout));
-
-        HttpPut put = new HttpPut(url);
-        for (Map.Entry<String, String> e : headers.entrySet()) {
-            put.addHeader(e.getKey(), MessageDigestUtil.utf8ToIso88591(e.getValue()));
-        }
-
-        if (StringUtils.isNotBlank(body)) {
-            put.setEntity(new StringEntity(body, Constants.ENCODING));
-
-        }
-
-        return httpClient.execute(put);
-    }
-
-    /**
-     * HTTP PUT字节数组
-     *
-     * @param url                  http://host+path+query
-     * @param headers              Http头
-     * @param bytes                字节数组请求体
-     * @param appKey               APP KEY
-     * @param appSecret            APP密钥
-     * @param timeout              超时时间（毫秒）
-     * @param signHeaderPrefixList 自定义参与签名Header前缀
-     * @return 调用结果
-     * @throws Exception
-     */
-    public static HttpResponse httpPut(String url, Map<String, String> headers, byte[] bytes, String appKey, String appSecret, int timeout, List<String> signHeaderPrefixList) throws Exception {
-        headers = initialBasicHeader(headers, appKey, appSecret, HttpMethod.PUT, url, null, signHeaderPrefixList);
-        HttpClient httpClient = new DefaultHttpClient();
-        httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, getTimeout(timeout));
-
-        HttpPut put = new HttpPut(url);
-        for (Map.Entry<String, String> e : headers.entrySet()) {
-            put.addHeader(e.getKey(), MessageDigestUtil.utf8ToIso88591(e.getValue()));
-        }
-
-        if (bytes != null) {
-            put.setEntity(new ByteArrayEntity(bytes));
-
-        }
-
-        return httpClient.execute(put);
-    }
-
-    /**
-     * HTTP DELETE
-     *
-     * @param url                  http://host+path+query
-     * @param headers              Http头
-     * @param appKey               APP KEY
-     * @param appSecret            APP密钥
-     * @param timeout              超时时间（毫秒）
-     * @param signHeaderPrefixList 自定义参与签名Header前缀
-     * @return 调用结果
-     * @throws Exception
-     */
-    public static HttpResponse httpDelete(String url, Map<String, String> headers, String appKey, String appSecret, int timeout, List<String> signHeaderPrefixList) throws Exception {
-        headers = initialBasicHeader(headers, appKey, appSecret, HttpMethod.DELETE, url, null, signHeaderPrefixList);
-        HttpClient httpClient = new DefaultHttpClient();
-        httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, getTimeout(timeout));
-
-        HttpDelete delete = new HttpDelete(url);
-        for (Map.Entry<String, String> e : headers.entrySet()) {
-            delete.addHeader(e.getKey(), MessageDigestUtil.utf8ToIso88591(e.getValue()));
-        }
-
-        return httpClient.execute(delete);
-    }
-
-    /**
-     * 构建FormEntity
-     * @param formParam
-     * @return
-     * @throws UnsupportedEncodingException
-     */
-    private static UrlEncodedFormEntity buildFormEntity(Map<String, String> formParam) throws UnsupportedEncodingException {
-        if (formParam != null) {
-            List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
-
-            for (String key : formParam.keySet()) {
-                nameValuePairList.add(new BasicNameValuePair(key, formParam.get(key)));
-            }
-            UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(nameValuePairList,Constants.ENCODING);
-            formEntity.setContentType(ContentType.CONTENT_TYPE_FORM);
-            return formEntity;
-        }
-
-        return null;
-    }
+//    /**
+//     * 构建FormEntity
+//     * @param formParam
+//     * @return
+//     * @throws UnsupportedEncodingException
+//     */
+//    private static UrlEncodedFormEntity buildFormEntity(Map<String, String> formParam) throws UnsupportedEncodingException {
+//        if (formParam != null) {
+//            List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
+//
+//            for (String key : formParam.keySet()) {
+//                nameValuePairList.add(new BasicNameValuePair(key, formParam.get(key)));
+//            }
+//            UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(nameValuePairList,Constants.ENCODING);
+//            formEntity.setContentType(ContentType.CONTENT_TYPE_FORM);
+//            return formEntity;
+//        }
+//
+//        return null;
+//    }
 
     /**
      * 读取超时时间

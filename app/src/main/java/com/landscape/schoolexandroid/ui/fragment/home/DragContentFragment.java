@@ -1,4 +1,4 @@
-package com.landscape.schoolexandroid.ui.fragment;
+package com.landscape.schoolexandroid.ui.fragment.home;
 
 import android.support.v4.app.Fragment;
 import android.view.animation.AnimationUtils;
@@ -11,7 +11,7 @@ import com.landscape.schoolexandroid.common.BaseFragment;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
 import com.landscape.schoolexandroid.views.home.DragContentView;
 import com.nineoldandroids.view.ViewHelper;
-import com.utils.behavior.ActivityUtils;
+import com.utils.behavior.FragmentsUtils;
 
 import butterknife.Bind;
 
@@ -64,9 +64,9 @@ public class DragContentFragment extends BaseFragment implements DragContentView
     @Override
     public void setContentFragment(Fragment fragment) {
         if (current == null) {
-            ActivityUtils.addFragmentToActivity(getChildFragmentManager(), fragment, R.id.contentFrame);
+            FragmentsUtils.addFragmentToActivity(getChildFragmentManager(), fragment, R.id.contentFrame);
         } else if(current != fragment){
-            ActivityUtils.showFragmentToActivity(getChildFragmentManager(),current,fragment,R.id.contentFrame);
+            FragmentsUtils.showFragmentToActivity(getChildFragmentManager(),current,fragment,R.id.contentFrame);
         }
         current = fragment;
     }

@@ -23,16 +23,12 @@ package com.landscape.apigatewaysign.enums;
  * Created by lipengfei on 16/3/17.
  */
 public enum Method {
-    GET("GET"),
-    POST_FORM("POST_FORM"),
+    GET,
+    POST_FORM,
     POST_STRING,
     POST_BYTES,
     PUT_FORM,
     PUT_STRING,
     PUT_BYTES,
     DELETE;
-
-    private String value;
-
-
 }

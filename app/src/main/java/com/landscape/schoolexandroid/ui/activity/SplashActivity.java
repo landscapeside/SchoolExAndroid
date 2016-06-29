@@ -5,18 +5,22 @@ import android.os.Bundle;
 
 import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.common.BaseActivity;
+import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
 import com.utils.datahelper.RxCounter;
 
+import javax.inject.Inject;
+
 public class SplashActivity extends BaseActivity {
 
+    @Inject
     UserAccountDataSource userAccountDataSource;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        userAccountDataSource = new UserAccountDataSource(this);
+        ((BaseApp)getApplication()).getAppComponent().inject(this);
         RxCounter.counter(3, 0).doOnCompleted(this::next).subscribe();
     }
 

@@ -1,10 +1,12 @@
 package com.landscape.schoolexandroid.api;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.landscape.schoolexandroid.common.AppConfig;
 import com.landscape.schoolexandroid.mode.account.UserAccount;
 import com.orhanobut.logger.Logger;
+import com.utils.behavior.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +76,10 @@ public class RetrofitService {
         Logger.e(throwable.getMessage());
     }
 
-    public static <T> void netErr(String errMsg){
-        Logger.e(errMsg);
+    public static <T> void netErr(Context context, String errMsg){
+        if (!TextUtils.isEmpty(errMsg)) {
+            ToastUtil.show(context,errMsg);
+            Logger.e(errMsg);
+        }
     }
 }

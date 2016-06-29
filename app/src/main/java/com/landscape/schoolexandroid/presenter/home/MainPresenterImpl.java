@@ -1,38 +1,34 @@
 package com.landscape.schoolexandroid.presenter.home;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.jsware.draglayout.DragCallBack;
 import com.landscape.schoolexandroid.R;
+import com.landscape.schoolexandroid.api.BaseCallBack;
+import com.landscape.schoolexandroid.common.BaseApp;
+import com.landscape.schoolexandroid.constant.Constant;
+import com.landscape.schoolexandroid.datasource.home.WorkTaskDataSource;
+import com.landscape.schoolexandroid.enums.PagerType;
+import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskInfo;
+import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskListInfo;
 import com.landscape.schoolexandroid.ui.activity.MainActivity;
-import com.landscape.schoolexandroid.ui.fragment.DragContentFragment;
-import com.landscape.schoolexandroid.ui.fragment.MenuFragment;
-import com.landscape.schoolexandroid.ui.fragment.WorkTaskFragment;
+import com.landscape.schoolexandroid.ui.activity.PagerActivity;
+import com.landscape.schoolexandroid.ui.fragment.home.DragContentFragment;
+import com.landscape.schoolexandroid.ui.fragment.home.MenuFragment;
+import com.landscape.schoolexandroid.ui.fragment.home.WorkTaskFragment;
 import com.landscape.schoolexandroid.views.BaseView;
 import com.landscape.schoolexandroid.views.home.DragContentView;
 import com.landscape.schoolexandroid.views.home.MenuView;
 import com.landscape.schoolexandroid.views.home.WorkTaskListView;
-import com.orhanobut.logger.Logger;
-import com.utils.behavior.ActivityUtils;
-import com.utils.behavior.AppFileUtils;
+import com.utils.behavior.FragmentsUtils;
 import com.utils.behavior.ToastUtil;
+import com.utils.datahelper.CollectionUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import javax.inject.Inject;
 
 /**
  * Created by Administrator on 2016/4/26.
@@ -43,7 +39,8 @@ public class MainPresenterImpl implements MainPresenter {
      * module-layer
      * ===============================
      */
-
+    @Inject
+    WorkTaskDataSource workTaskDataSource;
 
     /**
      * ===============================
@@ -58,14 +55,19 @@ public class MainPresenterImpl implements MainPresenter {
      * */
     WorkTaskListView workTaskListView;
 
+    /**
+     * 数据
+     */
+    List<ExaminationTaskInfo> taskInfos;
 
     public MainPresenterImpl(MainActivity mainActivity) {
         dragContent = new DragContentFragment();
         menuView = new MenuFragment();
         workTaskListView = new WorkTaskFragment();
+        ((BaseApp)mainActivity.getApplication()).getAppComponent().inject(this);
         this.mainActivity = mainActivity;
-        ActivityUtils.addFragmentToActivity(mainActivity.getSupportFragmentManager(), (Fragment) menuView, R.id.drag_menu);
-        ActivityUtils.addFragmentToActivity(mainActivity.getSupportFragmentManager(), (Fragment) dragContent, R.id.drag_content);
+        FragmentsUtils.addFragmentToActivity(mainActivity.getSupportFragmentManager(), (Fragment) menuView, R.id.drag_menu);
+        FragmentsUtils.addFragmentToActivity(mainActivity.getSupportFragmentManager(), (Fragment) dragContent, R.id.drag_content);
         setDragLayout(dragContent);
         this.initViews();
         refreshData(mainActivity.getIntent());
@@ -115,6 +117,7 @@ public class MainPresenterImpl implements MainPresenter {
                 case 0:
                     // 作业本
                     dragContent.setTitle("作业本");
+                    dragContent.setContentFragment((Fragment) workTaskListView);
                     break;
                 case 1:
                     // 错题本
@@ -139,11 +142,29 @@ public class MainPresenterImpl implements MainPresenter {
             @Override
             public void onInitialized() {
                 workTaskListView.setListItemSelectListener(position -> {
-                    // TODO: 2016/6/22 跳转条目
+                    if (CollectionUtils.isEmpty(taskInfos)) {
+                        throw new ArrayIndexOutOfBoundsException("任务列表为空");
+                    }
+                    if (position >= taskInfos.size()) {
+                        throw new ArrayIndexOutOfBoundsException("超出任务列表长度");
+                    }
+                    mainActivity.startActivity(new Intent(mainActivity, PagerActivity.class)
+                            .putExtra(Constant.PAGER_TYPE, PagerType.PREVIEW_TASK.getType())
+                            .putExtra(Constant.TASK_INFO,taskInfos.get(position)));
                 });
-                workTaskListView.setRefreshListener(() -> {
-                    // TODO: 2016/6/22 刷新数据
-                });
+                BaseCallBack<ExaminationTaskListInfo> callBack = new BaseCallBack<ExaminationTaskListInfo>(mainActivity) {
+                    @Override
+                    public void response(ExaminationTaskListInfo response) {
+                        workTaskResult(response);
+                    }
+
+                    @Override
+                    public void err() {
+                        workTaskListView.cancelRefresh();
+                    }
+                };
+                workTaskListView.setRefreshListener(() -> workTaskDataSource.request(callBack));
+                workTaskDataSource.request(callBack);
             }
 
             @Override
@@ -153,8 +174,24 @@ public class MainPresenterImpl implements MainPresenter {
         });
     }
 
+    private void workTaskResult(ExaminationTaskListInfo result) {
+        // TODO: 2016/6/27 更新列表
+        if (result.isIsSuccess()) {
+            taskInfos = result.getData();
+            workTaskListView.listData(taskInfos);
+        } else {
+            ToastUtil.show(mainActivity,result.getMessage());
+        }
+
+    }
+
     private void setDragLayout(DragCallBack callBack) {
         mainActivity.dl.setDragListener(callBack);
+    }
+
+    @Override
+    public void remove() {
+
     }
 
     @Override

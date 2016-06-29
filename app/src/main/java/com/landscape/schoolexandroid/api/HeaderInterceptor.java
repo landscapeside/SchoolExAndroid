@@ -81,7 +81,7 @@ public class HeaderInterceptor implements Interceptor {
             //（可选）响应内容序列化格式,默认application/json,目前仅支持application/json
             headers.put(HttpHeader.HTTP_HEADER_ACCEPT, "application/json");
             //（可选）Body MD5,服务端会校验Body内容是否被篡改,建议Body非Form表单时添加此Header
-            headers.put(HttpHeader.HTTP_HEADER_CONTENT_MD5, MessageDigestUtil.base64AndMD5(bodyStr/*request.body().toString()*/));
+            headers.put(HttpHeader.HTTP_HEADER_CONTENT_MD5, MessageDigestUtil.base64AndMD5(bodyStr/*preview.body().toString()*/));
             //（POST/PUT请求必选）请求Body内容格式
             headers.put(HttpHeader.HTTP_HEADER_CONTENT_TYPE, ContentType.CONTENT_TYPE_TEXT);
             try {

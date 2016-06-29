@@ -7,6 +7,7 @@ public interface BaseDataSource {
 
     interface CallBack<T>{
         void callBack(T data);
+        void err();
     }
 
 }

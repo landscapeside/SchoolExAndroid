@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/web_error_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:visibility="gone">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="抱歉，网络不可用"
+        android:drawableTop="@mipmap/icon_error_message"
+        android:drawablePadding="10dp"
+        android:textSize="16sp"
+        android:textColor="@color/text_color_dark_gray"
+        android:layout_marginTop="100dp"/>
+    <TextView
+        android:id="@+id/note_online_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="点击重新加载"
+        android:textSize="13sp"
+        android:textColor="@color/gray" />
+
+</LinearLayout>

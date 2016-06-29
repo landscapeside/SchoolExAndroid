@@ -11,4 +11,5 @@
     <color name="red">#ff1717</color>
 
     <color name="menu_item_text">#323232</color>
+    <color name="text_color_dark_gray">#666666</color>
 </resources>

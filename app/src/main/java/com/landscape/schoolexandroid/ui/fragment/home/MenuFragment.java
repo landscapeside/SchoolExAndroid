@@ -1,4 +1,4 @@
-package com.landscape.schoolexandroid.ui.fragment;
+package com.landscape.schoolexandroid.ui.fragment.home;
 
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
