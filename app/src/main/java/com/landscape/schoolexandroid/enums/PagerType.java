@@ -1,6 +1,7 @@
 package com.landscape.schoolexandroid.enums;
 
 import com.landscape.schoolexandroid.presenter.worktask.PreviewTaskPresenterImpl;
+import com.landscape.schoolexandroid.presenter.worktask.QuestionLocationPresenterImpl;
 
 /**
  * Created by 1 on 2016/6/27.
@@ -8,6 +9,8 @@ import com.landscape.schoolexandroid.presenter.worktask.PreviewTaskPresenterImpl
 public enum PagerType {
 
     PREVIEW_TASK(0,PreviewTaskPresenterImpl.class),
+
+    QUESTION_LOCATION(3, QuestionLocationPresenterImpl.class),
 
 
     NONE(-1,Object.class);
@@ -33,6 +36,8 @@ public enum PagerType {
         switch (type) {
             case 0:
                 return PREVIEW_TASK;
+            case 3:
+                return QUESTION_LOCATION;
             default:
                 return NONE;
         }
