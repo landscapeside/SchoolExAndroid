@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true">
 
-    <RelativeLayout
+    <com.landscape.weight.FlingRelativeLayout
         android:id="@+id/weblayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -27,5 +27,5 @@
             android:layout_height="2dp"
             android:progressDrawable="@drawable/web_po_seekbar" />
 
-    </RelativeLayout>
+    </com.landscape.weight.FlingRelativeLayout>
 </ScrollView>

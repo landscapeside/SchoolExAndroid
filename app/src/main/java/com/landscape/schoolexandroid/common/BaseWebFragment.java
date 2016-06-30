@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.ZoomButtonsController;
 
 import com.landscape.schoolexandroid.R;
+import com.landscape.weight.FlingRelativeLayout;
 
 import java.lang.reflect.Field;
 
@@ -30,6 +31,7 @@ public abstract class BaseWebFragment extends BaseFragment implements View.OnCli
     protected WebView mWebView;
     protected ProgressBar mProgressBar;
     protected View note_online_error;
+    protected FlingRelativeLayout webViewLayout;
     private boolean isError = false;
 
     @Nullable
@@ -51,6 +53,7 @@ public abstract class BaseWebFragment extends BaseFragment implements View.OnCli
     }
 
     protected WebView initWebView(View view) {
+        webViewLayout = (FlingRelativeLayout) view.findViewById(R.id.weblayout);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         mProgressBar.setMax(100);
         mWebView = (WebView) view.findViewById(R.id.webView);

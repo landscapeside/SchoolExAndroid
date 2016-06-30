@@ -11,21 +11,21 @@ public class ExaminationTaskInfo implements Parcelable {
     /**
      * $id : 35
      * StudentQuestionsTasksID : 11478
-     * IsTasks : false
-     * PuchDateTime : 2016-03-29T13:34:05.5
-     * CanStartDateTime : 2016-03-29T13:33:29
-     * CanEndDateTime : 2016-04-09T14:33:29
-     * StartTime : 2016-03-29T13:34:42.533
-     * EndTime : 2016-03-29T13:35:59.097
+     * IsTasks : false //判断是否在答题时间
+     * PuchDateTime : 2016-03-29T13:34:05.5  //推送时间
+     * CanStartDateTime : 2016-03-29T13:33:29 /允许答题的开始时间
+     * CanEndDateTime : 2016-04-09T14:33:29 //允许答题的限制结束时间
+     * StartTime : 2016-03-29T13:34:42.533 //学生答题的开始时间
+     * EndTime : 2016-03-29T13:35:59.097,//学生答题的结束
      * DateTime : 2016-06-27T13:19:12.2241452
-     * Duration : 3
-     * Status : 2
-     * ExaminationPapersId : 1464
-     * Name : 数学组卷测试1
-     * SubjectTypeName : 数学
+     * Duration : 3 ,//答题分钟数
+     * Status : 2 //z状态 -1 初始状态 0 开始做题 1 做题完成 2老师已批阅
+     * ExaminationPapersId : 1464 //试卷ID
+     * Name : 数学组卷测试1 //试卷名称
+     * SubjectTypeName : 数学 //科目
      * PapersTypeName : 课堂练习
-     * Count : 9
-     * Fraction : 6
+     * Count : 9  //题目条数
+     * Fraction : 6 //总分
      */
 
     private int StudentQuestionsTasksID;

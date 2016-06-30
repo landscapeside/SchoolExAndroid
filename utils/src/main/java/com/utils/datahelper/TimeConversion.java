@@ -25,6 +25,16 @@ public class TimeConversion {
         return timeStr;
     }
 
+    public static String getHourMinSecondsData(long timeMillis) {
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timeMillis);
+
+        System.out.println(timeMillis + " = " + formatter.format(calendar.getTime()));
+        return formatter.format(calendar.getTime());
+    }
+
     public static String getData(long timeMillis) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 

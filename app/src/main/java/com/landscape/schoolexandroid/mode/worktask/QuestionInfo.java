@@ -1,9 +1,12 @@
 package com.landscape.schoolexandroid.mode.worktask;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by 1 on 2016/6/28.
  */
-public class QuestionInfo {
+public class QuestionInfo implements Parcelable {
 
 
     /**
@@ -96,4 +99,48 @@ public class QuestionInfo {
     public void setStudentsAnswer(String StudentsAnswer) {
         this.StudentsAnswer = StudentsAnswer;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.Id);
+        dest.writeInt(this.QuestionTypeId);
+        dest.writeString(this.AlternativeContent);
+        dest.writeString(this.AnswerType);
+        dest.writeString(this.Answer);
+        dest.writeInt(this.Fraction);
+        dest.writeInt(this.Sort);
+        dest.writeString(this.StudentsAnswer);
+    }
+
+    public QuestionInfo() {
+    }
+
+    protected QuestionInfo(Parcel in) {
+        this.Id = in.readInt();
+        this.QuestionTypeId = in.readInt();
+        this.AlternativeContent = in.readString();
+        this.AnswerType = in.readString();
+        this.Answer = in.readString();
+        this.Fraction = in.readInt();
+        this.Sort = in.readInt();
+        this.StudentsAnswer = in.readString();
+    }
+
+    public static final Creator<QuestionInfo> CREATOR = new Creator<QuestionInfo>() {
+        @Override
+        public QuestionInfo createFromParcel(Parcel source) {
+            return new QuestionInfo(source);
+        }
+
+        @Override
+        public QuestionInfo[] newArray(int size) {
+            return new QuestionInfo[size];
+        }
+    };
 }

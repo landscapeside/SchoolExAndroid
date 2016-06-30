@@ -37,6 +37,10 @@ public class QuestionLocationPresenterImpl implements BasePresenter {
         locationView.setLifeListener(new BaseView.ViewLifeListener() {
             @Override
             public void onInitialized() {
+                locationView.setListItemSelectListener(position -> {
+                    // TODO: 2016/6/30 重定位
+
+                });
                 locationView.listData(pagerActivity.getIntent().getIntegerArrayListExtra(Constant.LOCATION_INFO));
             }
 

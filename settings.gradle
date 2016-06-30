@@ -1,1 +1,1 @@
-include ':app', ':aoplibrary', ':utils', ':draglayout', ':pullrefresh', ':apigatewaysign'
+include ':app', ':aoplibrary', ':utils', ':draglayout', ':pullrefresh', ':apigatewaysign', ':slidinguppanel'

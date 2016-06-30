@@ -10,6 +10,8 @@ import com.landscape.schoolexandroid.common.AppConfig;
 import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.worktask.TaskOptionDataSource;
+import com.landscape.schoolexandroid.enums.PagerType;
+import com.landscape.schoolexandroid.enums.TaskStatus;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationPaperListInfo;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskInfo;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
@@ -20,6 +22,7 @@ import com.landscape.schoolexandroid.views.worktask.PreviewTaskView;
 import com.orhanobut.logger.Logger;
 import com.utils.behavior.FragmentsUtils;
 import com.utils.behavior.ToastUtil;
+import com.utils.datahelper.CollectionUtils;
 
 import javax.inject.Inject;
 
@@ -82,6 +85,10 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
                                 String.format(urlFormat,
                                         taskInfo.getExaminationPapersId(),
                                         taskInfo.getStudentQuestionsTasksID()));
+                previewTaskView.startEnable(CollectionUtils.isIn(
+                        TaskStatus.getStatus(taskInfo.getStatus()),
+                        TaskStatus.INIT,
+                        TaskStatus.RUN)&&!taskInfo.isIsTasks() && taskInfo.getDuration()>0);
             }
 
             @Override
@@ -124,7 +131,12 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
     @Override
     public void paperResult(ExaminationPaperListInfo result) {
         if (result.isIsSuccess()) {
-
+            Intent intent = new Intent(pagerActivity, PagerActivity.class).putExtra(Constant.PAGER_TYPE, PagerType.ANSWER.getType());
+            pagerActivity.startActivity(
+                    taskOptionDataSource.putWorkData(
+                            intent,
+                            result.getData().get(0).getQuestionGruop(),
+                            taskInfo));
         } else {
             ToastUtil.show(pagerActivity,result.getMessage());
         }

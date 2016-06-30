@@ -1,6 +1,7 @@
 package com.landscape.schoolexandroid.ui.fragment.worktask;
 
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 
 import com.landscape.schoolexandroid.R;
@@ -34,6 +35,11 @@ public class PreviewTaskFragment extends BaseWebFragment implements PreviewTaskV
         Logger.i(url);
         this.url = url;
         mWebView.loadUrl(url);
+    }
+
+    @Override
+    public void startEnable(boolean isEnable) {
+        startTask.setVisibility(isEnable? View.VISIBLE:View.GONE);
     }
 
     @Override

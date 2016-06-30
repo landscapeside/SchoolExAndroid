@@ -9,7 +9,7 @@ import com.landscape.schoolexandroid.views.BaseView;
 public interface PreviewTaskView<T extends BasePresenter> extends BaseView<T> {
 
     void previewTask(String url);
-
+    void startEnable(boolean isEnable);
     void setClickListener(ClickListener clickListener);
 
     interface ClickListener{
