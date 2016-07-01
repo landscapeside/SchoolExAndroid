@@ -64,9 +64,15 @@ public class MenuFragment extends BaseFragment implements MenuView<BasePresenter
                     menuItemSelectListener.onSelect(position);
                 }
             });
+            lv.setSelection(0);
         } else {
             adapter.replaceAll(Arrays.asList(listData));
         }
+    }
+
+    @Override
+    public int getCurrentIdx() {
+        return lv.getSelectedItemPosition() == -1?0:lv.getSelectedItemPosition();
     }
 
     @Override

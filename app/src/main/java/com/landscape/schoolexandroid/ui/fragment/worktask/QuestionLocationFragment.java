@@ -6,12 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.joanzapata.android.BaseAdapterHelper;
 import com.joanzapata.android.QuickAdapter;
 import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.common.BaseFragment;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
+import com.landscape.schoolexandroid.utils.AnswerUtils;
 import com.landscape.schoolexandroid.views.worktask.QuestionLocationView;
 
 import java.util.List;
@@ -23,6 +25,8 @@ import butterknife.Bind;
  */
 public class QuestionLocationFragment extends BaseFragment implements QuestionLocationView<BasePresenter> {
 
+    int currentIdx = 0;
+
     QuickAdapter adapter = null;
     @Bind(R.id.grid_location)
     GridView gridLocation;
@@ -33,13 +37,21 @@ public class QuestionLocationFragment extends BaseFragment implements QuestionLo
     }
 
     @Override
-    public void listData(List<Integer> locations) {
+    public void listData(int current, List<Integer> locations) {
+        this.currentIdx = current;
         if (adapter == null) {
-            adapter = new QuickAdapter<Integer>(getActivity(),R.layout.item_location,locations) {
+            adapter = new QuickAdapter<Integer>(getActivity(), R.layout.item_location, locations) {
                 @Override
                 protected void convert(BaseAdapterHelper helper, Integer item) {
                     int position = helper.getPosition();
-                    helper.setText(R.id.tv_location, "" + position);
+                    TextView tvLocation = helper.getView(R.id.tv_location);
+                    tvLocation.setText("" + (position+1));
+                    if (position == currentIdx) {
+                        tvLocation.setBackgroundResource(R.drawable.btn_badge_solid_green);
+                    } else {
+                        tvLocation.setBackgroundResource(R.drawable.badge_selector);
+                        tvLocation.setSelected(item == AnswerUtils.QUESTION_DONE);
+                    }
                 }
             };
             gridLocation.setAdapter(adapter);

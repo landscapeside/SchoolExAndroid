@@ -14,6 +14,8 @@ public interface MenuView<T extends BasePresenter> extends BaseView<T> {
 
     void listData(List<MenuItemBean> listData);
 
+    int getCurrentIdx();
+
     interface OnMenuItemSelectListener{
         void onSelect(int position);
     }

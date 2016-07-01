@@ -12,6 +12,8 @@ import java.util.List;
 public interface WorkTaskListView<T extends BasePresenter> extends BaseView<T> {
 
     void listData(List<ExaminationTaskInfo> listData);
+
+    void startRefresh();
     void cancelRefresh();
 
     void setRefreshListener(RefreshListener refreshListener);

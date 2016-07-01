@@ -21,5 +21,10 @@ public interface AnswerView<T extends BasePresenter> extends BaseView<T> {
         void location();
     }
 
+    void setTimeCounterCallbk(TimeCounterCallbk timeCounterCallbk);
+    interface TimeCounterCallbk{
+        void timeOut();
+    }
+
     void setFlingListener(FlingRelativeLayout.FlingListener flingListener);
 }

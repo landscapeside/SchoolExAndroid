@@ -3,6 +3,7 @@ package com.landscape.schoolexandroid.dagger;
 import android.content.Context;
 
 import com.landscape.schoolexandroid.common.BaseApp;
+import com.squareup.otto.Bus;
 
 import javax.inject.Singleton;
 
@@ -30,5 +31,11 @@ public class AppModule {
     @Singleton
     public Context getApplication() {
         return app.getApplicationContext();
+    }
+
+    @Singleton
+    @Provides
+    public Bus getBus() {
+        return new Bus();
     }
 }

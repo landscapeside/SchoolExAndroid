@@ -62,10 +62,14 @@ public class RetrofitService {
     }
 
     public static void cancel(Call call) {
-        call.cancel();
         if (calls.contains(call)) {
+            call.cancel();
             calls.remove(call);
         }
+    }
+
+    public static boolean isLive(Call call) {
+        return calls.contains(call);
     }
 
     public static void netErr(Throwable throwable){

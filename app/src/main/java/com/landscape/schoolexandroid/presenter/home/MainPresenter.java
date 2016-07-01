@@ -10,5 +10,5 @@ import com.landscape.schoolexandroid.presenter.BasePresenter;
  */
 public interface MainPresenter extends BasePresenter {
 
-
+    void refreshList();
 }

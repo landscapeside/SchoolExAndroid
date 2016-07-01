@@ -11,18 +11,30 @@ public class QuestionInfo implements Parcelable {
 
     /**
      * $id : 4
-     * Id : 2389836
+     * Id : 2389836 //试题ID
      * QuestionTypeId : 1
-     * AlternativeContent : [{"Id":"A","Content":"某厂生产的电灯使用寿命"},{"Id":"B","Content":"全国初中生的视力情况<br>"},{"Id":"C","Content":"某校七年级学生的身高情况"},{"Id":"D","Content":"\"娃哈哈\"产品的合格率"}]
-     * AnswerType : [{"Id":"1","Content":"$option:1$","TypeId":1}]
-     * Answer : [{"Id":"1","Answer":"C"}]
-     * Fraction : 4
-     * Sort : 1
+     * =======================
+     * Id	Name
+     1	选择题
+     2	填空题
+     3	解答题
+     4	判断题
+     5	多选题
+     12	听力单选题
+     13	听力填空题
+     26	复合题
+     * =======================
+     * AlternativeContent : // （选择题和多选题有值） 题目选项 数组 根据数组的长度 判断选项的长度
+     * [{"Id":"A","Content":"某厂生产的电灯使用寿命"},{"Id":"B","Content":"全国初中生的视力情况<br>"},{"Id":"C","Content":"某校七年级学生的身高情况"},{"Id":"D","Content":"\"娃哈哈\"产品的合格率"}]
+     * AnswerType : [{"Id":"1" //第几个空 ,"Content":"$option:1$","TypeId":1 //试题类型id 即QuestionTypeID }]
+     * Answer : //正确答案 [{"Id":"1" //第几个空 ,"Answer":"C" //正确答案 }]
+     * Fraction : 4  //试题分数
+     * Sort : 1  //排序编号
      * StudentsAnswer : [
      {
-     "Answer" : "C",
-     "Id" : 1,
-     "TypeId" : 1
+     "Answer" : "C",  //学生选这个的答案
+     "Id" : 1, //第几个空（如果有多个答案类容）
+     "TypeId" : 1 //试题类型id 即QuestionTypeID
      }
      ]
      */

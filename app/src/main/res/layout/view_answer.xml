@@ -9,17 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/ll_finish"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingTop="@dimen/answer_btn_padding"
+            android:gravity="center"
             android:paddingBottom="@dimen/answer_btn_padding"
-            android:gravity="center">
+            android:paddingTop="@dimen/answer_btn_padding">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -28,7 +28,7 @@
                 android:drawablePadding="10dp"
                 android:gravity="center"
                 android:text="交卷"
-                android:textColor="@color/text_color_gray"/>
+                android:textColor="@color/text_color_gray" />
 
         </LinearLayout>
 
@@ -37,9 +37,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingTop="@dimen/answer_btn_padding"
+            android:gravity="center"
             android:paddingBottom="@dimen/answer_btn_padding"
-            android:gravity="center">
+            android:paddingTop="@dimen/answer_btn_padding">
 
             <TextView
                 android:id="@+id/tv_time_left"
@@ -49,7 +49,7 @@
                 android:drawablePadding="10dp"
                 android:gravity="center"
                 android:text="时间"
-                android:textColor="@color/text_color_gray"/>
+                android:textColor="@color/text_color_gray" />
         </LinearLayout>
 
         <LinearLayout
@@ -57,9 +57,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:paddingTop="@dimen/answer_btn_padding"
+            android:gravity="center"
             android:paddingBottom="@dimen/answer_btn_padding"
-            android:gravity="center">
+            android:paddingTop="@dimen/answer_btn_padding">
 
             <TextView
                 android:id="@+id/tv_location"
@@ -69,15 +69,53 @@
                 android:drawablePadding="10dp"
                 android:gravity="center"
                 android:text="1/52"
-                android:textColor="@color/text_color_gray"/>
+                android:textColor="@color/text_color_gray" />
         </LinearLayout>
 
     </LinearLayout>
 
-    <include
-        layout="@layout/view_base_web"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/ll_infos"/>
+        android:layout_above="@+id/ll_infos">
+
+        <include layout="@layout/view_base_web" />
+
+        <com.landscape.slidinguppanel.WrapSlidingDrawer
+            android:id="@+id/slidingDrawer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:allowSingleTap="true"
+            android:content="@+id/content"
+            android:handle="@+id/handle">
+
+            <RelativeLayout
+                android:id="@+id/handle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
+
+                <ImageView
+                    android:id="@+id/handlebg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/icon_answer_handle_close" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@color/answer_view_bg">
+
+
+            </RelativeLayout>
+
+        </com.landscape.slidinguppanel.WrapSlidingDrawer>
+
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package com.landscape.schoolexandroid.presenter.worktask;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 
@@ -39,9 +40,14 @@ public class QuestionLocationPresenterImpl implements BasePresenter {
             public void onInitialized() {
                 locationView.setListItemSelectListener(position -> {
                     // TODO: 2016/6/30 重定位
-
+                    Intent data = new Intent();
+                    data.putExtra(Constant.LOCATION_INDEX, position);
+                    pagerActivity.setResult(Activity.RESULT_OK,data);
+                    pagerActivity.finish();
                 });
-                locationView.listData(pagerActivity.getIntent().getIntegerArrayListExtra(Constant.LOCATION_INFO));
+                locationView.listData(
+                        pagerActivity.getIntent().getIntExtra(Constant.LOCATION_INDEX, 0),
+                        pagerActivity.getIntent().getIntegerArrayListExtra(Constant.LOCATION_INFO));
             }
 
             @Override

@@ -12,4 +12,10 @@
 
     <color name="menu_item_text">#323232</color>
     <color name="text_color_dark_gray">#666666</color>
+
+    <color name="answer_view_bg">#f1f1f1</color>
+
+    <color name="transparent">#00000000</color>
+
+    <color name="list_view_spit">#cfcfcf</color>
 </resources>

@@ -1,7 +1,11 @@
 package com.landscape.schoolexandroid.ui.fragment.worktask;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 
 import com.landscape.schoolexandroid.R;
@@ -9,6 +13,8 @@ import com.landscape.schoolexandroid.common.BaseFragment;
 import com.landscape.schoolexandroid.common.BaseWebFragment;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
 import com.landscape.schoolexandroid.views.worktask.AnswerView;
+import com.landscape.slidinguppanel.SlidingUpPanelLayout;
+import com.landscape.slidinguppanel.WrapSlidingDrawer;
 import com.landscape.weight.FlingRelativeLayout;
 import com.orhanobut.logger.Logger;
 import com.utils.datahelper.RxCounter;
@@ -27,6 +33,7 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
 
     String url = "";
     BtnClickListener btnClickListener;
+    TimeCounterCallbk timeCounterCallbk;
     Subscription subscription = null;
 
     @Bind(R.id.tv_time_left)
@@ -35,6 +42,10 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     TextView tvLocation;
     @Bind(R.id.ll_infos)
     View llInfos;
+    @Bind(R.id.slidingDrawer)
+    WrapSlidingDrawer slidingDrawer;
+    @Bind(R.id.handlebg)
+    ImageView handlebg;
 
     @Override
     public int getLayoutResId() {
@@ -47,6 +58,14 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        webViewLayout.setTouchListener(() -> slidingDrawer.close());
+        slidingDrawer.setOnDrawerOpenListener(() -> handlebg.setImageResource(R.drawable.icon_answer_handle_open));
+        slidingDrawer.setOnDrawerCloseListener(() -> handlebg.setImageResource(R.drawable.icon_answer_handle_close));
+    }
+
+    @Override
     public void refresh() {
         previewTask(url);
     }
@@ -55,6 +74,9 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     public void previewTask(String url) {
         if (TextUtils.isEmpty(url)) {
             throw new IllegalArgumentException("H5地址不能为空");
+        }
+        if (slidingDrawer.isShown()) {
+            slidingDrawer.close();
         }
         Logger.i(url);
         this.url = url;
@@ -88,7 +110,9 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     }
 
     private void tickComplete() {
-
+        if (timeCounterCallbk != null) {
+            timeCounterCallbk.timeOut();
+        }
     }
 
     @OnClick(R.id.ll_finish)
@@ -123,6 +147,11 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     @Override
     public void setBtnClickListener(BtnClickListener btnClickListener) {
         this.btnClickListener = btnClickListener;
+    }
+
+    @Override
+    public void setTimeCounterCallbk(TimeCounterCallbk timeCounterCallbk) {
+        this.timeCounterCallbk = timeCounterCallbk;
     }
 
     @Override

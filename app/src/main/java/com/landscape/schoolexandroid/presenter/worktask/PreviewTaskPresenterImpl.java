@@ -3,6 +3,8 @@ package com.landscape.schoolexandroid.presenter.worktask;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 
+import com.landscape.event.FinishPagerEvent;
+import com.landscape.event.RefreshListEvent;
 import com.landscape.netedge.worktask.IWorkTask;
 import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.api.BaseCallBack;
@@ -20,6 +22,8 @@ import com.landscape.schoolexandroid.ui.fragment.worktask.PreviewTaskFragment;
 import com.landscape.schoolexandroid.views.BaseView;
 import com.landscape.schoolexandroid.views.worktask.PreviewTaskView;
 import com.orhanobut.logger.Logger;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.utils.behavior.FragmentsUtils;
 import com.utils.behavior.ToastUtil;
 import com.utils.datahelper.CollectionUtils;
@@ -36,6 +40,8 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
 
     @Inject
     TaskOptionDataSource taskOptionDataSource;
+    @Inject
+    Bus mBus;
 
     String urlFormat = "HomeWork/ExaminationPapers?id=%s&taskid=%s";
     ExaminationTaskInfo taskInfo;
@@ -57,6 +63,7 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
         previewTaskView = new PreviewTaskFragment();
         FragmentsUtils.addFragmentToActivity(pagerActivity.getSupportFragmentManager(), (Fragment) previewTaskView, R.id.contentPanel);
         mOptions = (IWorkTask) pagerActivity.mProxy.createProxyInstance(this);
+        mBus.register(this);
         initViews();
     }
 
@@ -100,7 +107,7 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
 
     @Override
     public void remove() {
-
+        mBus.unregister(this);
     }
 
     @Override
@@ -140,5 +147,10 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
         } else {
             ToastUtil.show(pagerActivity,result.getMessage());
         }
+    }
+
+    @Subscribe
+    public void onFinishAnswer(FinishPagerEvent event) {
+        pagerActivity.finish();
     }
 }

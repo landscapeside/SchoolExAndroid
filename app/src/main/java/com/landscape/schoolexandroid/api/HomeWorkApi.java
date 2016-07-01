@@ -1,5 +1,6 @@
 package com.landscape.schoolexandroid.api;
 
+import com.landscape.schoolexandroid.mode.BaseBean;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationPaperListInfo;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskListInfo;
 
@@ -27,6 +28,6 @@ public interface HomeWorkApi {
     Call<String> startWork(@Query("StudentQuestionsTasksID") int StudentQuestionsTasksID);
 
     @GET("api/Students/EndWork")
-    Call<String> endWork(@Query("StudentQuestionsTasksID") int StudentQuestionsTasksID);
+    Call<BaseBean> endWork(@Query("StudentQuestionsTasksID") int StudentQuestionsTasksID);
 
 }

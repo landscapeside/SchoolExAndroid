@@ -10,6 +10,7 @@ import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.BaseDataSource;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
 import com.landscape.schoolexandroid.datasource.home.WorkTaskDataSource;
+import com.landscape.schoolexandroid.mode.BaseBean;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationPaperListInfo;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskInfo;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskListInfo;
@@ -54,8 +55,8 @@ public class TaskOptionDataSource implements BaseDataSource {
         return call;
     }
 
-    public Call<String> endWork(ExaminationTaskInfo taskInfo, BaseCallBack<String> callBack) {
-        Call<String> call = null;
+    public Call<BaseBean> endWork(ExaminationTaskInfo taskInfo, BaseCallBack<BaseBean> callBack) {
+        Call<BaseBean> call = null;
         call = RetrofitService.createApi(HomeWorkApi.class)
                 .endWork(taskInfo.getStudentQuestionsTasksID());
         RetrofitService.addCall(call);

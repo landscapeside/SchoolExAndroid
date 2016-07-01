@@ -3,6 +3,7 @@ package com.landscape.schoolexandroid.api;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.orhanobut.logger.Logger;
 import com.utils.behavior.ToastUtil;
 
 import java.io.IOException;
@@ -53,8 +54,12 @@ public abstract class BaseCallBack<T> implements Callback<T> {
 
     @Override
     public void onFailure(Call call, Throwable t) {
-        RetrofitService.cancel(call);
+        Logger.e("BaseCallBack======>onFailure");
         RetrofitService.netErr(call,t);
+        if (RetrofitService.isLive(call)) {
+            err();
+        }
+        RetrofitService.cancel(call);
         destroy();
     }
 

@@ -58,6 +58,11 @@ public class WorkTaskFragment extends BaseFragment implements WorkTaskListView<B
     }
 
     @Override
+    public void startRefresh() {
+        pullRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
     public void cancelRefresh() {
         pullRefreshLayout.setRefreshing(false);
     }

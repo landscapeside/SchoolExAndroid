@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface QuestionLocationView<T extends BasePresenter> extends BaseView<T> {
 
-    void listData(List<Integer> locations);
+    void listData(int current,List<Integer> locations);
 
     interface OnListItemSelectListener{
         void onSelect(int position);

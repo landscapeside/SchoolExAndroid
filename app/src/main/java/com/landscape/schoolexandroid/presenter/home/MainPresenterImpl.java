@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 
 import com.jsware.draglayout.DragCallBack;
+import com.landscape.event.RefreshListEvent;
 import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.api.BaseCallBack;
+import com.landscape.schoolexandroid.api.RetrofitService;
 import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.home.WorkTaskDataSource;
@@ -21,6 +23,9 @@ import com.landscape.schoolexandroid.views.BaseView;
 import com.landscape.schoolexandroid.views.home.DragContentView;
 import com.landscape.schoolexandroid.views.home.MenuView;
 import com.landscape.schoolexandroid.views.home.WorkTaskListView;
+import com.orhanobut.logger.Logger;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.utils.behavior.FragmentsUtils;
 import com.utils.behavior.ToastUtil;
 import com.utils.datahelper.CollectionUtils;
@@ -41,6 +46,12 @@ public class MainPresenterImpl implements MainPresenter {
      */
     @Inject
     WorkTaskDataSource workTaskDataSource;
+
+    /***
+     * bus
+     */
+    @Inject
+    Bus mBus;
 
     /**
      * ===============================
@@ -71,6 +82,7 @@ public class MainPresenterImpl implements MainPresenter {
         setDragLayout(dragContent);
         this.initViews();
         refreshData(mainActivity.getIntent());
+        mBus.register(this);
     }
 
     public void initViews() {
@@ -152,19 +164,7 @@ public class MainPresenterImpl implements MainPresenter {
                             .putExtra(Constant.PAGER_TYPE, PagerType.PREVIEW_TASK.getType())
                             .putExtra(Constant.TASK_INFO,taskInfos.get(position)));
                 });
-                BaseCallBack<ExaminationTaskListInfo> callBack = new BaseCallBack<ExaminationTaskListInfo>(mainActivity) {
-                    @Override
-                    public void response(ExaminationTaskListInfo response) {
-                        workTaskResult(response);
-                    }
-
-                    @Override
-                    public void err() {
-                        workTaskListView.cancelRefresh();
-                    }
-                };
-                workTaskListView.setRefreshListener(() -> workTaskDataSource.request(callBack.setContext(mainActivity)));
-                workTaskDataSource.request(callBack);
+                refreshWorkTask();
             }
 
             @Override
@@ -191,11 +191,44 @@ public class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void remove() {
-
+        mBus.unregister(this);
     }
 
     @Override
     public void refreshData(Intent data) {
 
+    }
+
+    @Subscribe
+    public void onRefreshEvent(RefreshListEvent refreshListEvent) {
+        refreshList();
+    }
+
+    @Override
+    public void refreshList() {
+        Logger.i("menuview current idx ---->" +menuView.getCurrentIdx());
+        switch (menuView.getCurrentIdx()) {
+            case 0:
+                // 作业本
+                refreshWorkTask();
+                break;
+        }
+    }
+
+    private void refreshWorkTask() {
+        BaseCallBack<ExaminationTaskListInfo> callBack = new BaseCallBack<ExaminationTaskListInfo>(mainActivity) {
+            @Override
+            public void response(ExaminationTaskListInfo response) {
+                workTaskResult(response);
+            }
+
+            @Override
+            public void err() {
+                workTaskListView.cancelRefresh();
+            }
+        };
+        workTaskListView.setRefreshListener(() -> workTaskDataSource.request(callBack.setContext(mainActivity)));
+        workTaskListView.startRefresh();
+        workTaskDataSource.request(callBack);
     }
 }

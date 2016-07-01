@@ -98,4 +98,16 @@ public class PagerActivity extends BaseActivity {
         ButterKnife.unbind(this);
         presenter.remove();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (presenter == null) {
+                initPresenter();
+            } else {
+                data.putExtra(Constant.INTENT_REQUEST, requestCode);
+                presenter.refreshData(data);
+            }
+        }
+    }
 }

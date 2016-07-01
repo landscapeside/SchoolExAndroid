@@ -51,10 +51,16 @@ public class FlingRelativeLayout extends RelativeLayout {
                     if (flingListener != null) {
                         flingListener.prev();
                     }
+                    if (touchListener != null) {
+                        touchListener.onTouch();
+                    }
                 } else if (xDiff < -FLING_SLOP) {
                     // TODO: 2016/6/30 next
                     if (flingListener != null) {
                         flingListener.next();
+                    }
+                    if (touchListener != null) {
+                        touchListener.onTouch();
                     }
                 }
                 mActivePointerId = INVALID_POINTER;
@@ -80,5 +86,14 @@ public class FlingRelativeLayout extends RelativeLayout {
 
     public void setFlingListener(FlingListener flingListener) {
         this.flingListener = flingListener;
+    }
+
+    public interface TouchListener{
+        void onTouch();
+    }
+    TouchListener touchListener = null;
+
+    public void setTouchListener(TouchListener touchListener) {
+        this.touchListener = touchListener;
     }
 }
