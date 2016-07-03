@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/photoshare_item_image"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="11.699982dip"
+        android:layout_marginLeft="10.699982dip"
+        android:layout_marginRight="10.699982dip"
+        android:layout_marginTop="11.699982dip"
+        android:scaleType="centerCrop" />
+
+    <ImageView
+        android:id="@+id/photoshare_item_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:focusable="false"
+        android:src="@drawable/delete_img" />"
+</RelativeLayout>

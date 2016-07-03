@@ -92,10 +92,10 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
                                 String.format(urlFormat,
                                         taskInfo.getExaminationPapersId(),
                                         taskInfo.getStudentQuestionsTasksID()));
-                previewTaskView.startEnable(CollectionUtils.isIn(
-                        TaskStatus.getStatus(taskInfo.getStatus()),
-                        TaskStatus.INIT,
-                        TaskStatus.RUN)&&!taskInfo.isIsTasks() && taskInfo.getDuration()>0);
+//                previewTaskView.startEnable(CollectionUtils.isIn(
+//                        TaskStatus.getStatus(taskInfo.getStatus()),
+//                        TaskStatus.INIT,
+//                        TaskStatus.RUN)&&!taskInfo.isIsTasks() && taskInfo.getDuration()>0);
             }
 
             @Override

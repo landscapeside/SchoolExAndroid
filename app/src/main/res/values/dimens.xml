@@ -4,4 +4,10 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="actionbar_height">48dp</dimen>
     <dimen name="answer_btn_padding">12dp</dimen>
+
+    <dimen name="business_cover_width">120dp</dimen>
+    <dimen name="business_cover_height">90dp</dimen>
+    <dimen name="cart_cover_width">45dp</dimen>
+    <dimen name="cart_cover_height">40dp</dimen>
+
 </resources>

@@ -30,4 +30,13 @@ public interface HomeWorkApi {
     @GET("api/Students/EndWork")
     Call<BaseBean> endWork(@Query("StudentQuestionsTasksID") int StudentQuestionsTasksID);
 
+    @POST("api/Students/SubmitAnswer")
+    Call<BaseBean> submitAnswer(
+            @Query("Stu_Id") int Stu_Id,
+            @Query("QuestionId") int QuestionId,
+            @Query("ExaminationPapersId") int ExaminationPapersId,
+            @Query("StudentQuestionsTasksId") int StudentQuestionsTasksId,
+            @Query("Answer") String Answer,
+            @Query("QuestionAnswerTypeId") int QuestionAnswerTypeId);
+
 }

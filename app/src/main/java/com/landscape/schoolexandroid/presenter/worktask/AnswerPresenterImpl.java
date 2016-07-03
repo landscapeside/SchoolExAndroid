@@ -25,6 +25,7 @@ import com.landscape.schoolexandroid.presenter.BasePresenter;
 import com.landscape.schoolexandroid.ui.activity.PagerActivity;
 import com.landscape.schoolexandroid.ui.fragment.worktask.AnswerFragment;
 import com.landscape.schoolexandroid.utils.AnswerUtils;
+import com.landscape.schoolexandroid.utils.PhotoHelper;
 import com.landscape.schoolexandroid.views.BaseView;
 import com.landscape.schoolexandroid.views.worktask.AnswerView;
 import com.landscape.weight.FlingRelativeLayout;
@@ -103,6 +104,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                         if (currentQuestion - 1 < 0) {
                             ToastUtil.show(pagerActivity, "前面没有了");
                         } else {
+                            checkSubmit();
                             answerView.previewTask(
                                     AppConfig.BASE_WEB_URL +
                                             String.format(urlFormat,
@@ -111,6 +113,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                                                     userAccountDataSource.getUserAccount().getData().getStudentId()));
                         }
                         answerView.setLocation(currentQuestion+1,questionInfos.size());
+                        answerView.setAnswerCard(questionInfos.get(currentQuestion));
                     }
 
                     @Override
@@ -118,6 +121,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                         if (currentQuestion + 1 >= questionInfos.size()) {
                             ToastUtil.show(pagerActivity, "后面没有了");
                         } else {
+                            checkSubmit();
                             answerView.previewTask(
                                     AppConfig.BASE_WEB_URL +
                                             String.format(urlFormat,
@@ -126,6 +130,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                                                     userAccountDataSource.getUserAccount().getData().getStudentId()));
                         }
                         answerView.setLocation(currentQuestion+1,questionInfos.size());
+                        answerView.setAnswerCard(questionInfos.get(currentQuestion));
                     }
                 });
                 answerView.setBtnClickListener(new AnswerView.BtnClickListener() {
@@ -151,15 +156,16 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                 });
                 answerView.setLocation(currentQuestion+1,questionInfos.size());
                 answerView.startTimeTick(taskInfo.getDuration());
-                answerView.setEnable(CollectionUtils.isIn(
-                            TaskStatus.getStatus(taskInfo.getStatus()),
-                            TaskStatus.INIT,
-                            TaskStatus.RUN)&&!taskInfo.isIsTasks() && taskInfo.getDuration()>0);
+//                answerView.setEnable(CollectionUtils.isIn(
+//                            TaskStatus.getStatus(taskInfo.getStatus()),
+//                            TaskStatus.INIT,
+//                            TaskStatus.RUN)&&!taskInfo.isIsTasks() && taskInfo.getDuration()>0);
                 answerView.setTimeCounterCallbk(() -> {
                     ToastUtil.show(pagerActivity,"时间到，你已不能继续答题");
                     mBus.post(new FinishPagerEvent());
                     mOptions.finish();
                 });
+                answerView.setAnswerCard(questionInfos.get(currentQuestion));
             }
 
             @Override
@@ -188,6 +194,15 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                                             questionInfos.get(currentQuestion).getId(),
                                             taskInfo.getExaminationPapersId(),
                                             userAccountDataSource.getUserAccount().getData().getStudentId()));
+                    break;
+                case PhotoHelper.SERVER_CAPTURE_PHOTO:
+
+                    break;
+                case PhotoHelper.SERVER_SELECT_PHOTO:
+
+                    break;
+                case PhotoHelper.SERVER_CROP_PHOTO:
+
                     break;
             }
         }
@@ -222,5 +237,24 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
     @Override
     public void netErr() {
 
+    }
+
+    private void checkSubmit() {
+        if (answerView.isAnswerChanged()) {
+            // TODO: 2016/7/3 提交答案
+            taskOptionDataSource.submitAnswer(
+                    taskInfo, answerView.getAnswer(),
+                    questionInfos.get(currentQuestion), new BaseCallBack<BaseBean>(pagerActivity) {
+                        @Override
+                        public void response(BaseBean response) {
+
+                        }
+
+                        @Override
+                        public void err() {
+
+                        }
+                    });
+        }
     }
 }

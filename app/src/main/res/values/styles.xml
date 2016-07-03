@@ -20,6 +20,29 @@
         <item name="android:textSize">16dp</item>
     </style>
 
+    <style name="AppDialogTheme" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@drawable/dialog_background</item>
+    </style>
+
+    <style name="AnimBottom" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
+    </style>
+
+    <style name="FULL_DIALOG" parent="AppDialogTheme">
+        <item name="android:windowFullscreen">true</item>
+        <!--是否填充满屏幕-->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.5</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="numberPickerStyle">@style/NumberPicker</item>
+    </style>
+
     <!--<style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">-->
         <!--<item name="android:displayOptions">homeAsUp</item>-->
     <!--</style>-->

@@ -18,4 +18,14 @@
     <color name="transparent">#00000000</color>
 
     <color name="list_view_spit">#cfcfcf</color>
+
+    <!-- 三级颜色 -->
+    <color name="default_lev3">#575a60</color>
+
+    <color name="pagebackground">#eeeeee</color>
+
+    <!-- 二级颜色 -->
+    <color name="default_lev2">#2e2f2f</color>
+    <color name="titletextcolor">#6e6e6e</color>
+    <color name="home_state_green">#3BCF67</color>
 </resources>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="NumberPicker">
+
+        <!-- @hide Color for the solid color background if such for optimized rendering. -->
+        <attr name="solidColor" format="color|reference" />
+        <!-- @hide Whether the number picker supports fligning. -->
+        <attr name="flingable" format="boolean" />
+        <!-- @hide The divider for making the selection area. -->
+        <attr name="selectionDivider"  format="reference"/>
+        <!-- @hide The height of the selection divider. -->
+        <attr name="selectionDividerHeight" format="dimension"/>
+        <!-- @hide The distance of the selection divider -->
+        <attr name="selectionDividersDistance" format="dimension" />
+        <attr name="scaleDetal" format="dimension" />
+        <!-- @hide The min height of the NumberPicker. -->
+        <attr name="android:minHeight" />
+        <!-- @hide The max height of the NumberPicker. -->
+        <attr name="android:maxHeight" />
+        <!-- @hide The min width of the NumberPicker. -->
+        <attr name="android:minWidth" />
+        <!-- @hide The max width of the NumberPicker. -->
+        <attr name="android:maxWidth" />
+        <attr name="android:textColor" />
+        <attr name="android:textSize" />
+        <attr name="wheel" format="boolean" />
+        <attr name="android:gravity" />
+        <attr name="pl" format="dimension"/>
+
+        <!-- We need some extra attributes -->
+        <attr name="android:fadingEdgeLength" />
+    </declare-styleable>
+
+    <attr name="numberPickerStyle" format="reference" />
+
+    <style name="NumberPicker">
+        <item name="android:orientation">vertical</item>
+        <item name="android:fadingEdge">vertical</item>
+        <item name="android:fadingEdgeLength">100dip</item>
+        <item name="solidColor">@android:color/transparent</item>
+        <item name="flingable">true</item>
+        <item name="selectionDivider">@drawable/div</item>
+        <item name="selectionDividerHeight">1dip</item>
+        <item name="android:minWidth">48dip</item>
+        <item name="android:maxHeight">200dip</item>
+        <item name="android:textColor">#FF333333</item>
+        <item name="android:textSize">18dp</item>
+        <item name="selectionDividersDistance">40dp</item>
+        <item name="scaleDetal">4dp</item>
+    </style>
+
+    <drawable name="div">#FFDFDFDF</drawable>
+
+</resources>

@@ -74,4 +74,18 @@ public class TaskOptionDataSource implements BaseDataSource {
         return data;
     }
 
+    public Call<BaseBean> submitAnswer(ExaminationTaskInfo taskInfo,String answer,QuestionInfo info, BaseCallBack<BaseBean> callBack) {
+        Call<BaseBean> call = null;
+        call = RetrofitService.createApi(HomeWorkApi.class)
+                .submitAnswer(
+                        userAccountDataSource.getUserAccount().getData().getStudentId(),info.getId(),
+                        taskInfo.getExaminationPapersId(),
+                        taskInfo.getStudentQuestionsTasksID(),
+                        answer,
+                        info.getQuestionTypeId());
+        RetrofitService.addCall(call);
+        call.enqueue(callBack);
+        return call;
+    }
+
 }

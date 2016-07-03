@@ -15,9 +15,10 @@ public class AppFileUtils {
 
     static String rootPath = "";
     static String downFolder = "download";
+    static String picFolder = "pics";
 
     public static void init(String rootFolder) {
-        File dir = null,downDir=null;
+        File dir = null,downDir=null,picDir = null;
         dir = new File(Environment.getExternalStorageDirectory(), rootFolder);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -27,6 +28,10 @@ public class AppFileUtils {
         if (!downDir.exists()) {
             downDir.mkdirs();
         }
+        picDir = new File(getPicsPath());
+        if (!picDir.exists()) {
+            picDir.mkdirs();
+        }
     }
 
     public static String getRootPath() {
@@ -35,6 +40,10 @@ public class AppFileUtils {
 
     public static String getDownPath() {
         return rootPath + File.separator + downFolder;
+    }
+
+    public static String getPicsPath() {
+        return rootPath + File.separator + picFolder;
     }
 
     public static String mergePath(String... paths) {

@@ -11,10 +11,12 @@ import android.widget.TextView;
 import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.common.BaseFragment;
 import com.landscape.schoolexandroid.common.BaseWebFragment;
+import com.landscape.schoolexandroid.mode.worktask.QuestionInfo;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
 import com.landscape.schoolexandroid.views.worktask.AnswerView;
 import com.landscape.slidinguppanel.SlidingUpPanelLayout;
 import com.landscape.slidinguppanel.WrapSlidingDrawer;
+import com.landscape.weight.AnswerCardView;
 import com.landscape.weight.FlingRelativeLayout;
 import com.orhanobut.logger.Logger;
 import com.utils.datahelper.RxCounter;
@@ -46,6 +48,8 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     WrapSlidingDrawer slidingDrawer;
     @Bind(R.id.handlebg)
     ImageView handlebg;
+    @Bind(R.id.content)
+    AnswerCardView answerCardView;
 
     @Override
     public int getLayoutResId() {
@@ -103,6 +107,21 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     @Override
     public void setEnable(boolean isEnable) {
         llInfos.setVisibility(isEnable?View.VISIBLE:View.GONE);
+    }
+
+    @Override
+    public void setAnswerCard(QuestionInfo info) {
+        answerCardView.loadAnswerCards(info);
+    }
+
+    @Override
+    public boolean isAnswerChanged() {
+        return answerCardView.isChanged();
+    }
+
+    @Override
+    public String getAnswer() {
+        return answerCardView.getAnswer();
     }
 
     private void tick(int time) {
