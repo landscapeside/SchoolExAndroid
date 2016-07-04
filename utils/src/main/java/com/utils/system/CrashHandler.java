@@ -25,7 +25,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private static final String TAG = "CrashHandler";
     private static final boolean DEBUG = true;
 
-    private static final String PATH = Environment.getExternalStorageDirectory().getPath() + "/schoolex/log/";
+    private static final String PATH = Environment.getExternalStorageDirectory().getPath() + File.separator + "landDrag"+File.separator+"log";
     private static final String FILE_NAME = "crash";
 
     //log文件的后缀名
@@ -99,7 +99,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         long current = System.currentTimeMillis();
         String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(current));
         //以当前时间创建log文件
-        File file = new File(PATH + FILE_NAME + time + FILE_NAME_SUFFIX);
+        File file = new File(PATH + File.separator + FILE_NAME + time + FILE_NAME_SUFFIX);
 
         try {
             PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
