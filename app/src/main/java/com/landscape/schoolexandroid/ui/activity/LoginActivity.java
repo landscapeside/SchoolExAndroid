@@ -78,7 +78,7 @@ public class LoginActivity extends BaseActivity implements ILogin {
         call = RetrofitService.createApi(LoginApi.class)
                 .accountLogin(editUsername.getText().toString().trim(), editPasswd.getText().toString());
         RetrofitService.addCall(call);
-        call.enqueue(new BaseCallBack<UserAccount>(this) {
+        call.enqueue(new BaseCallBack<UserAccount>(this,call) {
             @Override
             public void response(UserAccount response) {
                 mOptions.loginResult(response);

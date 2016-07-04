@@ -20,14 +20,19 @@ import retrofit2.Response;
 public abstract class BaseCallBack<T> implements Callback<T> {
 
     protected Context mContext=null;
+    protected Call mCall;
 
     public BaseCallBack(Context context) {
         mContext = context;
     }
 
+    public BaseCallBack(Context context,Call call) {
+        mContext = context;
+        setCall(call);
+    }
+
     @Override
     public void onResponse(Call<T> call, Response<T> response) {
-        RetrofitService.cancel(call);
         if (response.body() != null) {
             response(response.body());
         } else {
@@ -55,11 +60,10 @@ public abstract class BaseCallBack<T> implements Callback<T> {
     @Override
     public void onFailure(Call call, Throwable t) {
         Logger.e("BaseCallBack======>onFailure");
-        RetrofitService.netErr(call,t);
-        if (RetrofitService.isLive(call)) {
+        RetrofitService.netErr(mCall,t);
+        if (RetrofitService.isLive(mCall)) {
             err();
         }
-        RetrofitService.cancel(call);
         destroy();
     }
 
@@ -68,8 +72,14 @@ public abstract class BaseCallBack<T> implements Callback<T> {
         return this;
     }
 
+    public void setCall(Call call) {
+        mCall = call;
+    }
+
     private void destroy() {
         mContext = null;
+        RetrofitService.cancel(mCall);
+        mCall = null;
     }
 
     public abstract void response(T response);

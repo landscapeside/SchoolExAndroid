@@ -14,6 +14,7 @@ import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.worktask.TaskOptionDataSource;
 import com.landscape.schoolexandroid.enums.PagerType;
 import com.landscape.schoolexandroid.enums.TaskStatus;
+import com.landscape.schoolexandroid.mode.BaseBean;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationPaperListInfo;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskInfo;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
@@ -73,10 +74,10 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
             @Override
             public void onInitialized() {
                 previewTaskView.setClickListener(() -> {
-                    taskOptionDataSource.startWork(taskInfo, new BaseCallBack<String>(pagerActivity) {
+                    taskOptionDataSource.startWork(taskInfo, new BaseCallBack<BaseBean>(pagerActivity) {
                         @Override
-                        public void response(String response) {
-                            Logger.i(response);
+                        public void response(BaseBean response) {
+
                         }
 
                         @Override
@@ -92,10 +93,10 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
                                 String.format(urlFormat,
                                         taskInfo.getExaminationPapersId(),
                                         taskInfo.getStudentQuestionsTasksID()));
-//                previewTaskView.startEnable(CollectionUtils.isIn(
-//                        TaskStatus.getStatus(taskInfo.getStatus()),
-//                        TaskStatus.INIT,
-//                        TaskStatus.RUN)&&!taskInfo.isIsTasks() && taskInfo.getDuration()>0);
+                previewTaskView.startEnable(CollectionUtils.isIn(
+                        TaskStatus.getStatus(taskInfo.getStatus()),
+                        TaskStatus.INIT,
+                        TaskStatus.RUN)&&taskInfo.isIsTasks());
             }
 
             @Override

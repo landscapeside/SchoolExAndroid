@@ -27,7 +27,7 @@ public class Constants {
     //编码UTF-8
     public static final String ENCODING = "UTF-8";
     //UserAgent
-    public static final String USER_AGENT = "demo/aliyun/java";
+    public static final String USER_AGENT = "schoolexandroid";
     //换行符
     public static final String LF = "\n";
     //默认请求超时时间,单位毫秒

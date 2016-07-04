@@ -8,6 +8,7 @@ import com.landscape.schoolexandroid.dagger.DaggerAppComponent;
 import com.orhanobut.logger.AndroidLogTool;
 import com.orhanobut.logger.Logger;
 import com.utils.behavior.AppFileUtils;
+import com.utils.system.CrashHandler;
 import com.utils.system.ScreenParam;
 
 /**
@@ -25,6 +26,8 @@ public class BaseApp extends Application {
         mAppComponent = DaggerAppComponent.builder()
                 .appModule(new AppModule(this))
                 .build();
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(this);
     }
 
     private void initLog() {

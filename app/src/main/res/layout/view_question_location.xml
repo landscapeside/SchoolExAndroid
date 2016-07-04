@@ -3,12 +3,15 @@
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp">
+    android:padding="15dp">
 
     <GridView
         android:id="@+id/grid_location"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="8" />
+        android:numColumns="6"
+        android:verticalSpacing="15dp"
+        android:listSelector="@color/transparent"
+        android:cacheColorHint="@color/transparent"/>
 
 </FrameLayout>

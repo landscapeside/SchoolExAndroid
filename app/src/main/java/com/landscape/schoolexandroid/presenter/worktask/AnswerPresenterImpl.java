@@ -1,6 +1,12 @@
 package com.landscape.schoolexandroid.presenter.worktask;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 
 import com.landscape.event.FinishPagerEvent;
@@ -10,7 +16,6 @@ import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.api.BaseCallBack;
 import com.landscape.schoolexandroid.common.AppConfig;
 import com.landscape.schoolexandroid.common.BaseApp;
-import com.landscape.schoolexandroid.common.BaseFragment;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
 import com.landscape.schoolexandroid.datasource.worktask.TaskOptionDataSource;
@@ -18,7 +23,7 @@ import com.landscape.schoolexandroid.dialog.PromptDialog;
 import com.landscape.schoolexandroid.enums.PagerType;
 import com.landscape.schoolexandroid.enums.TaskStatus;
 import com.landscape.schoolexandroid.mode.BaseBean;
-import com.landscape.schoolexandroid.mode.worktask.ExaminationPaperInfo;
+import com.landscape.schoolexandroid.mode.account.UserFile;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskInfo;
 import com.landscape.schoolexandroid.mode.worktask.QuestionInfo;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
@@ -26,15 +31,18 @@ import com.landscape.schoolexandroid.ui.activity.PagerActivity;
 import com.landscape.schoolexandroid.ui.fragment.worktask.AnswerFragment;
 import com.landscape.schoolexandroid.utils.AnswerUtils;
 import com.landscape.schoolexandroid.utils.PhotoHelper;
-import com.landscape.schoolexandroid.views.BaseView;
 import com.landscape.schoolexandroid.views.worktask.AnswerView;
 import com.landscape.weight.FlingRelativeLayout;
+import com.orhanobut.logger.Logger;
 import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
+import com.utils.behavior.AppFileUtils;
 import com.utils.behavior.FragmentsUtils;
 import com.utils.behavior.ToastUtil;
 import com.utils.datahelper.CollectionUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +56,9 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
     private static final int REQUEST_LOCATION = 2;
 
     String urlFormat = "HomeWork/Question?id=%s&PapersID=%s&studentid=%s";
+    String tmpPic = "tmp.jpg";
+    File picFile = null;
+    Bitmap simpleBitmap = null;
 
     AnswerView answerView = null;
     /**
@@ -85,6 +96,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
         taskInfo = pagerActivity.getIntent().getParcelableExtra(Constant.TASK_INFO);
         pagerActivity.setToolbarTitle(taskInfo.getName());
         mOptions = (IAnswer) pagerActivity.mProxy.createProxyInstance(this);
+        picFile = new File(AppFileUtils.getPicsPath(),tmpPic);
     }
 
     public void initViews() {
@@ -155,11 +167,10 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                     }
                 });
                 answerView.setLocation(currentQuestion+1,questionInfos.size());
-                answerView.startTimeTick(taskInfo.getDuration());
-//                answerView.setEnable(CollectionUtils.isIn(
-//                            TaskStatus.getStatus(taskInfo.getStatus()),
-//                            TaskStatus.INIT,
-//                            TaskStatus.RUN)&&!taskInfo.isIsTasks() && taskInfo.getDuration()>0);
+                if (taskInfo.getDuration() > 0) {
+                    answerView.startTimeTick(taskInfo.getDuration());
+                }
+                answerView.setTimeEnable(CollectionUtils.isIn(taskInfo.getDuration()>0));
                 answerView.setTimeCounterCallbk(() -> {
                     ToastUtil.show(pagerActivity,"时间到，你已不能继续答题");
                     mBus.post(new FinishPagerEvent());
@@ -187,7 +198,9 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
             switch (requestCode) {
                 case REQUEST_LOCATION:
                     currentQuestion = data.getIntExtra(Constant.LOCATION_INDEX, 0);
+                    checkSubmit();
                     answerView.setLocation(currentQuestion+1,questionInfos.size());
+                    answerView.setAnswerCard(questionInfos.get(currentQuestion));
                     answerView.previewTask(
                             AppConfig.BASE_WEB_URL +
                                     String.format(urlFormat,
@@ -196,13 +209,33 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                                             userAccountDataSource.getUserAccount().getData().getStudentId()));
                     break;
                 case PhotoHelper.SERVER_CAPTURE_PHOTO:
-
+                    PhotoHelper.cropPhoto(pagerActivity,data.getParcelableExtra("data"));
                     break;
                 case PhotoHelper.SERVER_SELECT_PHOTO:
-
+                    Uri selectedImage = data.getData();
+                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                    ContentResolver contentResolver = pagerActivity.getContentResolver();
+//                    Cursor cursor = contentResolver.query(selectedImage,
+//                            filePathColumn, null, null, null);
+//                    cursor.moveToFirst();
+//                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+//                    String picturePath = cursor.getString(columnIndex);
+//                    cursor.close();
+                    try {
+                        PhotoHelper.cropPhoto(pagerActivity,BitmapFactory.decodeStream(contentResolver.openInputStream(selectedImage)));
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case PhotoHelper.SERVER_CROP_PHOTO:
-
+                    simpleBitmap = PhotoHelper.convertToBlackWhite(data.getParcelableExtra("data"));
+                    try {
+                        PhotoHelper.saveFileByBitmap(simpleBitmap, picFile);
+                        simpleBitmap = PhotoHelper.compressFile(picFile);
+                        mOptions.uploadFile();
+                    } catch (IOException e) {
+                        Logger.e(e.getMessage());
+                    }
                     break;
             }
         }
@@ -235,6 +268,32 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
     }
 
     @Override
+    public void uploadFile() {
+        userAccountDataSource.uploadFile(picFile, new BaseCallBack<UserFile>(pagerActivity) {
+            @Override
+            public void response(UserFile response) {
+                mOptions.uploadSuc(response);
+            }
+
+            @Override
+            public void err() {
+                mOptions.netErr();
+            }
+        });
+    }
+
+    @Override
+    public void uploadSuc(UserFile result) {
+        if (result.isIsSuccess()) {
+            PhotoHelper.subcriberView.setTag(R.id.image_file_path,picFile.getAbsolutePath());
+            PhotoHelper.subcriberView.setTag(R.id.image_url,result.getData());
+            PhotoHelper.loadImageIntoSubcriberView(simpleBitmap);
+        } else {
+            ToastUtil.show(pagerActivity,result.getMessage());
+        }
+    }
+
+    @Override
     public void netErr() {
 
     }
@@ -242,6 +301,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
     private void checkSubmit() {
         if (answerView.isAnswerChanged()) {
             // TODO: 2016/7/3 提交答案
+            questionInfos.get(currentQuestion).setStudentsAnswer(answerView.getAnswer());
             taskOptionDataSource.submitAnswer(
                     taskInfo, answerView.getAnswer(),
                     questionInfos.get(currentQuestion), new BaseCallBack<BaseBean>(pagerActivity) {

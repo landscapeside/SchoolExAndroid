@@ -46,12 +46,12 @@ public class QuestionLocationFragment extends BaseFragment implements QuestionLo
                     int position = helper.getPosition();
                     TextView tvLocation = helper.getView(R.id.tv_location);
                     tvLocation.setText("" + (position+1));
-                    if (position == currentIdx) {
-                        tvLocation.setBackgroundResource(R.drawable.btn_badge_solid_green);
-                    } else {
-                        tvLocation.setBackgroundResource(R.drawable.badge_selector);
-                        tvLocation.setSelected(item == AnswerUtils.QUESTION_DONE);
-                    }
+//                    if (position == currentIdx) {
+//                        tvLocation.setBackgroundResource(R.drawable.btn_badge_solid_green);
+//                    } else {
+//                        tvLocation.setBackgroundResource(R.drawable.badge_selector);
+//                        tvLocation.setSelected(item == AnswerUtils.QUESTION_DONE);
+//                    }
                 }
             };
             gridLocation.setAdapter(adapter);

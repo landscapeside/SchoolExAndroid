@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,16 +25,21 @@ import com.landscape.schoolexandroid.enums.CardType;
 import com.landscape.schoolexandroid.mode.worktask.AnswerType;
 import com.landscape.schoolexandroid.mode.worktask.QuestionInfo;
 import com.landscape.schoolexandroid.utils.PhotoHelper;
-import com.utils.behavior.AppFileUtils;
+import com.squareup.picasso.Picasso;
 import com.utils.datahelper.CollectionUtils;
 import com.utils.datahelper.JSONS;
 import com.utils.system.ScreenParam;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -74,13 +78,7 @@ public class AnswerCardView extends RelativeLayout {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 switch (scrollState) {
                     case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                        if (listCard.getFirstVisiblePosition() == 0 && adapter.getCount() > 1) {
-                            // TODO: 2016/7/3 显示向下的图标
-                        } else if (adapter.getCount() > 1 && listCard.getLastVisiblePosition() == (adapter.getCount() - 1)) {
-                            // TODO: 2016/7/3 显示向上的图标
-                        } else {
-                            // TODO: 2016/7/3 不显示图标
-                        }
+                        initIndicatorState();
                         break;
                 }
             }
@@ -90,6 +88,21 @@ public class AnswerCardView extends RelativeLayout {
 
             }
         });
+    }
+
+    private void initIndicatorState() {
+        if (listCard.getFirstVisiblePosition() == 0 && adapter.getCount() > 1) {
+            // 显示向下的图标
+            iconIndicator.setImageResource(R.drawable.icon_answer_card_down);
+            iconIndicator.setVisibility(VISIBLE);
+        } else if (adapter.getCount() > 1 && listCard.getLastVisiblePosition() == (adapter.getCount() - 1)) {
+            // 显示向上的图标
+            iconIndicator.setImageResource(R.drawable.icon_answer_card_up);
+            iconIndicator.setVisibility(VISIBLE);
+        } else {
+            // 不显示图标
+            iconIndicator.setVisibility(INVISIBLE);
+        }
     }
 
     public void loadAnswerCards(QuestionInfo questionInfo) {
@@ -117,9 +130,14 @@ public class AnswerCardView extends RelativeLayout {
         } else {
             adapter.refreshCards();
         }
+        initIndicatorState();
     }
 
-    // TODO: 2016/7/3 答案是否变换
+    /**
+     * 答案是否变换
+     *
+     * @return
+     */
     public boolean isChanged() {
         List<StudentAnswer> oldAnswers = new ArrayList<>();
         Map<String, StudentAnswer> oldAnswerMap = new HashMap<>();
@@ -145,9 +163,18 @@ public class AnswerCardView extends RelativeLayout {
         return false;
     }
 
-    // TODO: 2016/7/3 答案内容
+    /**
+     * 答案内容
+     *
+     * @return
+     */
     public String getAnswer() {
-        return "";
+        Set<String> keys = answerMap.keySet();
+        List<StudentAnswer> answerList = new ArrayList<>();
+        for (String key : keys) {
+            answerList.add(answerMap.get(key));
+        }
+        return JSONS.parseJson(answerList);
     }
 
     class CardAdapter extends BaseAdapter{
@@ -175,23 +202,31 @@ public class AnswerCardView extends RelativeLayout {
                     CardType.DECIDE,
                     CardType.LISTEN_SINGLE_CHOOSE
             )) {
-                // TODO: 2016/7/2 单选
+                /**
+                 * 单选
+                 */
                 return TYPE_SINGLE;
             } else if (CollectionUtils.isIn(
                     CardType.getType(answerTypes.get(position).getTypeId()),
-                    CardType.MULTI_CHOOSE,
-                    CardType.LISTEN_MULTI_CHOOSE)) {
-                // TODO: 2016/7/2 多选
+                    CardType.MULTI_CHOOSE)) {
+                /**
+                 * 多选
+                 */
                 return TYPE_MULTI;
             } else if (CollectionUtils.isIn(
                     CardType.getType(answerTypes.get(position).getTypeId()),
-                    CardType.PACK)){
-                // TODO: 2016/7/2 填空
+                    CardType.PACK,
+                    CardType.LISTEN_PACK)){
+                /**
+                 * 填空
+                 */
                 return TYPE_EDIT;
             } else if (CollectionUtils.isIn(
                     CardType.getType(answerTypes.get(position).getTypeId()),
                     CardType.EXPLAIN)) {
-                // TODO: 2016/7/2 解答
+                /**
+                 * 解答
+                 */
                 return TYPE_RICH;
             }
             return TYPE_NONE;
@@ -280,8 +315,9 @@ public class AnswerCardView extends RelativeLayout {
     }
 
     class StudentAnswer{
-        public String Answer;
-        public String Id;
+        public String Answer = "";
+        public String Id = "";
+        public int TypeId;
     }
 
     class SingleViewHolder{
@@ -297,7 +333,11 @@ public class AnswerCardView extends RelativeLayout {
             group.removeAllViews();
             for (int i = 0;i<alternativeContent.size();i++) {
                 RadioButton radioButton = (RadioButton) View.inflate(mContext, R.layout.view_radio_button, null);
-                radioButton.setText(alternativeContent.get(i).Id);
+                if (CardType.getType(type.getTypeId()) == CardType.DECIDE) {
+                    radioButton.setText(alternativeContent.get(i).Id.replace("T","正确").replace("F","错误"));
+                } else {
+                    radioButton.setText(alternativeContent.get(i).Id);
+                }
                 group.addView(radioButton);
                 RadioGroup.LayoutParams layoutParams = (RadioGroup.LayoutParams) radioButton.getLayoutParams();
                 layoutParams.setMargins(20,20,20,20);
@@ -310,6 +350,7 @@ public class AnswerCardView extends RelativeLayout {
                         if (studentAnswer == null) {
                             studentAnswer = new StudentAnswer();
                             studentAnswer.Id = type.getId();
+                            studentAnswer.TypeId = type.getTypeId();
                         }
                         studentAnswer.Answer = radioButton.getText().toString();
                         answerMap.put(type.getId(), studentAnswer);
@@ -345,15 +386,37 @@ public class AnswerCardView extends RelativeLayout {
                 radioButton.setText(alternativeContent.get(i).Id);
                 radioButton.setOnClickListener(v -> {
                     v.setSelected(!v.isSelected());
-                    if (v.isSelected()) {
-                        StudentAnswer studentAnswer = answerMap.get(type.getId());
-                        if (studentAnswer == null) {
-                            studentAnswer = new StudentAnswer();
-                            studentAnswer.Id = type.getId();
-                        }
-                        // TODO: 2016/7/3 更改学生答案
-                        answerMap.put(type.getId(), studentAnswer);
+                    StudentAnswer studentAnswer = answerMap.get(type.getId());
+                    if (studentAnswer == null) {
+                        studentAnswer = new StudentAnswer();
+                        studentAnswer.Id = type.getId();
+                        studentAnswer.TypeId = type.getTypeId();
                     }
+                    if (v.isSelected()) {
+                        if (TextUtils.isEmpty(studentAnswer.Answer)) {
+                            studentAnswer.Answer = radioButton.getText().toString();
+                        } else {
+                            String[] answers = studentAnswer.Answer.split(",");
+                            String[] newAnswers = new String[answers.length + 1];
+                            System.arraycopy(answers,0,newAnswers,0,answers.length);
+                            newAnswers[newAnswers.length-1] = radioButton.getText().toString();
+                            studentAnswer.Answer = StringUtils.join(newAnswers,",");
+                        }
+                    } else {
+                        if (!TextUtils.isEmpty(studentAnswer.Answer)) {
+                            String[] answers = studentAnswer.Answer.split(",");
+                            List<String> answerList = Arrays.asList(answers);
+                            for (int i1 = 0;i1<answerList.size();i1++) {
+                                if (answerList.get(i1).equals(radioButton.getText().toString())) {
+                                    answerList.remove(i1);
+                                    break;
+                                }
+                            }
+                            String[] newAnswers = (String[]) answerList.toArray();
+                            studentAnswer.Answer = StringUtils.join(newAnswers,",");
+                        }
+                    }
+                    answerMap.put(type.getId(), studentAnswer);
                 });
                 multiContent.addView(radioButton);
                 LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) radioButton.getLayoutParams();
@@ -378,10 +441,12 @@ public class AnswerCardView extends RelativeLayout {
 
     class EditViewHolder{
 
+        boolean initFlag = false;
+
         @Bind(R.id.ll_pics)
         View llPics;
         @Bind(R.id.img_pic)
-        ImageView imgPic;
+        AvatarImageView imgPic;
         @Bind(R.id.edit_content)
         EditText editContent;
 
@@ -390,7 +455,12 @@ public class AnswerCardView extends RelativeLayout {
         }
 
         public void build(AnswerType type,boolean picEnable) {
+            final String strFormat = "<img src=\"%s\"/>";
             llPics.setVisibility(picEnable?VISIBLE:GONE);
+            initFlag = true;
+            editContent.setText("");
+            imgPic.setImageResource(R.color.transparent);
+            imgPic.setTag(R.id.image_file_path,"");
             editContent.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -399,7 +469,39 @@ public class AnswerCardView extends RelativeLayout {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                    editContent.removeTextChangedListener(this);
+                    StudentAnswer studentAnswer = answerMap.get(type.getId());
+                    if (studentAnswer == null) {
+                        studentAnswer = new StudentAnswer();
+                        studentAnswer.Id = type.getId();
+                        studentAnswer.TypeId = type.getTypeId();
+                    }
+                    if (!initFlag) {
+                        if (studentAnswer.Answer.contains("<img")) {
+                            String imgAnswer = studentAnswer.Answer.substring(studentAnswer.Answer.indexOf("<img"));
+                            studentAnswer.Answer = editContent.getText().toString() + imgAnswer;
+                        } else {
+                            studentAnswer.Answer = editContent.getText().toString();
+                        }
+                        answerMap.put(type.getId(), studentAnswer);
+                    } else {
+                        initFlag = false;
+                        /**
+                         * 设置默认值
+                         */
+                        if (studentAnswer != null) {
+                            if (studentAnswer.Answer.contains("<img")) {
+                                String editAnswer = studentAnswer.Answer.substring(0,studentAnswer.Answer.indexOf("<img"));
+                                editContent.setText(editAnswer);
+                                String imgAnswer = studentAnswer.Answer.substring(studentAnswer.Answer.indexOf("<img src=\""));
+                                imgAnswer = imgAnswer.replace("<img src=\"","").replace("\"/>","");
+                                Picasso.with(mContext).load(imgAnswer).into(imgPic);
+                            } else {
+                                editContent.setText(studentAnswer.Answer);
+                            }
+                        }
+                    }
+                    editContent.addTextChangedListener(this);
                 }
 
                 @Override
@@ -407,17 +509,49 @@ public class AnswerCardView extends RelativeLayout {
 
                 }
             });
+            imgPic.setTAGChangeListener(new AvatarImageView.TAGChangeListener() {
+                @Override
+                public void tagChanged(Object tag) {
+
+                }
+
+                @Override
+                public void tagChanged(int key, Object tag) {
+                    if (key == R.id.image_url) {
+                        StudentAnswer studentAnswer = answerMap.get(type.getId());
+                        if (studentAnswer == null) {
+                            studentAnswer = new StudentAnswer();
+                            studentAnswer.Id = type.getId();
+                            studentAnswer.TypeId = type.getTypeId();
+                        }
+                        if (!TextUtils.isEmpty((String) tag)) {
+                            String imgAnswer = String.format(strFormat, (String)tag);
+                            studentAnswer.Answer = editContent.getText().toString() + imgAnswer;
+                        }
+                        answerMap.put(type.getId(), studentAnswer);
+                    }
+                }
+            });
         }
 
         @OnClick(R.id.icon_camera)
         public void camera(View view) {
+            PhotoHelper.subcriberView = imgPic;
             PhotoHelper.takePhoto(mContext);
         }
 
         @OnClick(R.id.img_pic)
         public void showPic(View view) {
             // TODO: 2016/7/3 查看图片
-            PhotoHelper.showPics(mContext, null);
+            String filePath = (String) imgPic.getTag(R.id.image_file_path);
+            if (TextUtils.isEmpty(filePath)) {
+                return;
+            }
+            File file = new File(filePath);
+            if (!file.exists()) {
+                return;
+            }
+            PhotoHelper.showPics(mContext, file);
         }
 
     }

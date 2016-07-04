@@ -6,8 +6,10 @@ import com.landscape.apigatewaysign.constant.SystemHeader;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +45,12 @@ public class HeaderBuilder {
         }
         if (StringUtils.isNotBlank(url.getQuery())) {
             stringBuilder.append("?");
-            stringBuilder.append(url.getQuery());
+//            stringBuilder.append(url.getQuery());
+            try {
+                stringBuilder.append(URLDecoder.decode(url.getQuery(),"utf-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
 
         headers.put(HttpHeader.HTTP_HEADER_USER_AGENT, Constants.USER_AGENT);

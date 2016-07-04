@@ -42,15 +42,17 @@ public class TaskOptionDataSource implements BaseDataSource {
         call = RetrofitService.createApi(HomeWorkApi.class)
                 .getExaminationPaper(taskInfo.getExaminationPapersId(),taskInfo.getStudentQuestionsTasksID());
         RetrofitService.addCall(call);
+        callBack.setCall(call);
         call.enqueue(callBack);
         return call;
     }
 
-    public Call<String> startWork(ExaminationTaskInfo taskInfo, BaseCallBack<String> callBack) {
-        Call<String> call = null;
+    public Call<BaseBean> startWork(ExaminationTaskInfo taskInfo, BaseCallBack<BaseBean> callBack) {
+        Call<BaseBean> call = null;
         call = RetrofitService.createApi(HomeWorkApi.class)
                 .startWork(taskInfo.getStudentQuestionsTasksID());
         RetrofitService.addCall(call);
+        callBack.setCall(call);
         call.enqueue(callBack);
         return call;
     }
@@ -60,6 +62,7 @@ public class TaskOptionDataSource implements BaseDataSource {
         call = RetrofitService.createApi(HomeWorkApi.class)
                 .endWork(taskInfo.getStudentQuestionsTasksID());
         RetrofitService.addCall(call);
+        callBack.setCall(call);
         call.enqueue(callBack);
         return call;
     }
@@ -84,6 +87,7 @@ public class TaskOptionDataSource implements BaseDataSource {
                         answer,
                         info.getQuestionTypeId());
         RetrofitService.addCall(call);
+        callBack.setCall(call);
         call.enqueue(callBack);
         return call;
     }

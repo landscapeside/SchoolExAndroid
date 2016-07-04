@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.landscape.schoolexandroid.dialog.BottomListMenuDialog;
 import com.landscape.schoolexandroid.dialog.BottomPopWindow;
@@ -85,16 +87,15 @@ public class PhotoHelper {
         dialog.show();
     }
 
-    public static void cropPhoto(Context context, Uri uri) {
+    public static void cropPhoto(Context context, Bitmap bitmap) {
         Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
+        intent.setType("image/*");
+        intent.putExtra("data", bitmap);
         intent.putExtra("crop", "true");// crop=true 有这句才能出来最后的裁剪页面.
         intent.putExtra("aspectX", 1);// 这两项为裁剪框的比例.
         intent.putExtra("aspectY", 1);// x:y=1:1
         intent.putExtra("outputX", 200);//图片输出大小
         intent.putExtra("outputY", 200);
-        intent.putExtra("output", uri);
-        intent.putExtra("outputFormat", "JPEG");// 返回格式
         intent.putExtra("return-data", true);
         ((Activity) context).startActivityForResult(intent, SERVER_CROP_PHOTO);
     }
@@ -136,7 +137,7 @@ public class PhotoHelper {
         return resizeBmp;
     }
 
-    public static Bitmap saveFile(File tempFile) {
+    public static Bitmap compressFile(File tempFile) {
         try {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 2;
@@ -178,6 +179,17 @@ public class PhotoHelper {
         intent.setAction(android.content.Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.fromFile(file), "image/*");
         context.startActivity(intent);
+    }
+
+    /**
+     * 缓存事件响应者
+     */
+    public static ImageView subcriberView;
+
+    public static void loadImageIntoSubcriberView(Bitmap bitmap) {
+        if (subcriberView != null) {
+            subcriberView.setImageBitmap(bitmap);
+        }
     }
 
 }

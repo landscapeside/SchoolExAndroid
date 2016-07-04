@@ -31,6 +31,7 @@ public class WorkTaskDataSource implements BaseDataSource {
         call = RetrofitService.createApi(HomeWorkApi.class)
                 .getExaminationTasks(userAccountDataSource.getUserAccount().getData().getStudentId(),null,null,null);
         RetrofitService.addCall(call);
+        callBack.setCall(call);
         call.enqueue(callBack);
         return call;
     }

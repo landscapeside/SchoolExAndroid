@@ -42,6 +42,8 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     TextView tvTime;
     @Bind(R.id.tv_location)
     TextView tvLocation;
+    @Bind(R.id.ll_time)
+    View llTime;
     @Bind(R.id.ll_infos)
     View llInfos;
     @Bind(R.id.slidingDrawer)
@@ -105,8 +107,8 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     }
 
     @Override
-    public void setEnable(boolean isEnable) {
-        llInfos.setVisibility(isEnable?View.VISIBLE:View.GONE);
+    public void setTimeEnable(boolean isEnable) {
+        llTime.setVisibility(isEnable?View.VISIBLE:View.GONE);
     }
 
     @Override

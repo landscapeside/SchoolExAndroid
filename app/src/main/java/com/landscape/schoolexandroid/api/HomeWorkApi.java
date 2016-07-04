@@ -25,7 +25,7 @@ public interface HomeWorkApi {
     Call<ExaminationPaperListInfo> getExaminationPaper(@Query("id") int id, @Query("tasksid") int tasksid);
 
     @GET("api/Students/StartWork")
-    Call<String> startWork(@Query("StudentQuestionsTasksID") int StudentQuestionsTasksID);
+    Call<BaseBean> startWork(@Query("StudentQuestionsTasksID") int StudentQuestionsTasksID);
 
     @GET("api/Students/EndWork")
     Call<BaseBean> endWork(@Query("StudentQuestionsTasksID") int StudentQuestionsTasksID);

@@ -4,6 +4,7 @@ import com.edge.annotation.NetBegin;
 import com.edge.annotation.NetEnd;
 import com.landscape.netedge.BaseEdge;
 import com.landscape.schoolexandroid.mode.BaseBean;
+import com.landscape.schoolexandroid.mode.account.UserFile;
 
 /**
  * Created by 1 on 2016/7/1.
@@ -13,4 +14,9 @@ public interface IAnswer extends BaseEdge {
     void finish();
     @NetEnd
     void finishResult(BaseBean result);
+    @NetBegin
+    void uploadFile();
+    @NetEnd
+    void uploadSuc(UserFile result);
+
 }
