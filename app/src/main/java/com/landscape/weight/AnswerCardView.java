@@ -152,6 +152,9 @@ public class AnswerCardView extends RelativeLayout {
             StudentAnswer studentAnswer = answerMap.get(type.getId());
             StudentAnswer oldStudentAnswer = oldAnswerMap.get(type.getId());
             if (studentAnswer != null) {
+                if (oldStudentAnswer == null && TextUtils.isEmpty(studentAnswer.Answer)) {
+                    continue;
+                }
                 if (oldStudentAnswer == null) {
                     return true;
                 }
@@ -497,7 +500,9 @@ public class AnswerCardView extends RelativeLayout {
                                 imgAnswer = imgAnswer.replace("<img src=\"","").replace("\"/>","");
                                 Picasso.with(mContext).load(imgAnswer).into(imgPic);
                             } else {
-                                editContent.setText(studentAnswer.Answer);
+                                if (!TextUtils.isEmpty(studentAnswer.Answer)) {
+                                    editContent.setText(studentAnswer.Answer);
+                                }
                             }
                         }
                     }
