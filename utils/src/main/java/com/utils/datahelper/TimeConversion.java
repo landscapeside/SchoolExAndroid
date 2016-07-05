@@ -1,5 +1,6 @@
 package com.utils.datahelper;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -27,12 +28,7 @@ public class TimeConversion {
 
     public static String getHourMinSecondsData(long timeMillis) {
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeMillis);
-
-        System.out.println(timeMillis + " = " + formatter.format(calendar.getTime()));
-        return formatter.format(calendar.getTime());
+        return formatter.format(new Date(timeMillis));
     }
 
     public static String getData(long timeMillis) {

@@ -45,6 +45,7 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
     Bus mBus;
 
     String urlFormat = "HomeWork/ExaminationPapers?id=%s&taskid=%s";
+    String checkFormat = "HomeWork/CheckPaper?StudentQuestionsTasksId=%s";
     ExaminationTaskInfo taskInfo;
     PreviewTaskView previewTaskView;
     /**
@@ -88,11 +89,21 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
                     mOptions.getExaminationPaper(taskInfo);
 
                 });
-                previewTaskView.previewTask(
-                        AppConfig.BASE_WEB_URL +
-                                String.format(urlFormat,
-                                        taskInfo.getExaminationPapersId(),
-                                        taskInfo.getStudentQuestionsTasksID()));
+                if (CollectionUtils.isIn(
+                        TaskStatus.getStatus(taskInfo.getStatus()),
+                        TaskStatus.COMPLETE,
+                        TaskStatus.READED)) {
+                    previewTaskView.previewTask(
+                            AppConfig.BASE_WEB_URL +
+                                    String.format(checkFormat,
+                                            taskInfo.getStudentQuestionsTasksID()));
+                } else {
+                    previewTaskView.previewTask(
+                            AppConfig.BASE_WEB_URL +
+                                    String.format(urlFormat,
+                                            taskInfo.getExaminationPapersId(),
+                                            taskInfo.getStudentQuestionsTasksID()));
+                }
                 previewTaskView.startEnable(CollectionUtils.isIn(
                         TaskStatus.getStatus(taskInfo.getStatus()),
                         TaskStatus.INIT,

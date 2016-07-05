@@ -95,7 +95,7 @@ public class LoginActivity extends BaseActivity implements ILogin {
     public void loginResult(UserAccount result) {
         if (result.isIsSuccess()) {
             userAccountDataSource.saveUserAccount(result);
-            startActivity(new Intent(this,MainActivity.class));
+            startActivity(new Intent(this,MainSlideMenuActivity.class));
             finish();
         } else {
             ToastUtil.show(this,result.getMessage());

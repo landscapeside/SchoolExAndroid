@@ -29,7 +29,7 @@ public class SplashActivity extends BaseActivity {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         } else {
-            startActivity(new Intent(this,MainActivity.class));
+            startActivity(new Intent(this,MainSlideMenuActivity.class));
             finish();
         }
     }

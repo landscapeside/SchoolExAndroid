@@ -1,6 +1,7 @@
 package com.landscape.weight;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -62,6 +63,7 @@ public class AnswerCardView extends RelativeLayout {
     List<StudentAnswer> studentAnswers = new ArrayList<>();
     Map<String, StudentAnswer> answerMap = new HashMap<>();
     List<AnswerType> answerTypes = new ArrayList<>();
+    Map<Integer,Map<String,String>> imageMap = new HashMap<>();
 
     public AnswerCardView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -110,6 +112,9 @@ public class AnswerCardView extends RelativeLayout {
         alternativeContent.clear();
         studentAnswers.clear();
         answerMap.clear();
+        if (imageMap.get(info.getId()) == null) {
+            imageMap.put(info.getId(), new HashMap<>());
+        }
         if (!TextUtils.isEmpty(questionInfo.getAlternativeContent())) {
             Type alterType = new TypeToken<ArrayList<AlternativeContent>>() {}.getType();
             alternativeContent = JSONS.parseObject(questionInfo.getAlternativeContent(), alterType);
@@ -325,6 +330,8 @@ public class AnswerCardView extends RelativeLayout {
 
     class SingleViewHolder{
 
+        @Bind(R.id.tv_index)
+        TextView tvIndex;
         @Bind(R.id.radio_group)
         RadioGroup group;
 
@@ -333,6 +340,7 @@ public class AnswerCardView extends RelativeLayout {
         }
 
         public void build(AnswerType type){
+            tvIndex.setText(""+type.getId());
             group.removeAllViews();
             for (int i = 0;i<alternativeContent.size();i++) {
                 RadioButton radioButton = (RadioButton) View.inflate(mContext, R.layout.view_radio_button, null);
@@ -375,6 +383,8 @@ public class AnswerCardView extends RelativeLayout {
 
     class MultiViewHolder{
 
+        @Bind(R.id.tv_index)
+        TextView tvIndex;
         @Bind(R.id.multi_content)
         LinearLayout multiContent;
 
@@ -383,6 +393,7 @@ public class AnswerCardView extends RelativeLayout {
         }
 
         public void build(AnswerType type) {
+            tvIndex.setText(""+type.getId());
             multiContent.removeAllViews();
             for (int i = 0;i<alternativeContent.size();i++) {
                 TextView radioButton = (TextView) View.inflate(mContext, R.layout.view_multi_button, null);
@@ -446,6 +457,8 @@ public class AnswerCardView extends RelativeLayout {
 
         boolean initFlag = false;
 
+        @Bind(R.id.tv_index)
+        TextView tvIndex;
         @Bind(R.id.ll_pics)
         View llPics;
         @Bind(R.id.img_pic)
@@ -458,10 +471,9 @@ public class AnswerCardView extends RelativeLayout {
         }
 
         public void build(AnswerType type,boolean picEnable) {
+            tvIndex.setText(type.getId());
             final String strFormat = "<img src=\"%s\"/>";
             llPics.setVisibility(picEnable?VISIBLE:GONE);
-            initFlag = true;
-            editContent.setText("");
             imgPic.setImageResource(R.color.transparent);
             imgPic.setTag(R.id.image_file_path,"");
             editContent.addTextChangedListener(new TextWatcher() {
@@ -493,7 +505,12 @@ public class AnswerCardView extends RelativeLayout {
                          * 设置默认值
                          */
                         if (studentAnswer != null) {
-                            if (studentAnswer.Answer.contains("<img")) {
+
+                            if (!TextUtils.isEmpty(imageMap.get(info.getId()).get(type.getId()))) {
+                                imgPic.setTag(R.id.image_file_path,imageMap.get(info.getId()).get(type.getId()));
+                                imgPic.setImageBitmap(BitmapFactory.decodeFile(imageMap.get(info.getId()).get(type.getId())));
+                            }
+                            else if (studentAnswer.Answer.contains("<img")) {
                                 String editAnswer = studentAnswer.Answer.substring(0,studentAnswer.Answer.indexOf("<img"));
                                 editContent.setText(editAnswer);
                                 String imgAnswer = studentAnswer.Answer.substring(studentAnswer.Answer.indexOf("<img src=\""));
@@ -535,8 +552,13 @@ public class AnswerCardView extends RelativeLayout {
                         }
                         answerMap.put(type.getId(), studentAnswer);
                     }
+                    if (key == R.id.image_file_path && !TextUtils.isEmpty((String) tag)) {
+                        imageMap.get(info.getId()).put(type.getId(), (String) tag);
+                    }
                 }
             });
+            initFlag = true;
+            editContent.setText("");
         }
 
         @OnClick(R.id.icon_camera)

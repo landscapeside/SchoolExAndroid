@@ -9,6 +9,7 @@
       <module fileurl="file://$PROJECT_DIR$/draglayout/draglayout.iml" filepath="$PROJECT_DIR$/draglayout/draglayout.iml" />
       <module fileurl="file://$PROJECT_DIR$/pullrefresh/pullrefresh.iml" filepath="$PROJECT_DIR$/pullrefresh/pullrefresh.iml" />
       <module fileurl="file://$PROJECT_DIR$/schoolExAdnrd.iml" filepath="$PROJECT_DIR$/schoolExAdnrd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/slidelibrary/slidelibrary.iml" filepath="$PROJECT_DIR$/slidelibrary/slidelibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/slidinguppanel/slidinguppanel.iml" filepath="$PROJECT_DIR$/slidinguppanel/slidinguppanel.iml" />
       <module fileurl="file://$PROJECT_DIR$/utils/utils.iml" filepath="$PROJECT_DIR$/utils/utils.iml" />
     </modules>

@@ -10,6 +10,7 @@ import com.landscape.schoolexandroid.api.BaseCallBack;
 import com.landscape.schoolexandroid.api.RetrofitService;
 import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
+import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
 import com.landscape.schoolexandroid.datasource.home.WorkTaskDataSource;
 import com.landscape.schoolexandroid.enums.PagerType;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskInfo;
@@ -46,6 +47,8 @@ public class MainPresenterImpl implements MainPresenter {
      */
     @Inject
     WorkTaskDataSource workTaskDataSource;
+    @Inject
+    UserAccountDataSource userAccountDataSource;
 
     /***
      * bus
@@ -71,6 +74,8 @@ public class MainPresenterImpl implements MainPresenter {
      */
     List<ExaminationTaskInfo> taskInfos;
 
+    public MainPresenterImpl(){}
+
     public MainPresenterImpl(MainActivity mainActivity) {
         dragContent = new DragContentFragment();
         menuView = new MenuFragment();
@@ -92,7 +97,7 @@ public class MainPresenterImpl implements MainPresenter {
         dragContent.setLifeListener(new BaseView.ViewLifeListener() {
             @Override
             public void onInitialized() {
-                dragContent.setAvatarClick(() -> mainActivity.dl.open());
+                dragContent.setAvatarClick(() -> openSlideMenu());
                 dragContent.setContentFragment((Fragment) workTaskListView);
             }
 
@@ -115,6 +120,7 @@ public class MainPresenterImpl implements MainPresenter {
                     menuItemBeanList.add(bean);
                 }
                 menuView.listData(menuItemBeanList);
+                menuView.loadUserAccount(userAccountDataSource.getUserAccount());
             }
 
             @Override
@@ -123,7 +129,7 @@ public class MainPresenterImpl implements MainPresenter {
             }
         });
         menuView.setMenuItemSelectListener(position -> {
-            mainActivity.dl.close();
+            shutDownSlideMenu();
             // TODO: 2016/4/27 点击后进入不同的主页视图
             switch (position) {
                 case 0:
@@ -160,9 +166,7 @@ public class MainPresenterImpl implements MainPresenter {
                     if (position >= taskInfos.size()) {
                         throw new ArrayIndexOutOfBoundsException("超出任务列表长度");
                     }
-                    mainActivity.startActivity(new Intent(mainActivity, PagerActivity.class)
-                            .putExtra(Constant.PAGER_TYPE, PagerType.PREVIEW_TASK.getType())
-                            .putExtra(Constant.TASK_INFO,taskInfos.get(position)));
+                    gotoPreviewTask(position);
                 });
                 refreshWorkTask();
             }
@@ -174,7 +178,7 @@ public class MainPresenterImpl implements MainPresenter {
         });
     }
 
-    private void workTaskResult(ExaminationTaskListInfo result) {
+    protected void workTaskResult(ExaminationTaskListInfo result) {
         // TODO: 2016/6/27 更新列表
         if (result.isIsSuccess()) {
             taskInfos = result.getData();
@@ -182,11 +186,24 @@ public class MainPresenterImpl implements MainPresenter {
         } else {
             ToastUtil.show(mainActivity,result.getMessage());
         }
-
     }
 
-    private void setDragLayout(DragCallBack callBack) {
+    public void shutDownSlideMenu() {
+        mainActivity.dl.close();
+    }
+
+    public void openSlideMenu() {
+        mainActivity.dl.open();
+    }
+
+    protected void setDragLayout(DragCallBack callBack) {
         mainActivity.dl.setDragListener(callBack);
+    }
+
+    public void gotoPreviewTask(int position) {
+        mainActivity.startActivity(new Intent(mainActivity, PagerActivity.class)
+                .putExtra(Constant.PAGER_TYPE, PagerType.PREVIEW_TASK.getType())
+                .putExtra(Constant.TASK_INFO,taskInfos.get(position)));
     }
 
     @Override
@@ -215,7 +232,7 @@ public class MainPresenterImpl implements MainPresenter {
         }
     }
 
-    private void refreshWorkTask() {
+    protected void refreshWorkTask() {
         BaseCallBack<ExaminationTaskListInfo> callBack = new BaseCallBack<ExaminationTaskListInfo>(mainActivity) {
             @Override
             public void response(ExaminationTaskListInfo response) {

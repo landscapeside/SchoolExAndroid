@@ -11,10 +11,7 @@
     <RelativeLayout
         android:id="@+id/drag_menu"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="30dp"
-        android:paddingLeft="30dp"
-        android:paddingTop="50dp" >
+        android:layout_height="match_parent" >
 
     </RelativeLayout>
 

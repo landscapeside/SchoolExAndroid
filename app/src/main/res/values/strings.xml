@@ -9,7 +9,9 @@
     <!--<string name="hello"><![CDATA[<b>The Awesome Sliding Up Panel</b><br/> Brought to you by<br/><a href="http://umanoapp.com">http://umanoapp.com</a>]]></string>-->
     <!--<string name="follow"><![CDATA[Follow us<br/>on <a href="http://twitter.com/umanoapp">Twitter</a>]]></string>-->
 
-    <string name="sure">确定</string>
-    <string name="cancle">取消</string>
+    <string name="sure">现在交卷</string>
+    <string name="cancle">继续做题</string>
+    <string name="ignore_record">不想看</string>
+    <string name="check_record">查看记录</string>
 
 </resources>

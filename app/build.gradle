@@ -55,4 +55,5 @@ dependencies {
     compile project(':pullrefresh')
     compile project(':apigatewaysign')
     compile project(':slidinguppanel')
+    compile project(':slidelibrary')
 }

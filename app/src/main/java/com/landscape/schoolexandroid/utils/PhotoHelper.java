@@ -137,7 +137,7 @@ public class PhotoHelper {
         return resizeBmp;
     }
 
-    public static Bitmap compressFile(File tempFile) {
+    public static Bitmap compressFile(File tempFile,File file) {
         try {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 2;
@@ -148,7 +148,7 @@ public class PhotoHelper {
 
             if (bitmap != null) {
                 // 保存图片
-                saveFileByBitmap(bitmap,tempFile);
+                saveFileByBitmap(bitmap,file);
                 return bitmap;
             }
         } catch (Exception e) {

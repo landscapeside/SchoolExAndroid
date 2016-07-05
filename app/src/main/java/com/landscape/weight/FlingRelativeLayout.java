@@ -14,7 +14,7 @@ public class FlingRelativeLayout extends RelativeLayout {
 
     private static final int INVALID_POINTER = -1;
 
-    private float mInitialMotionX;
+    private float mInitialMotionX,mInitialMotionY;
     private int mTouchSlop;
     private int mActivePointerId;
     private static final int FLING_SLOP = 50;
@@ -31,10 +31,12 @@ public class FlingRelativeLayout extends RelativeLayout {
             case MotionEvent.ACTION_DOWN:
                 mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
                 final float initialMotionX = getMotionEventX(ev, mActivePointerId);
-                if (initialMotionX == -1) {
+                final float initialMotionY = getMotionEventY(ev, mActivePointerId);
+                if (initialMotionX == -1 || initialMotionY == -1) {
                     return false;
                 }
                 mInitialMotionX = initialMotionX;
+                mInitialMotionY = initialMotionY;
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -42,11 +44,14 @@ public class FlingRelativeLayout extends RelativeLayout {
                     return false;
                 }
                 final float x = getMotionEventX(ev, mActivePointerId);
-                if (x == -1) {
+                final float y = getMotionEventY(ev, mActivePointerId);
+                if (x == -1 || y == -1) {
                     return false;
                 }
                 final float xDiff = x - mInitialMotionX;
-                if (xDiff > FLING_SLOP) {
+                final float yDiff = y - mInitialMotionY;
+
+                if (xDiff > FLING_SLOP && Math.abs(xDiff) > Math.abs(yDiff)) {
                     // TODO: 2016/6/30 prev
                     if (flingListener != null) {
                         flingListener.prev();
@@ -54,7 +59,7 @@ public class FlingRelativeLayout extends RelativeLayout {
                     if (touchListener != null) {
                         touchListener.onTouch();
                     }
-                } else if (xDiff < -FLING_SLOP) {
+                } else if (xDiff < -FLING_SLOP && Math.abs(xDiff) > Math.abs(yDiff)) {
                     // TODO: 2016/6/30 next
                     if (flingListener != null) {
                         flingListener.next();
@@ -75,6 +80,14 @@ public class FlingRelativeLayout extends RelativeLayout {
             return -1;
         }
         return MotionEventCompat.getX(ev, index);
+    }
+
+    private float getMotionEventY(MotionEvent ev, int activePointerId) {
+        final int index = MotionEventCompat.findPointerIndex(ev, activePointerId);
+        if (index < 0) {
+            return -1;
+        }
+        return MotionEventCompat.getY(ev, index);
     }
 
     public interface FlingListener{

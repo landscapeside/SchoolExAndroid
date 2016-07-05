@@ -2,7 +2,6 @@ package com.landscape.schoolexandroid.presenter.worktask;
 
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -19,6 +18,7 @@ import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
 import com.landscape.schoolexandroid.datasource.worktask.TaskOptionDataSource;
+import com.landscape.schoolexandroid.dialog.CheckDialog;
 import com.landscape.schoolexandroid.dialog.PromptDialog;
 import com.landscape.schoolexandroid.enums.PagerType;
 import com.landscape.schoolexandroid.enums.TaskStatus;
@@ -55,9 +55,11 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
 
     private static final int REQUEST_LOCATION = 2;
 
+    String promptStrFormat = "你还有%s题未做完\n你确定要现在交卷吗？";
+    String checkStrFormat = "完成交卷，点击\"查看记录\"可查看本次做题记录";
     String urlFormat = "HomeWork/Question?id=%s&PapersID=%s&studentid=%s";
     String tmpPic = "tmp.jpg";
-    File picFile = null;
+    File picTempFile = null,picFile = null;
     Bitmap simpleBitmap = null;
 
     AnswerView answerView = null;
@@ -73,6 +75,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
      * Views
      * */
     PromptDialog promptDialog;
+    CheckDialog checkDialog;
 
     /**
      * parent
@@ -96,7 +99,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
         taskInfo = pagerActivity.getIntent().getParcelableExtra(Constant.TASK_INFO);
         pagerActivity.setToolbarTitle(taskInfo.getName());
         mOptions = (IAnswer) pagerActivity.mProxy.createProxyInstance(this);
-        picFile = new File(AppFileUtils.getPicsPath(),tmpPic);
+        picTempFile = new File(AppFileUtils.getPicsPath(),tmpPic);
     }
 
     public void initViews() {
@@ -131,7 +134,13 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                     @Override
                     public void next() {
                         if (currentQuestion + 1 >= questionInfos.size()) {
-                            ToastUtil.show(pagerActivity, "后面没有了");
+                            promptDialog = new PromptDialog(pagerActivity,String.format(promptStrFormat,AnswerUtils.getUndoQuestionNum(questionInfos))) {
+                                @Override
+                                public void onOk() {
+                                    mOptions.finish();
+                                }
+                            };
+                            promptDialog.show();
                         } else {
                             checkSubmit();
                             answerView.previewTask(
@@ -148,7 +157,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                 answerView.setBtnClickListener(new AnswerView.BtnClickListener() {
                     @Override
                     public void finish() {
-                        promptDialog = new PromptDialog(pagerActivity,"确定要交卷吗？") {
+                        promptDialog = new PromptDialog(pagerActivity,String.format(promptStrFormat,AnswerUtils.getUndoQuestionNum(questionInfos))) {
                             @Override
                             public void onOk() {
                                 mOptions.finish();
@@ -170,7 +179,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                 if (taskInfo.getDuration() > 0) {
                     answerView.startTimeTick(taskInfo.getDuration());
                 }
-                answerView.setTimeEnable(CollectionUtils.isIn(taskInfo.getDuration()>0));
+                answerView.setTimeEnable(taskInfo.getDuration()>0);
                 answerView.setTimeCounterCallbk(() -> {
                     ToastUtil.show(pagerActivity,"时间到，你已不能继续答题");
                     mBus.post(new FinishPagerEvent());
@@ -197,8 +206,8 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
             int requestCode = data.getIntExtra(Constant.INTENT_REQUEST, Constant.INTENT_INVALID_VALUE);
             switch (requestCode) {
                 case REQUEST_LOCATION:
-                    currentQuestion = data.getIntExtra(Constant.LOCATION_INDEX, 0);
                     checkSubmit();
+                    currentQuestion = data.getIntExtra(Constant.LOCATION_INDEX, 0);
                     answerView.setLocation(currentQuestion+1,questionInfos.size());
                     answerView.setAnswerCard(questionInfos.get(currentQuestion));
                     answerView.previewTask(
@@ -230,8 +239,9 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                 case PhotoHelper.SERVER_CROP_PHOTO:
                     simpleBitmap = PhotoHelper.convertToBlackWhite(data.getParcelableExtra("data"));
                     try {
-                        PhotoHelper.saveFileByBitmap(simpleBitmap, picFile);
-                        simpleBitmap = PhotoHelper.compressFile(picFile);
+                        PhotoHelper.saveFileByBitmap(simpleBitmap, picTempFile);
+                        picFile = new File(AppFileUtils.getPicsPath(),System.currentTimeMillis()+".jpg");
+                        simpleBitmap = PhotoHelper.compressFile(picTempFile,picFile);
                         mOptions.uploadFile();
                     } catch (IOException e) {
                         Logger.e(e.getMessage());
@@ -261,7 +271,22 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
         if (result.isIsSuccess()) {
             mBus.post(new FinishPagerEvent());
             mBus.post(new RefreshListEvent());
-            pagerActivity.finish();
+            checkDialog = new CheckDialog(pagerActivity,checkStrFormat) {
+                @Override
+                public void onOk() {
+                    taskInfo.setStatus(TaskStatus.COMPLETE.getStatus());
+                    pagerActivity.startActivity(new Intent(pagerActivity, PagerActivity.class)
+                            .putExtra(Constant.PAGER_TYPE, PagerType.PREVIEW_TASK.getType())
+                            .putExtra(Constant.TASK_INFO,taskInfo));
+                    pagerActivity.finish();
+                }
+
+                @Override
+                public void cancel() {
+                    pagerActivity.finish();
+                }
+            };
+            checkDialog.show();
         } else {
             ToastUtil.show(pagerActivity,result.getMessage());
         }
@@ -285,7 +310,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
     @Override
     public void uploadSuc(UserFile result) {
         if (result.isIsSuccess()) {
-            PhotoHelper.subcriberView.setTag(R.id.image_file_path,picFile.getAbsolutePath());
+            PhotoHelper.subcriberView.setTag(R.id.image_file_path, picFile.getAbsolutePath());
             PhotoHelper.subcriberView.setTag(R.id.image_url,result.getData());
             PhotoHelper.loadImageIntoSubcriberView(simpleBitmap);
         } else {

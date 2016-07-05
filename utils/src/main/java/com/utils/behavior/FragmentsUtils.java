@@ -48,6 +48,21 @@ public class FragmentsUtils {
         }
     }
 
+    /**
+     * The {@code fragment} is added to the container view with id {@code frameId}. The operation is
+     * performed by the {@code fragmentManager}.
+     *
+     */
+    public static void addFragmentToActivityStateLoss (FragmentManager fragmentManager,
+                                              Fragment fragment, int frameId) {
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.add(frameId, fragment);
+        transaction.commitAllowingStateLoss();
+        if (!containsFragment(fragment)) {
+            loadedFragments.add(new WeakReference<>(fragment));
+        }
+    }
+
     public static void replaceFragmentToActivity(FragmentManager fragmentManager,
                                                  Fragment fragment, int frameId){
         FragmentTransaction transaction = fragmentManager.beginTransaction();

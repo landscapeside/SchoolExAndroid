@@ -30,6 +30,18 @@ public class AnswerUtils {
         return result;
     }
 
+    public static int getUndoQuestionNum(List<QuestionInfo> questionInfos) {
+        int result = 0;
+        for (QuestionInfo info : questionInfos) {
+            if (JSONS.parseJsonArray(info.getStudentsAnswer()) == null
+                    || JSONS.parseJsonArray(info.getStudentsAnswer()).size() == 0) {
+                // TODO: 2016/6/29 学生答案为空
+                result++;
+            }
+        }
+        return result;
+    }
+
     public static int firstUndoQuestion(List<QuestionInfo> questionInfos) {
         int result = 0;
         if (CollectionUtils.isEmpty(questionInfos)) {
