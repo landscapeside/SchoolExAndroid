@@ -1,7 +1,9 @@
 package com.landscape.schoolexandroid.presenter.worktask;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -18,6 +20,9 @@ import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
 import com.landscape.schoolexandroid.datasource.worktask.TaskOptionDataSource;
+import com.landscape.schoolexandroid.db.DbHelper;
+import com.landscape.schoolexandroid.db.LabelTable;
+import com.landscape.schoolexandroid.db.TaskDb;
 import com.landscape.schoolexandroid.dialog.CheckDialog;
 import com.landscape.schoolexandroid.dialog.PromptDialog;
 import com.landscape.schoolexandroid.enums.PagerType;
@@ -35,6 +40,8 @@ import com.landscape.schoolexandroid.views.worktask.AnswerView;
 import com.landscape.weight.FlingRelativeLayout;
 import com.orhanobut.logger.Logger;
 import com.squareup.otto.Bus;
+import com.squareup.sqlbrite.BriteDatabase;
+import com.squareup.sqlbrite.SqlBrite;
 import com.utils.behavior.AppFileUtils;
 import com.utils.behavior.FragmentsUtils;
 import com.utils.behavior.ToastUtil;
@@ -48,10 +55,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import rx.Observable;
+import rx.functions.Action1;
+
 /**
  * Created by 1 on 2016/6/30.
  */
-public class AnswerPresenterImpl implements BasePresenter,IAnswer {
+public class AnswerPresenterImpl implements BasePresenter, IAnswer {
 
     private static final int REQUEST_LOCATION = 2;
 
@@ -59,7 +69,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
     String checkStrFormat = "完成交卷，点击\"查看记录\"可查看本次做题记录";
     String urlFormat = "HomeWork/Question?id=%s&PapersID=%s&studentid=%s";
     String tmpPic = "tmp.jpg";
-    File picTempFile = null,picFile = null;
+    File picTempFile = null, picFile = null;
     Bitmap simpleBitmap = null;
 
     AnswerView answerView = null;
@@ -68,12 +78,12 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
      */
     ExaminationTaskInfo taskInfo;
     List<QuestionInfo> questionInfos = new ArrayList<>();
-    int currentQuestion = 0 ;
+    int currentQuestion = 0;
     IAnswer mOptions;
 
     /**
      * Views
-     * */
+     */
     PromptDialog promptDialog;
     CheckDialog checkDialog;
 
@@ -88,6 +98,8 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
     TaskOptionDataSource taskOptionDataSource;
     @Inject
     Bus mBus;
+    @Inject
+    BriteDatabase db;
 
     public AnswerPresenterImpl(PagerActivity pagerActivity) {
         this.pagerActivity = pagerActivity;
@@ -99,7 +111,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
         taskInfo = pagerActivity.getIntent().getParcelableExtra(Constant.TASK_INFO);
         pagerActivity.setToolbarTitle(taskInfo.getName());
         mOptions = (IAnswer) pagerActivity.mProxy.createProxyInstance(this);
-        picTempFile = new File(AppFileUtils.getPicsPath(),tmpPic);
+        picTempFile = new File(AppFileUtils.getPicsPath(), tmpPic);
     }
 
     public void initViews() {
@@ -127,14 +139,15 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                                                     taskInfo.getExaminationPapersId(),
                                                     userAccountDataSource.getUserAccount().getData().getStudentId()));
                         }
-                        answerView.setLocation(currentQuestion+1,questionInfos.size());
+                        answerView.setLocation(currentQuestion + 1, questionInfos.size());
                         answerView.setAnswerCard(questionInfos.get(currentQuestion));
                     }
 
                     @Override
                     public void next() {
                         if (currentQuestion + 1 >= questionInfos.size()) {
-                            promptDialog = new PromptDialog(pagerActivity,String.format(promptStrFormat,AnswerUtils.getUndoQuestionNum(questionInfos))) {
+                            checkSubmit();
+                            promptDialog = new PromptDialog(pagerActivity, String.format(promptStrFormat, AnswerUtils.getUndoQuestionNum(questionInfos))) {
                                 @Override
                                 public void onOk() {
                                     mOptions.finish();
@@ -150,14 +163,14 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                                                     taskInfo.getExaminationPapersId(),
                                                     userAccountDataSource.getUserAccount().getData().getStudentId()));
                         }
-                        answerView.setLocation(currentQuestion+1,questionInfos.size());
+                        answerView.setLocation(currentQuestion + 1, questionInfos.size());
                         answerView.setAnswerCard(questionInfos.get(currentQuestion));
                     }
                 });
                 answerView.setBtnClickListener(new AnswerView.BtnClickListener() {
                     @Override
                     public void finish() {
-                        promptDialog = new PromptDialog(pagerActivity,String.format(promptStrFormat,AnswerUtils.getUndoQuestionNum(questionInfos))) {
+                        promptDialog = new PromptDialog(pagerActivity, String.format(promptStrFormat, AnswerUtils.getUndoQuestionNum(questionInfos))) {
                             @Override
                             public void onOk() {
                                 mOptions.finish();
@@ -172,16 +185,16 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                         intent.putExtra(Constant.PAGER_TYPE, PagerType.QUESTION_LOCATION.getType());
                         intent.putExtra(Constant.LOCATION_INDEX, currentQuestion);
                         intent.putIntegerArrayListExtra(Constant.LOCATION_INFO, (ArrayList<Integer>) AnswerUtils.transforStudentsAnswers(questionInfos));
-                        pagerActivity.startActivityForResult(intent,REQUEST_LOCATION);
+                        pagerActivity.startActivityForResult(intent, REQUEST_LOCATION);
                     }
                 });
-                answerView.setLocation(currentQuestion+1,questionInfos.size());
+                answerView.setLocation(currentQuestion + 1, questionInfos.size());
                 if (taskInfo.getDuration() > 0) {
                     answerView.startTimeTick(taskInfo.getDuration());
                 }
-                answerView.setTimeEnable(taskInfo.getDuration()>0);
+                answerView.setTimeEnable(taskInfo.getDuration() > 0);
                 answerView.setTimeCounterCallbk(() -> {
-                    ToastUtil.show(pagerActivity,"时间到，你已不能继续答题");
+                    ToastUtil.show(pagerActivity, "时间到，你已不能继续答题");
                     mBus.post(new FinishPagerEvent());
                     mOptions.finish();
                 });
@@ -208,7 +221,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                 case REQUEST_LOCATION:
                     checkSubmit();
                     currentQuestion = data.getIntExtra(Constant.LOCATION_INDEX, 0);
-                    answerView.setLocation(currentQuestion+1,questionInfos.size());
+                    answerView.setLocation(currentQuestion + 1, questionInfos.size());
                     answerView.setAnswerCard(questionInfos.get(currentQuestion));
                     answerView.previewTask(
                             AppConfig.BASE_WEB_URL +
@@ -218,11 +231,11 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                                             userAccountDataSource.getUserAccount().getData().getStudentId()));
                     break;
                 case PhotoHelper.SERVER_CAPTURE_PHOTO:
-                    PhotoHelper.cropPhoto(pagerActivity,data.getParcelableExtra("data"));
+                    PhotoHelper.cropPhoto(pagerActivity, data.getParcelableExtra("data"));
                     break;
                 case PhotoHelper.SERVER_SELECT_PHOTO:
                     Uri selectedImage = data.getData();
-                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
                     ContentResolver contentResolver = pagerActivity.getContentResolver();
 //                    Cursor cursor = contentResolver.query(selectedImage,
 //                            filePathColumn, null, null, null);
@@ -231,7 +244,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
 //                    String picturePath = cursor.getString(columnIndex);
 //                    cursor.close();
                     try {
-                        PhotoHelper.cropPhoto(pagerActivity,BitmapFactory.decodeStream(contentResolver.openInputStream(selectedImage)));
+                        PhotoHelper.cropPhoto(pagerActivity, BitmapFactory.decodeStream(contentResolver.openInputStream(selectedImage)));
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -240,8 +253,8 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                     simpleBitmap = PhotoHelper.convertToBlackWhite(data.getParcelableExtra("data"));
                     try {
                         PhotoHelper.saveFileByBitmap(simpleBitmap, picTempFile);
-                        picFile = new File(AppFileUtils.getPicsPath(),System.currentTimeMillis()+".jpg");
-                        simpleBitmap = PhotoHelper.compressFile(picTempFile,picFile);
+                        picFile = new File(AppFileUtils.getPicsPath(), System.currentTimeMillis() + ".jpg");
+                        simpleBitmap = PhotoHelper.compressFile(picTempFile, picFile);
                         mOptions.uploadFile();
                     } catch (IOException e) {
                         Logger.e(e.getMessage());
@@ -249,6 +262,12 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
                     break;
             }
         }
+    }
+
+    @Override
+    public void back() {
+        TaskDb.update(db,taskInfo.getStudentQuestionsTasksID(),answerView.getDuration());
+        pagerActivity.finish();
     }
 
     @Override
@@ -271,13 +290,13 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
         if (result.isIsSuccess()) {
             mBus.post(new FinishPagerEvent());
             mBus.post(new RefreshListEvent());
-            checkDialog = new CheckDialog(pagerActivity,checkStrFormat) {
+            checkDialog = new CheckDialog(pagerActivity, checkStrFormat) {
                 @Override
                 public void onOk() {
                     taskInfo.setStatus(TaskStatus.COMPLETE.getStatus());
                     pagerActivity.startActivity(new Intent(pagerActivity, PagerActivity.class)
                             .putExtra(Constant.PAGER_TYPE, PagerType.PREVIEW_TASK.getType())
-                            .putExtra(Constant.TASK_INFO,taskInfo));
+                            .putExtra(Constant.TASK_INFO, taskInfo));
                     pagerActivity.finish();
                 }
 
@@ -288,7 +307,7 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
             };
             checkDialog.show();
         } else {
-            ToastUtil.show(pagerActivity,result.getMessage());
+            ToastUtil.show(pagerActivity, result.getMessage());
         }
     }
 
@@ -311,10 +330,10 @@ public class AnswerPresenterImpl implements BasePresenter,IAnswer {
     public void uploadSuc(UserFile result) {
         if (result.isIsSuccess()) {
             PhotoHelper.subcriberView.setTag(R.id.image_file_path, picFile.getAbsolutePath());
-            PhotoHelper.subcriberView.setTag(R.id.image_url,result.getData());
+            PhotoHelper.subcriberView.setTag(R.id.image_url, result.getData());
             PhotoHelper.loadImageIntoSubcriberView(simpleBitmap);
         } else {
-            ToastUtil.show(pagerActivity,result.getMessage());
+            ToastUtil.show(pagerActivity, result.getMessage());
         }
     }
 

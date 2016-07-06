@@ -1,6 +1,7 @@
 package com.landscape.schoolexandroid.common;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.landscape.schoolexandroid.dagger.AppComponent;
 import com.landscape.schoolexandroid.dagger.AppModule;
@@ -17,9 +18,16 @@ import com.utils.system.ScreenParam;
 public class BaseApp extends Application {
     private AppComponent mAppComponent;
 
+    private static Application instance;
+
+    public static Application getInstance() {
+        return instance;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         initLog();
         AppFileUtils.init(AppConfig.ROOT_FOLDER);
         ScreenParam.init(this);

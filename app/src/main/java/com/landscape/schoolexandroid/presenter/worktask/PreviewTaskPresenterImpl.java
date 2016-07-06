@@ -2,6 +2,7 @@ package com.landscape.schoolexandroid.presenter.worktask;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 
 import com.landscape.event.FinishPagerEvent;
 import com.landscape.event.RefreshListEvent;
@@ -12,6 +13,7 @@ import com.landscape.schoolexandroid.common.AppConfig;
 import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.worktask.TaskOptionDataSource;
+import com.landscape.schoolexandroid.db.TaskDb;
 import com.landscape.schoolexandroid.enums.PagerType;
 import com.landscape.schoolexandroid.enums.TaskStatus;
 import com.landscape.schoolexandroid.mode.BaseBean;
@@ -25,9 +27,11 @@ import com.landscape.schoolexandroid.views.worktask.PreviewTaskView;
 import com.orhanobut.logger.Logger;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+import com.squareup.sqlbrite.BriteDatabase;
 import com.utils.behavior.FragmentsUtils;
 import com.utils.behavior.ToastUtil;
 import com.utils.datahelper.CollectionUtils;
+import com.utils.datahelper.TimeConversion;
 
 import javax.inject.Inject;
 
@@ -43,6 +47,8 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
     TaskOptionDataSource taskOptionDataSource;
     @Inject
     Bus mBus;
+    @Inject
+    BriteDatabase db;
 
     String urlFormat = "HomeWork/ExaminationPapers?id=%s&taskid=%s";
     String checkFormat = "HomeWork/CheckPaper?StudentQuestionsTasksId=%s";
@@ -61,12 +67,26 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
         if (taskInfo == null) {
             throw new IllegalArgumentException("taskinfo为空");
         }
+        /**
+         * 1.将duration扩展为秒单位
+         * 2.如果duration为0，则通过允许答题的限制结束时间来设置
+         * */
+        taskInfo.setDuration(taskInfo.getDuration()*60);
+        if (taskInfo.getDuration() == 0
+                &&taskInfo.isIsTasks()) {
+            taskInfo.setDuration(TimeConversion.getDuration(taskInfo.getCanEndDateTime()));
+        }
         pagerActivity.setToolbarTitle(taskInfo.getName());
         previewTaskView = new PreviewTaskFragment();
         FragmentsUtils.addFragmentToActivity(pagerActivity.getSupportFragmentManager(), (Fragment) previewTaskView, R.id.contentPanel);
         mOptions = (IWorkTask) pagerActivity.mProxy.createProxyInstance(this);
         mBus.register(this);
         initViews();
+        TaskDb.query(db, taskInfo.getStudentQuestionsTasksID(), duration -> {
+            if (!TextUtils.isEmpty(duration)) {
+                taskInfo.setDuration(Integer.parseInt(duration));
+            }
+        });
     }
 
     public void initViews() {
@@ -125,6 +145,11 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
     @Override
     public void refreshData(Intent data) {
 
+    }
+
+    @Override
+    public void back() {
+        pagerActivity.finish();
     }
 
     @Override

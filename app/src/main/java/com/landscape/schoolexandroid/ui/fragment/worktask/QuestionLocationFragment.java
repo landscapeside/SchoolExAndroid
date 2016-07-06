@@ -48,14 +48,18 @@ public class QuestionLocationFragment extends BaseFragment implements QuestionLo
                     tvLocation.setText("" + (position+1));
 //                    tvLocation.setSelected(item == AnswerUtils.QUESTION_DONE);
 //                    tvLocation.setSelected(true);
-                    if (item == AnswerUtils.QUESTION_DONE) {
+                    if (position == currentIdx) {
                         tvLocation.setTextColor(getResources().getColor(R.color.white));
-                        tvLocation.setBackgroundResource(R.drawable.btn_badge_solid_green);
+                        tvLocation.setBackgroundResource(R.drawable.btn_badge_solid_gray);
                     } else {
-                        tvLocation.setTextColor(getResources().getColorStateList(R.color.location_text_selector));
-                        tvLocation.setBackgroundResource(R.drawable.badge_selector);
+                        if (item == AnswerUtils.QUESTION_DONE) {
+                            tvLocation.setTextColor(getResources().getColor(R.color.white));
+                            tvLocation.setBackgroundResource(R.drawable.btn_badge_solid_green);
+                        } else {
+                            tvLocation.setTextColor(getResources().getColorStateList(R.color.location_text_selector));
+                            tvLocation.setBackgroundResource(R.drawable.badge_selector);
+                        }
                     }
-
 //                    if (position == currentIdx) {
 //                        tvLocation.setBackgroundResource(R.drawable.btn_badge_solid_green);
 //                    } else {

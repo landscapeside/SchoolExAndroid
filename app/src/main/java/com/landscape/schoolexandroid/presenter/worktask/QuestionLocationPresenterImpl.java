@@ -66,4 +66,9 @@ public class QuestionLocationPresenterImpl implements BasePresenter {
     public void refreshData(Intent data) {
 
     }
+
+    @Override
+    public void back() {
+        pagerActivity.finish();
+    }
 }

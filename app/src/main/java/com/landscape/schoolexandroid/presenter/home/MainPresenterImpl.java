@@ -216,6 +216,11 @@ public class MainPresenterImpl implements MainPresenter {
 
     }
 
+    @Override
+    public void back() {
+
+    }
+
     @Subscribe
     public void onRefreshEvent(RefreshListEvent refreshListEvent) {
         refreshList();

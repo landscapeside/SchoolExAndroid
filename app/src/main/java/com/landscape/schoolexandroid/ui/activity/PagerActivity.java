@@ -93,10 +93,15 @@ public class PagerActivity extends BaseActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        presenter.back();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        ButterKnife.unbind(this);
         presenter.remove();
+        ButterKnife.unbind(this);
     }
 
     @Override

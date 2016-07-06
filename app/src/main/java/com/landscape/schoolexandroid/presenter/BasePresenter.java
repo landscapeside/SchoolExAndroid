@@ -10,4 +10,5 @@ public interface BasePresenter {
     default void stop(){}
     void remove();
     void refreshData(Intent data);
+    void back();
 }

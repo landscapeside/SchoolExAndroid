@@ -1,8 +1,10 @@
 package com.utils.datahelper;
 
-import java.sql.Date;
+import android.text.TextUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 
 public class TimeConversion {
@@ -87,5 +89,25 @@ public class TimeConversion {
             sb.append(minute + "分钟");
         }
         return sb.toString();
+    }
+
+    public static int getDuration(String durationStr) {
+        if (TextUtils.isEmpty(durationStr)) {
+            return 0;
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date date = new Date();
+        try {
+            date = formatter.parse(durationStr);
+            long current = System.currentTimeMillis();
+            long seconds = date.getTime() - current;
+            if (seconds > 0) {
+                seconds = seconds/1000;
+                return (int) seconds;
+            }
+        } catch (Exception e) {
+
+        }
+        return 0;
     }
 }

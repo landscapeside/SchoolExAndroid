@@ -1,6 +1,7 @@
 package com.landscape.schoolexandroid.ui.fragment.home;
 
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -51,7 +52,15 @@ public class MenuFragment extends BaseFragment implements MenuView<BasePresenter
 
     @Override
     public void loadUserAccount(UserAccount userAccount) {
-        Picasso.with(getActivity()).load(userAccount.getData().getPhoto()).into(ivBottom);
+        if (!TextUtils.isEmpty(userAccount.getData().getPhoto())) {
+            Picasso.with(getActivity())
+                    .load(userAccount.getData().getPhoto())
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.mipmap.ic_launcher)
+                    .into(ivBottom);
+        } else {
+            ivBottom.setImageResource(R.mipmap.ic_launcher);
+        }
         tvName.setText(userAccount.getData().getName());
         tvSchool.setText(userAccount.getData().getGradeName()+userAccount.getData().getTeamName()+userAccount.getData().getClassGroupName());
     }

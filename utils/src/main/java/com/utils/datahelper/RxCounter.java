@@ -32,9 +32,10 @@ public class RxCounter {
 
     public static Observable<Integer> counter(int from, int to, int delay, TimeUnit time) {
         return from == to ? Observable.empty() : Observable.<Integer>create(subscriber -> {
+            tick = true;
             int step = from > to ? -1 : 1;
             int cursor = from;
-            while (cursor != to) {
+            while (cursor != to && tick) {
                 subscriber.onNext(cursor);
                 cursor += step;
                 try {
@@ -42,7 +43,6 @@ public class RxCounter {
 //                    SystemClock.sleep(1000);//this method has no exception
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    subscriber.onError(e);
                 }
             }
             subscriber.onNext(cursor);

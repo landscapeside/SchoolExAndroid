@@ -19,6 +19,7 @@ import com.landscape.slidinguppanel.WrapSlidingDrawer;
 import com.landscape.weight.AnswerCardView;
 import com.landscape.weight.FlingRelativeLayout;
 import com.orhanobut.logger.Logger;
+import com.utils.behavior.ToastUtil;
 import com.utils.datahelper.RxCounter;
 import com.utils.datahelper.TimeConversion;
 
@@ -34,6 +35,7 @@ import rx.Subscription;
 public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePresenter> {
 
     String url = "";
+    String duration = "";
     BtnClickListener btnClickListener;
     TimeCounterCallbk timeCounterCallbk;
     Subscription subscription = null;
@@ -91,7 +93,7 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
 
     @Override
     public void startTimeTick(int startTime) {
-        int seconds = startTime * 60;
+        int seconds = startTime;
         if (subscription != null) {
             subscription.unsubscribe();
         }
@@ -126,11 +128,18 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
         return answerCardView.getAnswer();
     }
 
+    @Override
+    public String getDuration() {
+        return duration;
+    }
+
     private void tick(int time) {
+        duration = ""+time;
         tvTime.setText(TimeConversion.getHourMinSecondsData(time * 1000));
     }
 
     private void tickComplete() {
+        duration = "0";
         if (timeCounterCallbk != null) {
             timeCounterCallbk.timeOut();
         }
@@ -161,6 +170,7 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     public void onDestroyView() {
         if (subscription != null) {
             subscription.unsubscribe();
+            RxCounter.cancelTick();
         }
         super.onDestroyView();
     }

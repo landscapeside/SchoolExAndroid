@@ -1,6 +1,7 @@
 package com.landscape.schoolexandroid.ui.fragment.home;
 
 import android.support.v4.app.Fragment;
+import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +23,8 @@ public class DragContentFragment extends BaseFragment implements DragContentView
     AvatarClickListener avatarClickListener;
     Fragment current;
 
+    @Bind(R.id.rl_icon)
+    View rlIcon;
     @Bind(R.id.iv_icon)
     ImageView ivIcon;
     @Bind(R.id.tv_title)
@@ -75,7 +78,7 @@ public class DragContentFragment extends BaseFragment implements DragContentView
     public void setAvatarClick(AvatarClickListener avatarClick) {
         avatarClickListener = avatarClick;
         if (avatarClickListener != null) {
-            ivIcon.setOnClickListener(v -> avatarClickListener.avatarClick());
+            rlIcon.setOnClickListener(v -> avatarClickListener.avatarClick());
         }
     }
 }

@@ -18,6 +18,7 @@ public interface AnswerView<T extends BasePresenter> extends BaseView<T> {
     void setAnswerCard(QuestionInfo info);
     boolean isAnswerChanged();
     String getAnswer();
+    String getDuration();
 
     void setBtnClickListener(BtnClickListener btnClickListener);
     interface BtnClickListener{
