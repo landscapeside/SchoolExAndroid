@@ -20,6 +20,7 @@ import rx.schedulers.Schedulers;
 @Module
 public class AppModule {
     private BaseApp app;
+    private Bus bus;
 
     public AppModule(BaseApp app) {
         this.app = app;
@@ -40,7 +41,7 @@ public class AppModule {
     @Singleton
     @Provides
     public Bus getBus() {
-        return new Bus();
+        return bus==null?bus= new Bus():bus;
     }
 
     @Provides

@@ -67,13 +67,17 @@ public class TaskOptionDataSource implements BaseDataSource {
         return call;
     }
 
-    public Intent putWorkData(Intent data, List<QuestionGroupInfo> questionGroupInfos,ExaminationTaskInfo taskInfo) {
+    public Intent putWorkData(Intent data,
+                              List<QuestionGroupInfo> questionGroupInfos,
+                              ExaminationTaskInfo taskInfo,
+                              int subjectTypeId) {
         List<QuestionInfo> infos = new ArrayList<>();
         for (QuestionGroupInfo groupInfo : questionGroupInfos) {
             infos.addAll(groupInfo.getQuestion());
         }
         data.putExtra(Constant.TASK_INFO, taskInfo);
         data.putParcelableArrayListExtra(Constant.QUESTION_INFO, (ArrayList<? extends Parcelable>) infos);
+        data.putExtra(Constant.SUBJECT_TYPE_ID, subjectTypeId);
         return data;
     }
 

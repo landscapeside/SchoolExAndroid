@@ -59,6 +59,7 @@ public class AnswerCardView extends RelativeLayout {
     CardAdapter adapter = null;
 
     QuestionInfo info;
+    int SubjectTypeId = 0;
     List<AlternativeContent> alternativeContent = new ArrayList<>();
     List<StudentAnswer> studentAnswers = new ArrayList<>();
     Map<String, StudentAnswer> answerMap = new HashMap<>();
@@ -107,7 +108,8 @@ public class AnswerCardView extends RelativeLayout {
         }
     }
 
-    public void loadAnswerCards(QuestionInfo questionInfo) {
+    public void loadAnswerCards(QuestionInfo questionInfo,int SubjectTypeId) {
+        this.SubjectTypeId = SubjectTypeId;
         info = questionInfo;
         alternativeContent.clear();
         studentAnswers.clear();
@@ -232,6 +234,10 @@ public class AnswerCardView extends RelativeLayout {
                 /**
                  * 填空
                  */
+                /*英语填空需要拍照*/
+                if (SubjectTypeId == 12) {
+                    return TYPE_RICH;
+                }
                 return TYPE_EDIT;
             } else if (CollectionUtils.isIn(
                     CardType.getType(answerTypes.get(position).getTypeId()),

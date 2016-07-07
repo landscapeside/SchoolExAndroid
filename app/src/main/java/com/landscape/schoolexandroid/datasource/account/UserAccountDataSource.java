@@ -56,11 +56,40 @@ public class UserAccountDataSource implements BaseDataSource {
         editor.commit();
     }
 
+    public void clearData() {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(Constant.SHARE_PRE_USER_ACCOUNT, "");
+        editor.commit();
+    }
+
+    public int getFlowerLvSmall(int flowers) {
+        return flowers%10;
+    }
+
+    public int getFlowerLvNormal(int flowers) {
+        return (flowers%100)/10;
+    }
+
+    public int getFlowerLvBig(int flowers) {
+        return flowers/100;
+    }
+
     public Call<UserFile> uploadFile(File file, BaseCallBack<UserFile> callBack) {
         RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
         Call<UserFile> call = null;
         call = RetrofitService.createApi(UserApi.class)
                 .uploadFile(requestBody);
+        RetrofitService.addCall(call);
+        callBack.setCall(call);
+        call.enqueue(callBack);
+        return call;
+    }
+
+    public Call<BaseBean> modifyPwd(String pwd,String newPwd,BaseCallBack<BaseBean> callBack) {
+        UserAccount userAccount = getUserAccount();
+        Call<BaseBean> call = null;
+        call = RetrofitService.createApi(UserApi.class)
+                .modifyPwd(userAccount.getData().getStudentId(),pwd,newPwd);
         RetrofitService.addCall(call);
         callBack.setCall(call);
         call.enqueue(callBack);

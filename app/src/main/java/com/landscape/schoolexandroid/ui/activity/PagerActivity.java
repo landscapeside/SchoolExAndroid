@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -28,6 +29,8 @@ public class PagerActivity extends BaseActivity {
     TextView toolbarTitle;
     @Bind(R.id.toolbar_right)
     TextView toolbarRight;
+    @Bind(R.id.toolbar_right_second)
+    ImageView toolbarRightImg;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,11 @@ public class PagerActivity extends BaseActivity {
         toolbarRight.setVisibility(View.VISIBLE);
         toolbarRight.setEnabled(enabled);
         toolbarRight.setClickable(enabled);
+    }
+
+    public void showRightImgBtn(View.OnClickListener clickListener) {
+        toolbarRightImg.setVisibility(View.VISIBLE);
+        toolbarRightImg.setOnClickListener(clickListener);
     }
 
     private void initPresenter() {

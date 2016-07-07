@@ -40,24 +40,13 @@
                 android:textSize="13sp"
                 android:padding="5dp"
                 android:visibility="gone" />
-            <TextView
+            <ImageView
                 android:id="@+id/toolbar_right_second"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_marginLeft="10dp"
-                android:textColor="@color/white"
-                android:textSize="13sp"
-                android:padding="5dp"
-                android:visibility="gone" />
-            <TextView
-                android:id="@+id/toolbar_right_third"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:textColor="@color/white"
-                android:textSize="13sp"
-                android:padding="5dp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:src="@drawable/icon_feedback"/>
         </LinearLayout>
 
 

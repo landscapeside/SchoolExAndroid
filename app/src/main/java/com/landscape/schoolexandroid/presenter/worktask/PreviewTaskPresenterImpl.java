@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
 import com.landscape.event.FinishPagerEvent;
-import com.landscape.event.RefreshListEvent;
 import com.landscape.netedge.worktask.IWorkTask;
 import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.api.BaseCallBack;
@@ -24,7 +23,6 @@ import com.landscape.schoolexandroid.ui.activity.PagerActivity;
 import com.landscape.schoolexandroid.ui.fragment.worktask.PreviewTaskFragment;
 import com.landscape.schoolexandroid.views.BaseView;
 import com.landscape.schoolexandroid.views.worktask.PreviewTaskView;
-import com.orhanobut.logger.Logger;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.squareup.sqlbrite.BriteDatabase;
@@ -69,12 +67,22 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
         }
         /**
          * 1.将duration扩展为秒单位
-         * 2.如果duration为0，则通过允许答题的限制结束时间来设置
+         * 2.
+         * 如果设置了分钟数 就可以视为 答题模式
+         * 答题模式 不允许退出  如果点击“返回”按钮就提示他是否交卷
+         * 倒计时为：答题开始时间+分钟数-当前时间（StartTime+Duration-  DateTime.Now） 不要用Duration直接倒计时 以免系统意外终止 下次进入的时候倒计时不准确
+         *
+         * 如果没有设置分钟数（Duration=null 或者Duration=0） 倒计时为：为普通模式
+         * 为普通模式  允许退出  如果点击“返回”按钮就可以返回
+         * 答题结束时间-当前时间 （CanEndDateTime-DateTime.Now）
          * */
         taskInfo.setDuration(taskInfo.getDuration()*60);
         if (taskInfo.getDuration() == 0
-                &&taskInfo.isIsTasks()) {
-            taskInfo.setDuration(TimeConversion.getDuration(taskInfo.getCanEndDateTime()));
+                && taskInfo.isIsTasks()) {
+            taskInfo.setDuration(TimeConversion.getDurationByEnd(taskInfo.getCanEndDateTime()));
+        } else {
+            taskInfo.setDuration(TimeConversion.getDurationByStart(
+                    taskInfo.getCanStartDateTime(),taskInfo.getDuration()));
         }
         pagerActivity.setToolbarTitle(taskInfo.getName());
         previewTaskView = new PreviewTaskFragment();
@@ -180,7 +188,8 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
                     taskOptionDataSource.putWorkData(
                             intent,
                             result.getData().get(0).getQuestionGruop(),
-                            taskInfo));
+                            taskInfo,
+                            result.getData().get(0).getSubjectTypeId()));
         } else {
             ToastUtil.show(pagerActivity,result.getMessage());
         }

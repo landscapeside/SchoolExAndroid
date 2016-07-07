@@ -15,7 +15,7 @@ public interface AnswerView<T extends BasePresenter> extends BaseView<T> {
     void startTimeTick(int startTime);
     void setLocation(int idx,int total);
     void setTimeEnable(boolean isEnable);
-    void setAnswerCard(QuestionInfo info);
+    void setAnswerCard(QuestionInfo info,int SubjectTypeId);
     boolean isAnswerChanged();
     String getAnswer();
     String getDuration();

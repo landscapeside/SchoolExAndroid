@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.edge.proxy.NetProxy;
 import com.edge.reader.NetBuilder;
 import com.landscape.schoolexandroid.api.RetrofitService;
+import com.utils.behavior.ActivityStack;
 import com.utils.behavior.ProgressUtils;
 
 /**
@@ -29,5 +30,12 @@ public class BaseActivity extends AppCompatActivity {
                 ProgressUtils.dismissProgressDialog();
             }
         }).build());
+        ActivityStack.getActivityManager().addActivity(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        ActivityStack.getActivityManager().finishActivity(this);
+        super.onDestroy();
     }
 }

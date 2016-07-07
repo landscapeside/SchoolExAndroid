@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 
 public class TimeConversion {
@@ -30,6 +31,7 @@ public class TimeConversion {
 
     public static String getHourMinSecondsData(long timeMillis) {
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
         return formatter.format(new Date(timeMillis));
     }
 
@@ -91,7 +93,27 @@ public class TimeConversion {
         return sb.toString();
     }
 
-    public static int getDuration(String durationStr) {
+    public static int getDurationByStart(String durationStart, int duration) {
+        if (TextUtils.isEmpty(durationStart)) {
+            return duration;
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date date = new Date();
+        try {
+            date = formatter.parse(durationStart);
+            long current = System.currentTimeMillis();
+            long seconds = date.getTime() - current + duration*1000;
+            if (seconds > 0) {
+                seconds = seconds/1000;
+                return (int) seconds;
+            }
+        } catch (Exception e) {
+
+        }
+        return 0;
+    }
+
+    public static int getDurationByEnd(String durationStr) {
         if (TextUtils.isEmpty(durationStr)) {
             return 0;
         }

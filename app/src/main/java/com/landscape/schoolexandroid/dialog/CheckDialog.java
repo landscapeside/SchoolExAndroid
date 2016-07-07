@@ -38,6 +38,7 @@ public abstract class CheckDialog extends Dialog {
 
     @OnClick(R.id.sure)
     public void onOkClick(View view){
+        dismiss();
         onOk();
     }
 

@@ -4,25 +4,26 @@
     android:layout_width="match_parent"
     android:background="@drawable/bg_draglayout">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/ll1"
         android:layout_width="match_parent"
         android:layout_height="130dp"
         android:paddingLeft="14dp"
-        android:paddingRight="14dp"
-        android:orientation="horizontal">
+        android:paddingRight="14dp">
 
         <com.landscape.weight.CircleImageView
             android:id="@+id/iv_bottom"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:layout_gravity="center_vertical"
+            android:layout_centerVertical="true"
             android:src="@mipmap/ic_launcher" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/iv_bottom"
+            android:layout_toLeftOf="@+id/iv_arrow"
             android:layout_marginLeft="12dp"
             android:orientation="vertical">
 
@@ -47,7 +48,15 @@
                 android:textSize="12sp" />
 
         </LinearLayout>
-    </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/icon_arrow"/>
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/lv"

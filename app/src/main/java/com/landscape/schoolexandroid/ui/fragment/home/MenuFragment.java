@@ -39,6 +39,8 @@ public class MenuFragment extends BaseFragment implements MenuView<BasePresenter
     TextView tvName;
     @Bind(R.id.tv_school)
     TextView tvSchool;
+    @Bind(R.id.ll1)
+    View userAccount;
 
     @Override
     public int getLayoutResId() {
@@ -100,12 +102,12 @@ public class MenuFragment extends BaseFragment implements MenuView<BasePresenter
     }
 
     @Override
-    public void setMenuItemSelectListener(OnMenuItemSelectListener listener) {
-        menuItemSelectListener = listener;
+    public void setUserAccountListener(UserAccountListener userAccountListener) {
+        userAccount.setOnClickListener(v -> userAccountListener.userAccount());
     }
 
-    @OnClick(R.id.ll1)
-    public void userSetting(View view) {
-
+    @Override
+    public void setMenuItemSelectListener(OnMenuItemSelectListener listener) {
+        menuItemSelectListener = listener;
     }
 }

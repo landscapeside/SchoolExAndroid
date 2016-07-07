@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/aoplibrary/aoplibrary.iml" filepath="$PROJECT_DIR$/aoplibrary/aoplibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/apigatewaysign/apigatewaysign.iml" filepath="$PROJECT_DIR$/apigatewaysign/apigatewaysign.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/crop/crop.iml" filepath="$PROJECT_DIR$/crop/crop.iml" />
       <module fileurl="file://$PROJECT_DIR$/draglayout/draglayout.iml" filepath="$PROJECT_DIR$/draglayout/draglayout.iml" />
       <module fileurl="file://$PROJECT_DIR$/pullrefresh/pullrefresh.iml" filepath="$PROJECT_DIR$/pullrefresh/pullrefresh.iml" />
       <module fileurl="file://$PROJECT_DIR$/schoolExAdnrd.iml" filepath="$PROJECT_DIR$/schoolExAdnrd.iml" />

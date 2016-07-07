@@ -17,6 +17,13 @@ public interface MenuView<T extends BasePresenter> extends BaseView<T> {
 
     int getCurrentIdx();
 
+    void setUserAccountListener(UserAccountListener userAccountListener);
+
+    interface UserAccountListener{
+        void userAccount();
+    }
+
+
     interface OnMenuItemSelectListener{
         void onSelect(int position);
     }

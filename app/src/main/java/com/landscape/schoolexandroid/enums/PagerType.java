@@ -1,5 +1,8 @@
 package com.landscape.schoolexandroid.enums;
 
+import com.landscape.schoolexandroid.presenter.useraccount.PasswdModifyPresenterImpl;
+import com.landscape.schoolexandroid.presenter.useraccount.UserAccountPresenterImpl;
+import com.landscape.schoolexandroid.presenter.useraccount.UserModifyPresenterImpl;
 import com.landscape.schoolexandroid.presenter.worktask.AnswerPresenterImpl;
 import com.landscape.schoolexandroid.presenter.worktask.PreviewTaskPresenterImpl;
 import com.landscape.schoolexandroid.presenter.worktask.QuestionLocationPresenterImpl;
@@ -15,6 +18,11 @@ public enum PagerType {
 
     QUESTION_LOCATION(3, QuestionLocationPresenterImpl.class),
 
+    USER_CENTER(4, UserAccountPresenterImpl.class),
+
+    USER_MODIFY(5, UserModifyPresenterImpl.class),
+
+    PWD_MODIFY(6, PasswdModifyPresenterImpl.class),
 
     NONE(-1,Object.class);
 
@@ -43,6 +51,12 @@ public enum PagerType {
                 return ANSWER;
             case 3:
                 return QUESTION_LOCATION;
+            case 4:
+                return USER_CENTER;
+            case 5:
+                return USER_MODIFY;
+            case 6:
+                return PWD_MODIFY;
             default:
                 return NONE;
         }

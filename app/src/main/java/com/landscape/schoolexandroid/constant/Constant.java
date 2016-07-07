@@ -9,6 +9,7 @@ public class Constant {
     public static final String PAGER_TYPE = "PAGER_TYPE";
     public static final String PAGER_TITLE = "TITLE";
     public static final String TASK_INFO = "TASK_INFO";
+    public static final String SUBJECT_TYPE_ID = "SUBJECT_TYPE_ID";
     public static final String LOCATION_INDEX = "LOCATION_INDEX";
     public static final String LOCATION_INFO = "LOCATION_INFO";
     public static final String QUESTION_INFO = "QUESTION_INFO";

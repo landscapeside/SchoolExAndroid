@@ -78,7 +78,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
      */
     ExaminationTaskInfo taskInfo;
     List<QuestionInfo> questionInfos = new ArrayList<>();
-    int currentQuestion = 0;
+    int currentQuestion = 0,subjectTypeId = 0;
     IAnswer mOptions;
 
     /**
@@ -109,6 +109,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
         initViews();
         questionInfos = pagerActivity.getIntent().getParcelableArrayListExtra(Constant.QUESTION_INFO);
         taskInfo = pagerActivity.getIntent().getParcelableExtra(Constant.TASK_INFO);
+        subjectTypeId = pagerActivity.getIntent().getIntExtra(Constant.SUBJECT_TYPE_ID, 0);
         pagerActivity.setToolbarTitle(taskInfo.getName());
         mOptions = (IAnswer) pagerActivity.mProxy.createProxyInstance(this);
         picTempFile = new File(AppFileUtils.getPicsPath(), tmpPic);
@@ -140,7 +141,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
                                                     userAccountDataSource.getUserAccount().getData().getStudentId()));
                         }
                         answerView.setLocation(currentQuestion + 1, questionInfos.size());
-                        answerView.setAnswerCard(questionInfos.get(currentQuestion));
+                        answerView.setAnswerCard(questionInfos.get(currentQuestion),subjectTypeId);
                     }
 
                     @Override
@@ -164,12 +165,13 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
                                                     userAccountDataSource.getUserAccount().getData().getStudentId()));
                         }
                         answerView.setLocation(currentQuestion + 1, questionInfos.size());
-                        answerView.setAnswerCard(questionInfos.get(currentQuestion));
+                        answerView.setAnswerCard(questionInfos.get(currentQuestion),subjectTypeId);
                     }
                 });
                 answerView.setBtnClickListener(new AnswerView.BtnClickListener() {
                     @Override
                     public void finish() {
+                        checkSubmit();
                         promptDialog = new PromptDialog(pagerActivity, String.format(promptStrFormat, AnswerUtils.getUndoQuestionNum(questionInfos))) {
                             @Override
                             public void onOk() {
@@ -198,7 +200,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
                     mBus.post(new FinishPagerEvent());
                     mOptions.finish();
                 });
-                answerView.setAnswerCard(questionInfos.get(currentQuestion));
+                answerView.setAnswerCard(questionInfos.get(currentQuestion),subjectTypeId);
             }
 
             @Override
@@ -222,7 +224,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
                     checkSubmit();
                     currentQuestion = data.getIntExtra(Constant.LOCATION_INDEX, 0);
                     answerView.setLocation(currentQuestion + 1, questionInfos.size());
-                    answerView.setAnswerCard(questionInfos.get(currentQuestion));
+                    answerView.setAnswerCard(questionInfos.get(currentQuestion),subjectTypeId);
                     answerView.previewTask(
                             AppConfig.BASE_WEB_URL +
                                     String.format(urlFormat,
@@ -302,6 +304,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
 
                 @Override
                 public void cancel() {
+                    checkDialog = null;
                     pagerActivity.finish();
                 }
             };

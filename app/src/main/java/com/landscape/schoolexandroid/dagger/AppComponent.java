@@ -2,6 +2,9 @@ package com.landscape.schoolexandroid.dagger;
 
 import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.presenter.home.MainPresenterImpl;
+import com.landscape.schoolexandroid.presenter.useraccount.PasswdModifyPresenterImpl;
+import com.landscape.schoolexandroid.presenter.useraccount.UserAccountPresenterImpl;
+import com.landscape.schoolexandroid.presenter.useraccount.UserModifyPresenterImpl;
 import com.landscape.schoolexandroid.presenter.worktask.AnswerPresenterImpl;
 import com.landscape.schoolexandroid.presenter.worktask.PreviewTaskPresenterImpl;
 import com.landscape.schoolexandroid.ui.activity.LoginActivity;
@@ -25,4 +28,7 @@ public interface AppComponent {
     void inject(MainPresenterImpl mainPresenter);
     void inject(PreviewTaskPresenterImpl previewTaskPresenter);
     void inject(AnswerPresenterImpl answerPresenter);
+    void inject(UserAccountPresenterImpl userAccountPresenter);
+    void inject(UserModifyPresenterImpl userModifyPresenter);
+    void inject(PasswdModifyPresenterImpl passwdModifyPresenter);
 }

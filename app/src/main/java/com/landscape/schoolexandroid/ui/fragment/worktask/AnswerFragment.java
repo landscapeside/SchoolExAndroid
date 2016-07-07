@@ -114,8 +114,8 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     }
 
     @Override
-    public void setAnswerCard(QuestionInfo info) {
-        answerCardView.loadAnswerCards(info);
+    public void setAnswerCard(QuestionInfo info,int SubjectTypeId) {
+        answerCardView.loadAnswerCards(info,SubjectTypeId);
     }
 
     @Override

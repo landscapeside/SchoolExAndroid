@@ -54,7 +54,7 @@ public class MainPresenterImpl implements MainPresenter {
      * bus
      */
     @Inject
-    Bus mBus;
+    protected Bus mBus;
 
     /**
      * ===============================
@@ -82,12 +82,12 @@ public class MainPresenterImpl implements MainPresenter {
         workTaskListView = new WorkTaskFragment();
         ((BaseApp)mainActivity.getApplication()).getAppComponent().inject(this);
         this.mainActivity = mainActivity;
+        mBus.register(this);
         FragmentsUtils.addFragmentToActivity(mainActivity.getSupportFragmentManager(), (Fragment) menuView, R.id.drag_menu);
         FragmentsUtils.addFragmentToActivity(mainActivity.getSupportFragmentManager(), (Fragment) dragContent, R.id.drag_content);
         setDragLayout(dragContent);
         this.initViews();
         refreshData(mainActivity.getIntent());
-        mBus.register(this);
     }
 
     public void initViews() {
@@ -121,6 +121,7 @@ public class MainPresenterImpl implements MainPresenter {
                 }
                 menuView.listData(menuItemBeanList);
                 menuView.loadUserAccount(userAccountDataSource.getUserAccount());
+                menuView.setUserAccountListener(() -> toUserCenter());
             }
 
             @Override
@@ -221,6 +222,11 @@ public class MainPresenterImpl implements MainPresenter {
 
     }
 
+    public void toUserCenter() {
+        mainActivity.startActivity(new Intent(mainActivity,PagerActivity.class)
+                .putExtra(Constant.PAGER_TYPE, PagerType.USER_CENTER.getType()));
+    }
+
     @Subscribe
     public void onRefreshEvent(RefreshListEvent refreshListEvent) {
         refreshList();
@@ -228,7 +234,6 @@ public class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void refreshList() {
-        Logger.i("menuview current idx ---->" +menuView.getCurrentIdx());
         switch (menuView.getCurrentIdx()) {
             case 0:
                 // 作业本

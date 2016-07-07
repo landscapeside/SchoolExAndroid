@@ -37,6 +37,7 @@ public abstract class PromptDialog extends Dialog {
 
     @OnClick(R.id.sure)
     public void onOkClick(View view){
+        dismiss();
         onOk();
     }
 

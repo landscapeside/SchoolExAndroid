@@ -6,17 +6,18 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.landscape.event.RefreshListEvent;
 import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.enums.PagerType;
-import com.landscape.schoolexandroid.ui.activity.MainActivity;
 import com.landscape.schoolexandroid.ui.activity.MainSlideMenuActivity;
 import com.landscape.schoolexandroid.ui.activity.PagerActivity;
 import com.landscape.schoolexandroid.ui.fragment.home.DragContentFragment;
 import com.landscape.schoolexandroid.ui.fragment.home.MenuFragment;
 import com.landscape.schoolexandroid.ui.fragment.home.WorkTaskFragment;
-import com.landscape.schoolexandroid.views.BaseView;
+import com.orhanobut.logger.Logger;
+import com.squareup.otto.Subscribe;
 import com.utils.behavior.FragmentsUtils;
 
 /**
@@ -79,5 +80,16 @@ public class MainSlideMenuPresenterImpl extends MainPresenterImpl {
         mainSlideMenuActivity.startActivity(new Intent(mainSlideMenuActivity, PagerActivity.class)
                 .putExtra(Constant.PAGER_TYPE, PagerType.PREVIEW_TASK.getType())
                 .putExtra(Constant.TASK_INFO,taskInfos.get(position)));
+    }
+
+    @Subscribe
+    public void onRefreshEvent(RefreshListEvent refreshListEvent) {
+        super.onRefreshEvent(refreshListEvent);
+    }
+
+    @Override
+    public void toUserCenter() {
+        mainSlideMenuActivity.startActivity(new Intent(mainSlideMenuActivity,PagerActivity.class)
+                .putExtra(Constant.PAGER_TYPE, PagerType.USER_CENTER.getType()));
     }
 }
