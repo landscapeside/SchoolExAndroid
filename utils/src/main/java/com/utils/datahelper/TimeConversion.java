@@ -94,11 +94,11 @@ public class TimeConversion {
     }
 
     public static int getDurationByStart(String durationStart, int duration) {
+        Date date = new Date();
         if (TextUtils.isEmpty(durationStart)) {
             return duration;
         }
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        Date date = new Date();
         try {
             date = formatter.parse(durationStart);
             long current = System.currentTimeMillis();

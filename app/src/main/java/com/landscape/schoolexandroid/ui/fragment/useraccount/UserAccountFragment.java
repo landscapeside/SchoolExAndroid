@@ -2,6 +2,7 @@ package com.landscape.schoolexandroid.ui.fragment.useraccount;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.landscape.schoolexandroid.common.BaseFragment;
 import com.landscape.schoolexandroid.enums.SexType;
 import com.landscape.schoolexandroid.mode.account.UserAccount;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
+import com.landscape.schoolexandroid.utils.PhotoHelper;
 import com.landscape.schoolexandroid.views.useraccount.UserAccountView;
 import com.landscape.weight.CircleImageView;
 import com.squareup.picasso.Picasso;
@@ -65,6 +67,7 @@ public class UserAccountFragment extends BaseFragment implements UserAccountView
     @OnClick(R.id.rl_avatar)
     void avatar(View view){
         if (btnClickListener != null) {
+            PhotoHelper.subcriberView = iconAvatar;
             btnClickListener.avatar();
         }
     }
@@ -81,7 +84,11 @@ public class UserAccountFragment extends BaseFragment implements UserAccountView
 
     @Override
     public void refreshUserInfo(UserAccount userAccount) {
-        Picasso.with(getActivity()).load(userAccount.getData().getPhoto()).into(iconAvatar);
+        if (!TextUtils.isEmpty(userAccount.getData().getPhoto())) {
+            Picasso.with(getActivity()).load(userAccount.getData().getPhoto()).into(iconAvatar);
+        } else {
+            iconAvatar.setImageResource(R.mipmap.ic_launcher);
+        }
         tvName.setText(userAccount.getData().getName());
         tvClass.setText(userAccount.getData().getGradeName()+userAccount.getData().getTeamName()+userAccount.getData().getClassGroupName());
         Drawable sexDrawable = getResources().getDrawable(

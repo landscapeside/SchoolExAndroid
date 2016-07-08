@@ -10,6 +10,7 @@ import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.api.RetrofitService;
 import com.landscape.schoolexandroid.common.BaseActivity;
 import com.landscape.schoolexandroid.presenter.home.MainPresenterImpl;
+import com.tu.crop.CropHelper;
 import com.utils.behavior.FragmentsUtils;
 
 import butterknife.Bind;
@@ -56,5 +57,6 @@ public class MainActivity extends BaseActivity {
         RetrofitService.cancel();
         ButterKnife.unbind(this);
         presenter.remove();
+        CropHelper.cleanAllCropCache(getApplicationContext());
     }
 }

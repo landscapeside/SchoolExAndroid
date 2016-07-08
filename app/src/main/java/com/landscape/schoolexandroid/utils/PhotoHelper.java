@@ -15,6 +15,10 @@ import android.widget.ImageView;
 
 import com.landscape.schoolexandroid.dialog.BottomListMenuDialog;
 import com.landscape.schoolexandroid.dialog.BottomPopWindow;
+import com.squareup.otto.Subscribe;
+import com.tu.crop.CropHandler;
+import com.tu.crop.CropHelper;
+import com.tu.crop.CropParams;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,16 +34,16 @@ import javax.inject.Singleton;
 /**
  * Created by jiangshun on 2015/10/20.
  */
-@Singleton
-public class PhotoHelper {
+public class PhotoHelper implements CropHandler {
+    private CropParams mCropParams = new CropParams();
+    private Context context;
+    private static PhotoHelper instance;
     public static String TAG_CAMERA = "camera";
     public static String TAG_ALBUM = "album";
     public static String TAG_CANCEL = "cancel";
 
     public static final int CALL_SELECT_PHOTO = 99;
 
-    public static final int SERVER_SELECT_PHOTO = 99;
-    public static final int SERVER_CAPTURE_PHOTO = 100;
     public static final int SERVER_CROP_PHOTO = 102;
     public static final int REQUST_DETAIL = 101;
 
@@ -52,11 +56,20 @@ public class PhotoHelper {
         add_pic_container.add(new BottomPopWindow.PopViewData("取消", TAG_CANCEL));
     }
 
+    private PhotoHelper() {}
+
+    public static PhotoHelper getInstance() {
+        if (instance == null) {
+            instance = new PhotoHelper();
+        }
+        return instance;
+    }
+
     /**
      * 弹出操作对话框
      * @param context
      */
-    public static void takePhoto(Context context) {
+    public void takePhoto(Context context) {
         takePhoto(context, 0, 0);
     }
 
@@ -67,37 +80,24 @@ public class PhotoHelper {
      * @param section 组索引
      * @param position 组内商品索引
      */
-    public static void takePhoto(Context context, int section, int position) {
+    public void takePhoto(Context context, int section, int position) {
+        mCropParams = new CropParams();
+        this.context = context;
         BottomListMenuDialog dialog = new BottomListMenuDialog(context, true, "拍照", "相册中选择", "取消");
         dialog.setOnItemClick(position1 -> {
             switch (position1) {
                 case 0:
-                    Intent intent2 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    intent2.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
-                    ((Activity) context).startActivityForResult(intent2, SERVER_CAPTURE_PHOTO);
+                    ((Activity)context).startActivityForResult(CropHelper.buildCaptureIntent(mCropParams.uri),
+                            CropHelper.REQUEST_CAMERA);
                     break;
                 case 1:
-                    Intent intent3 = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    ((Activity) context).startActivityForResult(intent3, SERVER_SELECT_PHOTO);
+                    ((Activity)context).startActivityForResult(CropHelper.buildGalleryIntent(), CropHelper.REQUEST_GALLERY);
                     break;
                 case 2:
                     break;
             }
         });
         dialog.show();
-    }
-
-    public static void cropPhoto(Context context, Bitmap bitmap) {
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setType("image/*");
-        intent.putExtra("data", bitmap);
-        intent.putExtra("crop", "true");// crop=true 有这句才能出来最后的裁剪页面.
-        intent.putExtra("aspectX", 1);// 这两项为裁剪框的比例.
-        intent.putExtra("aspectY", 1);// x:y=1:1
-        intent.putExtra("outputX", 200);//图片输出大小
-        intent.putExtra("outputY", 200);
-        intent.putExtra("return-data", true);
-        ((Activity) context).startActivityForResult(intent, SERVER_CROP_PHOTO);
     }
 
     /**
@@ -137,27 +137,7 @@ public class PhotoHelper {
         return resizeBmp;
     }
 
-    public static Bitmap compressFile(File tempFile,File file) {
-        try {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 2;
-            Bitmap bitmap = BitmapFactory.decodeFile(tempFile.getPath(),
-                    options);
-            // 压缩图片
-//                    bitmap = compressImage(bitmap,500);
-
-            if (bitmap != null) {
-                // 保存图片
-                saveFileByBitmap(bitmap,file);
-                return bitmap;
-            }
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-        return null;
-    }
-
-    public static void saveFileByBitmap(Bitmap bitmap,File tempFile) throws IOException {
+    public void saveFileByBitmap(Bitmap bitmap,File tempFile) throws IOException {
         if (bitmap != null) {
             // 保存图片
             FileOutputStream fos = null;
@@ -186,10 +166,52 @@ public class PhotoHelper {
      */
     public static ImageView subcriberView;
 
-    public static void loadImageIntoSubcriberView(Bitmap bitmap) {
+    public static void loadImageIntoSubcriberView(Uri uri) {
         if (subcriberView != null) {
-            subcriberView.setImageBitmap(bitmap);
+            subcriberView.setImageURI(uri);
+//            subcriberView.setImageBitmap(bitmap);
         }
     }
 
+    @Override
+    public void onPhotoCropped(Uri uri) {
+        if (photoCallbk != null) {
+            photoCallbk.onPhotoCropped(uri);
+        }
+    }
+
+    @Override
+    public void onCropCancel() {
+
+    }
+
+    @Override
+    public void onCropFailed(String message) {
+
+    }
+
+    @Override
+    public CropParams getCropParams() {
+        return mCropParams;
+    }
+
+    @Override
+    public Context getContext() {
+        return context;
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        ((Activity)context).startActivityForResult(intent,requestCode);
+    }
+
+    private PhotoCallbk photoCallbk = null;
+
+    public void setPhotoCallbk(PhotoCallbk callbk) {
+        photoCallbk = callbk;
+    }
+
+    public interface PhotoCallbk{
+        void onPhotoCropped(Uri uri);
+    }
 }

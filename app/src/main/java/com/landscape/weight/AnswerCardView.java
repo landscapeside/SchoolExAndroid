@@ -587,8 +587,9 @@ public class AnswerCardView extends RelativeLayout {
 
         @OnClick(R.id.icon_camera)
         public void camera(View view) {
+            PhotoHelper photoHelper = PhotoHelper.getInstance();
             PhotoHelper.subcriberView = imgPic;
-            PhotoHelper.takePhoto(mContext);
+            photoHelper.takePhoto(mContext);
         }
 
         @OnClick(R.id.img_pic)

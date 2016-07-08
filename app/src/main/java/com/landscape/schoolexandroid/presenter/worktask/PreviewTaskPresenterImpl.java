@@ -13,6 +13,7 @@ import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.worktask.TaskOptionDataSource;
 import com.landscape.schoolexandroid.db.TaskDb;
+import com.landscape.schoolexandroid.enums.AnswerMode;
 import com.landscape.schoolexandroid.enums.PagerType;
 import com.landscape.schoolexandroid.enums.TaskStatus;
 import com.landscape.schoolexandroid.mode.BaseBean;
@@ -40,6 +41,8 @@ import javax.inject.Inject;
 public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
 
     IWorkTask mOptions;
+
+    AnswerMode answerMode;
 
     @Inject
     TaskOptionDataSource taskOptionDataSource;
@@ -71,6 +74,7 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
          * 如果设置了分钟数 就可以视为 答题模式
          * 答题模式 不允许退出  如果点击“返回”按钮就提示他是否交卷
          * 倒计时为：答题开始时间+分钟数-当前时间（StartTime+Duration-  DateTime.Now） 不要用Duration直接倒计时 以免系统意外终止 下次进入的时候倒计时不准确
+         * 如果StartTime为空则取当前时间
          *
          * 如果没有设置分钟数（Duration=null 或者Duration=0） 倒计时为：为普通模式
          * 为普通模式  允许退出  如果点击“返回”按钮就可以返回
@@ -79,10 +83,14 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
         taskInfo.setDuration(taskInfo.getDuration()*60);
         if (taskInfo.getDuration() == 0
                 && taskInfo.isIsTasks()) {
+            // 普通模式
+            answerMode = AnswerMode.TRAIN;
             taskInfo.setDuration(TimeConversion.getDurationByEnd(taskInfo.getCanEndDateTime()));
         } else {
+            // 答题模式
+            answerMode = AnswerMode.EXAM;
             taskInfo.setDuration(TimeConversion.getDurationByStart(
-                    taskInfo.getCanStartDateTime(),taskInfo.getDuration()));
+                    taskInfo.getStartTime(),taskInfo.getDuration()));
         }
         pagerActivity.setToolbarTitle(taskInfo.getName());
         previewTaskView = new PreviewTaskFragment();
@@ -184,12 +192,13 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
     public void paperResult(ExaminationPaperListInfo result) {
         if (result.isIsSuccess()) {
             Intent intent = new Intent(pagerActivity, PagerActivity.class).putExtra(Constant.PAGER_TYPE, PagerType.ANSWER.getType());
-            pagerActivity.startActivity(
-                    taskOptionDataSource.putWorkData(
-                            intent,
-                            result.getData().get(0).getQuestionGruop(),
-                            taskInfo,
-                            result.getData().get(0).getSubjectTypeId()));
+            intent = taskOptionDataSource.putWorkData(
+                    intent,
+                    result.getData().get(0).getQuestionGruop(),
+                    taskInfo,
+                    result.getData().get(0).getSubjectTypeId());
+            intent.putExtra(Constant.ANSWER_MODE, answerMode.getCode());
+            pagerActivity.startActivity(intent);
         } else {
             ToastUtil.show(pagerActivity,result.getMessage());
         }

@@ -25,6 +25,7 @@ import com.landscape.schoolexandroid.db.LabelTable;
 import com.landscape.schoolexandroid.db.TaskDb;
 import com.landscape.schoolexandroid.dialog.CheckDialog;
 import com.landscape.schoolexandroid.dialog.PromptDialog;
+import com.landscape.schoolexandroid.enums.AnswerMode;
 import com.landscape.schoolexandroid.enums.PagerType;
 import com.landscape.schoolexandroid.enums.TaskStatus;
 import com.landscape.schoolexandroid.mode.BaseBean;
@@ -42,6 +43,8 @@ import com.orhanobut.logger.Logger;
 import com.squareup.otto.Bus;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
+import com.tu.crop.BitmapUtil;
+import com.tu.crop.CropHelper;
 import com.utils.behavior.AppFileUtils;
 import com.utils.behavior.FragmentsUtils;
 import com.utils.behavior.ToastUtil;
@@ -61,7 +64,7 @@ import rx.functions.Action1;
 /**
  * Created by 1 on 2016/6/30.
  */
-public class AnswerPresenterImpl implements BasePresenter, IAnswer {
+public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.PhotoCallbk {
 
     private static final int REQUEST_LOCATION = 2;
 
@@ -73,6 +76,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
     Bitmap simpleBitmap = null;
 
     AnswerView answerView = null;
+    AnswerMode answerMode;
     /**
      * data bean
      */
@@ -80,6 +84,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
     List<QuestionInfo> questionInfos = new ArrayList<>();
     int currentQuestion = 0,subjectTypeId = 0;
     IAnswer mOptions;
+    PhotoHelper photoHelper;
 
     /**
      * Views
@@ -110,9 +115,12 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
         questionInfos = pagerActivity.getIntent().getParcelableArrayListExtra(Constant.QUESTION_INFO);
         taskInfo = pagerActivity.getIntent().getParcelableExtra(Constant.TASK_INFO);
         subjectTypeId = pagerActivity.getIntent().getIntExtra(Constant.SUBJECT_TYPE_ID, 0);
+        answerMode = AnswerMode.getAnswerMode(pagerActivity.getIntent().getIntExtra(Constant.ANSWER_MODE, -1));
         pagerActivity.setToolbarTitle(taskInfo.getName());
         mOptions = (IAnswer) pagerActivity.mProxy.createProxyInstance(this);
         picTempFile = new File(AppFileUtils.getPicsPath(), tmpPic);
+        photoHelper = PhotoHelper.getInstance();
+        photoHelper.setPhotoCallbk(this);
     }
 
     public void initViews() {
@@ -147,14 +155,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
                     @Override
                     public void next() {
                         if (currentQuestion + 1 >= questionInfos.size()) {
-                            checkSubmit();
-                            promptDialog = new PromptDialog(pagerActivity, String.format(promptStrFormat, AnswerUtils.getUndoQuestionNum(questionInfos))) {
-                                @Override
-                                public void onOk() {
-                                    mOptions.finish();
-                                }
-                            };
-                            promptDialog.show();
+                            submitClick();
                         } else {
                             checkSubmit();
                             answerView.previewTask(
@@ -171,14 +172,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
                 answerView.setBtnClickListener(new AnswerView.BtnClickListener() {
                     @Override
                     public void finish() {
-                        checkSubmit();
-                        promptDialog = new PromptDialog(pagerActivity, String.format(promptStrFormat, AnswerUtils.getUndoQuestionNum(questionInfos))) {
-                            @Override
-                            public void onOk() {
-                                mOptions.finish();
-                            }
-                        };
-                        promptDialog.show();
+                        submitClick();
                     }
 
                     @Override
@@ -232,44 +226,18 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
                                             taskInfo.getExaminationPapersId(),
                                             userAccountDataSource.getUserAccount().getData().getStudentId()));
                     break;
-                case PhotoHelper.SERVER_CAPTURE_PHOTO:
-                    PhotoHelper.cropPhoto(pagerActivity, data.getParcelableExtra("data"));
-                    break;
-                case PhotoHelper.SERVER_SELECT_PHOTO:
-                    Uri selectedImage = data.getData();
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                    ContentResolver contentResolver = pagerActivity.getContentResolver();
-//                    Cursor cursor = contentResolver.query(selectedImage,
-//                            filePathColumn, null, null, null);
-//                    cursor.moveToFirst();
-//                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-//                    String picturePath = cursor.getString(columnIndex);
-//                    cursor.close();
-                    try {
-                        PhotoHelper.cropPhoto(pagerActivity, BitmapFactory.decodeStream(contentResolver.openInputStream(selectedImage)));
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case PhotoHelper.SERVER_CROP_PHOTO:
-                    simpleBitmap = PhotoHelper.convertToBlackWhite(data.getParcelableExtra("data"));
-                    try {
-                        PhotoHelper.saveFileByBitmap(simpleBitmap, picTempFile);
-                        picFile = new File(AppFileUtils.getPicsPath(), System.currentTimeMillis() + ".jpg");
-                        simpleBitmap = PhotoHelper.compressFile(picTempFile, picFile);
-                        mOptions.uploadFile();
-                    } catch (IOException e) {
-                        Logger.e(e.getMessage());
-                    }
-                    break;
             }
         }
     }
 
     @Override
     public void back() {
-        TaskDb.update(db,taskInfo.getStudentQuestionsTasksID(),answerView.getDuration());
-        pagerActivity.finish();
+        if (answerMode == AnswerMode.TRAIN) {
+            TaskDb.update(db, taskInfo.getStudentQuestionsTasksID(), answerView.getDuration());
+            pagerActivity.finish();
+        } else {
+            submitClick();
+        }
     }
 
     @Override
@@ -334,7 +302,8 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
         if (result.isIsSuccess()) {
             PhotoHelper.subcriberView.setTag(R.id.image_file_path, picFile.getAbsolutePath());
             PhotoHelper.subcriberView.setTag(R.id.image_url, result.getData());
-            PhotoHelper.loadImageIntoSubcriberView(simpleBitmap);
+            Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(pagerActivity.getContentResolver(), simpleBitmap, null,null));
+            PhotoHelper.loadImageIntoSubcriberView(uri);
         } else {
             ToastUtil.show(pagerActivity, result.getMessage());
         }
@@ -343,6 +312,17 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
     @Override
     public void netErr() {
 
+    }
+
+    private void submitClick() {
+        checkSubmit();
+        promptDialog = new PromptDialog(pagerActivity, String.format(promptStrFormat, AnswerUtils.getUndoQuestionNum(questionInfos))) {
+            @Override
+            public void onOk() {
+                mOptions.finish();
+            }
+        };
+        promptDialog.show();
     }
 
     private void checkSubmit() {
@@ -362,6 +342,17 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer {
 
                         }
                     });
+        }
+    }
+
+    @Override
+    public void onPhotoCropped(Uri uri) {
+        simpleBitmap = PhotoHelper.convertToBlackWhite(CropHelper.decodeUriAsBitmap(pagerActivity,uri));
+        try {
+            picFile = new File(BitmapUtil.saveFile(pagerActivity, simpleBitmap));
+            mOptions.uploadFile();
+        } catch (IOException e) {
+            Logger.e(e.getMessage());
         }
     }
 }

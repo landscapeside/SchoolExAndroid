@@ -13,6 +13,8 @@ import com.landscape.schoolexandroid.common.BaseActivity;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.enums.PagerType;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
+import com.landscape.schoolexandroid.utils.PhotoHelper;
+import com.tu.crop.CropHelper;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -114,6 +116,13 @@ public class PagerActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case CropHelper.REQUEST_CAMERA:
+            case CropHelper.REQUEST_GALLERY:
+            case CropHelper.REQUEST_CROP:
+                CropHelper.handleResult(PhotoHelper.getInstance(), requestCode, resultCode, data);
+                return;
+        }
         if (resultCode == RESULT_OK) {
             if (presenter == null) {
                 initPresenter();

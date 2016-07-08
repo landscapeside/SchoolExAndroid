@@ -7,6 +7,7 @@ import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
+import com.landscape.schoolexandroid.dialog.LogoutDialog;
 import com.landscape.schoolexandroid.enums.PagerType;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
 import com.landscape.schoolexandroid.ui.activity.LoginActivity;
@@ -28,6 +29,7 @@ public class UserModifyPresenterImpl implements BasePresenter {
     UserAccountDataSource userAccountDataSource;
 
     UserModifyView userModifyView;
+    LogoutDialog logoutDialog;
 
     /**
      * parent
@@ -52,9 +54,15 @@ public class UserModifyPresenterImpl implements BasePresenter {
                 userModifyView.setBtnClickListener(new UserModifyView.BtnClickListener() {
                     @Override
                     public void quit() {
-                        userAccountDataSource.clearData();
-                        pagerActivity.startActivity(new Intent(pagerActivity, LoginActivity.class));
-                        ActivityStack.finishAllActivity();
+                        logoutDialog = new LogoutDialog(pagerActivity,"确定退出吗？") {
+                            @Override
+                            public void onOk() {
+                                userAccountDataSource.clearData();
+                                pagerActivity.startActivity(new Intent(pagerActivity, LoginActivity.class));
+                                ActivityStack.finishAllActivity();
+                            }
+                        };
+                        logoutDialog.show();
                     }
 
                     @Override
