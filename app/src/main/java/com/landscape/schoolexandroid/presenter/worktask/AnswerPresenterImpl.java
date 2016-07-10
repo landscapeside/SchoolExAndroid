@@ -23,6 +23,7 @@ import com.landscape.schoolexandroid.datasource.worktask.TaskOptionDataSource;
 import com.landscape.schoolexandroid.db.DbHelper;
 import com.landscape.schoolexandroid.db.LabelTable;
 import com.landscape.schoolexandroid.db.TaskDb;
+import com.landscape.schoolexandroid.dialog.AlertDialog;
 import com.landscape.schoolexandroid.dialog.CheckDialog;
 import com.landscape.schoolexandroid.dialog.PromptDialog;
 import com.landscape.schoolexandroid.enums.AnswerMode;
@@ -91,6 +92,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
      */
     PromptDialog promptDialog;
     CheckDialog checkDialog;
+    AlertDialog alertDialog;
 
     /**
      * parent
@@ -187,6 +189,14 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
                 answerView.setLocation(currentQuestion + 1, questionInfos.size());
                 if (taskInfo.getDuration() > 0) {
                     answerView.startTimeTick(taskInfo.getDuration());
+                } else {
+                    alertDialog = new AlertDialog(pagerActivity,"答题时间已过，你已不能继续答题") {
+                        @Override
+                        public void onOk() {
+                            pagerActivity.finish();
+                        }
+                    };
+                    alertDialog.show();
                 }
                 answerView.setTimeEnable(taskInfo.getDuration() > 0);
                 answerView.setTimeCounterCallbk(() -> {
@@ -225,6 +235,9 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
                                             questionInfos.get(currentQuestion).getId(),
                                             taskInfo.getExaminationPapersId(),
                                             userAccountDataSource.getUserAccount().getData().getStudentId()));
+                    break;
+                case PhotoHelper.REQUST_DETAIL:
+                    PhotoHelper.subcriberView.setTag(R.id.image_file_path, data.getStringExtra(Constant.PIC_PATH));
                     break;
             }
         }

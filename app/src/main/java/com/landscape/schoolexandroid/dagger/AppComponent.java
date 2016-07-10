@@ -8,6 +8,7 @@ import com.landscape.schoolexandroid.presenter.useraccount.UserAccountPresenterI
 import com.landscape.schoolexandroid.presenter.useraccount.UserModifyPresenterImpl;
 import com.landscape.schoolexandroid.presenter.worktask.AnswerPresenterImpl;
 import com.landscape.schoolexandroid.presenter.worktask.PreviewTaskPresenterImpl;
+import com.landscape.schoolexandroid.presenter.worktask.ShowPicPresenterImpl;
 import com.landscape.schoolexandroid.ui.activity.LoginActivity;
 import com.landscape.schoolexandroid.ui.activity.SplashActivity;
 
@@ -33,4 +34,5 @@ public interface AppComponent {
     void inject(UserModifyPresenterImpl userModifyPresenter);
     void inject(PasswdModifyPresenterImpl passwdModifyPresenter);
     void inject(ChartPresenterImpl chartPresenter);
+    void inject(ShowPicPresenterImpl showPicPresenter);
 }

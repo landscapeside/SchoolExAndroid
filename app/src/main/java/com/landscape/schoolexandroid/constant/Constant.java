@@ -1,5 +1,7 @@
 package com.landscape.schoolexandroid.constant;
 
+import java.security.Key;
+
 /**
  * Created by 1 on 2016/6/21.
  */
@@ -15,6 +17,8 @@ public class Constant {
     public static final String QUESTION_INFO = "QUESTION_INFO";
     public static final String ANSWER_MODE = "ANSWER_MODE";
     public static final String CHART_TYPE = "CHART_TYPE";
+    public static final String PIC_PATH = "PIC_PATH";
+    public static final String PIC_IS_HTTP = "PIC_IS_HTTP";
 
     public static final String INTENT_REQUEST = "INTENT_REQUEST";
     public static final String INTENT_RESULT = "INTENT_RESULT";

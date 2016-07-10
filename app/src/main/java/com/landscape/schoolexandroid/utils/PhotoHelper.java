@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 
 import com.landscape.schoolexandroid.dialog.BottomListMenuDialog;
 import com.landscape.schoolexandroid.dialog.BottomPopWindow;
+import com.landscape.schoolexandroid.ui.activity.PagerActivity;
 import com.squareup.otto.Subscribe;
 import com.tu.crop.CropHandler;
 import com.tu.crop.CropHelper;
@@ -161,6 +163,10 @@ public class PhotoHelper implements CropHandler {
         context.startActivity(intent);
     }
 
+    public static void showPic(Context context, Intent intent) {
+        ((Activity)context).startActivityForResult(intent,REQUST_DETAIL);
+    }
+
     /**
      * 缓存事件响应者
      */
@@ -172,6 +178,11 @@ public class PhotoHelper implements CropHandler {
 //            subcriberView.setImageBitmap(bitmap);
         }
     }
+
+    /**
+     * 缓存缩略图
+     * */
+    public static Drawable thumbDrawable;
 
     @Override
     public void onPhotoCropped(Uri uri) {

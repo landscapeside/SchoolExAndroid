@@ -24,6 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitService {
 
     private static List<Call> calls = new ArrayList<>();
+    private static okhttp3.Call okCall = null;
 
     private static OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .addInterceptor(new HeaderInterceptor())
@@ -46,6 +47,10 @@ public class RetrofitService {
         //construct
     }
 
+    public static OkHttpClient getOkHttpClient() {
+        return okHttpClient;
+    }
+
     public static <T> T createApi(Class<T> clazz) {
         return retrofit.create(clazz);
     }
@@ -54,17 +59,32 @@ public class RetrofitService {
         calls.add(call);
     }
 
+    public static void addCall(okhttp3.Call call) {
+        okCall = call;
+    }
+
     public static void cancel() {
         for (Call call : calls) {
             call.cancel();
         }
         calls.clear();
+        if (okCall != null) {
+            okCall.cancel();
+            okCall = null;
+        }
     }
 
     public static void cancel(Call call) {
         if (calls.contains(call)) {
             call.cancel();
             calls.remove(call);
+        }
+    }
+
+    public static void cancel(okhttp3.Call call) {
+        if (okCall != null) {
+            okCall.cancel();
+            okCall = null;
         }
     }
 

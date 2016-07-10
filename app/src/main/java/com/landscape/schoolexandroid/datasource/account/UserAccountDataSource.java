@@ -96,4 +96,15 @@ public class UserAccountDataSource implements BaseDataSource {
         return call;
     }
 
+    public Call<BaseBean> updateStudent(String Photo,BaseCallBack<BaseBean> callBack) {
+        UserAccount userAccount = getUserAccount();
+        Call<BaseBean> call = null;
+        call = RetrofitService.createApi(UserApi.class)
+                .updateStudent(userAccount.getData().getStudentId(),Photo);
+        RetrofitService.addCall(call);
+        callBack.setCall(call);
+        call.enqueue(callBack);
+        return call;
+    }
+
 }

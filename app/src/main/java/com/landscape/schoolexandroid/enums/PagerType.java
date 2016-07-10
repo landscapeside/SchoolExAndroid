@@ -7,6 +7,7 @@ import com.landscape.schoolexandroid.presenter.useraccount.UserModifyPresenterIm
 import com.landscape.schoolexandroid.presenter.worktask.AnswerPresenterImpl;
 import com.landscape.schoolexandroid.presenter.worktask.PreviewTaskPresenterImpl;
 import com.landscape.schoolexandroid.presenter.worktask.QuestionLocationPresenterImpl;
+import com.landscape.schoolexandroid.presenter.worktask.ShowPicPresenterImpl;
 
 /**
  * Created by 1 on 2016/6/27.
@@ -26,6 +27,8 @@ public enum PagerType {
     PWD_MODIFY(6, PasswdModifyPresenterImpl.class),
 
     CHART(7, ChartPresenterImpl.class),
+
+    SHOW_PIC(8, ShowPicPresenterImpl.class),
 
     NONE(-1,Object.class);
 
@@ -62,6 +65,8 @@ public enum PagerType {
                 return PWD_MODIFY;
             case 7:
                 return CHART;
+            case 8:
+                return SHOW_PIC;
             default:
                 return NONE;
         }

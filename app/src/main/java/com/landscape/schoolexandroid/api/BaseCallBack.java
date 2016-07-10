@@ -17,18 +17,14 @@ import retrofit2.Response;
 /**
  * Created by landscape on 2016/6/21.
  */
-public abstract class BaseCallBack<T> implements Callback<T> {
-
-    protected Context mContext=null;
-    protected Call mCall;
+public abstract class BaseCallBack<T> extends CallContext implements Callback<T> {
 
     public BaseCallBack(Context context) {
-        mContext = context;
+        super(context);
     }
 
-    public BaseCallBack(Context context,Call call) {
-        mContext = context;
-        setCall(call);
+    public BaseCallBack(Context context, Call call) {
+        super(context, call);
     }
 
     @Override
@@ -67,19 +63,9 @@ public abstract class BaseCallBack<T> implements Callback<T> {
         destroy();
     }
 
+    @Override
     public BaseCallBack setContext(Context context) {
-        mContext = context;
-        return this;
-    }
-
-    public void setCall(Call call) {
-        mCall = call;
-    }
-
-    private void destroy() {
-        mContext = null;
-        RetrofitService.cancel(mCall);
-        mCall = null;
+        return (BaseCallBack) super.setContext(context);
     }
 
     public abstract void response(T response);

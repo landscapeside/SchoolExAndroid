@@ -20,4 +20,7 @@ public interface UserApi {
 
     @POST("api/Account/EditPwd")
     Call<BaseBean> modifyPwd(@Query("UserId") int UserId, @Query("Pwd") String Pwd, @Query("NewPwd") String NewPwd);
+
+    @POST("api/Account/UpdataStudent")
+    Call<BaseBean> updateStudent(@Query("id") int UserId,@Query("Photo") String Photo);
 }

@@ -74,7 +74,7 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
          * 如果设置了分钟数 就可以视为 答题模式
          * 答题模式 不允许退出  如果点击“返回”按钮就提示他是否交卷
          * 倒计时为：答题开始时间+分钟数-当前时间（StartTime+Duration-  DateTime.Now） 不要用Duration直接倒计时 以免系统意外终止 下次进入的时候倒计时不准确
-         * 如果StartTime为空则取当前时间
+         * 如果StartTime为空则取当前时间,如果结果为负数，则强制交卷
          *
          * 如果没有设置分钟数（Duration=null 或者Duration=0） 倒计时为：为普通模式
          * 为普通模式  允许退出  如果点击“返回”按钮就可以返回

@@ -1,6 +1,7 @@
 package com.landscape.weight;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -22,9 +23,12 @@ import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.landscape.schoolexandroid.R;
+import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.enums.CardType;
+import com.landscape.schoolexandroid.enums.PagerType;
 import com.landscape.schoolexandroid.mode.worktask.AnswerType;
 import com.landscape.schoolexandroid.mode.worktask.QuestionInfo;
+import com.landscape.schoolexandroid.ui.activity.PagerActivity;
 import com.landscape.schoolexandroid.utils.PhotoHelper;
 import com.squareup.picasso.Picasso;
 import com.utils.datahelper.CollectionUtils;
@@ -503,7 +507,7 @@ public class AnswerCardView extends RelativeLayout {
 
                 @Override
                 public void tagChanged(int key, Object tag) {
-                    if (key == R.id.image_url) {
+                    if (key == R.id.image_url && !initFlag) {
                         StudentAnswer studentAnswer = answerMap.get(type.getId());
                         if (studentAnswer == null) {
                             studentAnswer = new StudentAnswer();
@@ -549,7 +553,6 @@ public class AnswerCardView extends RelativeLayout {
                     }
                     answerMap.put(type.getId(), studentAnswer);
                 } else {
-                    initFlag = false;
                     /**
                      * 设置默认值
                      */
@@ -562,6 +565,7 @@ public class AnswerCardView extends RelativeLayout {
                             String imgAnswer = studentAnswer.Answer.substring(studentAnswer.Answer.indexOf("<img src=\""));
                             imgAnswer = imgAnswer.replace("<img src=\"", "").replace("\"/>", "");
                             Picasso.with(mContext).load(imgAnswer).into(imgPic);
+                            imgPic.setTag(R.id.image_url,imgAnswer);
                         }
 
                         if (studentAnswer.Answer.contains("<img")) {
@@ -572,9 +576,8 @@ public class AnswerCardView extends RelativeLayout {
                                 editContent.setText(studentAnswer.Answer);
                             }
                         }
-
-
                     }
+                    initFlag = false;
                 }
                 editContent.addTextChangedListener(this);
             }
@@ -596,16 +599,35 @@ public class AnswerCardView extends RelativeLayout {
         public void showPic(View view) {
             // TODO: 2016/7/3 查看图片
             String filePath = (String) imgPic.getTag(R.id.image_file_path);
+            PhotoHelper.subcriberView = imgPic;
             if (TextUtils.isEmpty(filePath)) {
+                showHttpPic((String) imgPic.getTag(R.id.image_url));
                 return;
             }
             File file = new File(filePath);
             if (!file.exists()) {
+                showHttpPic((String) imgPic.getTag(R.id.image_url));
                 return;
             }
-            PhotoHelper.showPics(mContext, file);
+            PhotoHelper.thumbDrawable = imgPic.getDrawable();
+            Intent intent = new Intent(mContext, PagerActivity.class);
+            intent.putExtra(Constant.PIC_IS_HTTP, false);
+            intent.putExtra(Constant.PIC_PATH, file.getAbsolutePath());
+            intent.putExtra(Constant.PAGER_TYPE, PagerType.SHOW_PIC.getType());
+            PhotoHelper.showPic(mContext, intent);
         }
 
+        private void showHttpPic(String url) {
+            if (TextUtils.isEmpty(url)) {
+                return;
+            }
+            PhotoHelper.thumbDrawable = imgPic.getDrawable();
+            Intent intent = new Intent(mContext, PagerActivity.class);
+            intent.putExtra(Constant.PIC_IS_HTTP, true);
+            intent.putExtra(Constant.PIC_PATH, url);
+            intent.putExtra(Constant.PAGER_TYPE, PagerType.SHOW_PIC.getType());
+            PhotoHelper.showPic(mContext, intent);
+        }
     }
 
 }

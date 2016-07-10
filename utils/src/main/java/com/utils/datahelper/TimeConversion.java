@@ -98,7 +98,7 @@ public class TimeConversion {
         if (TextUtils.isEmpty(durationStart)) {
             return duration;
         }
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
         try {
             date = formatter.parse(durationStart);
             long current = System.currentTimeMillis();
@@ -108,9 +108,9 @@ public class TimeConversion {
                 return (int) seconds;
             }
         } catch (Exception e) {
-
+            return duration;
         }
-        return 0;
+        return -1;
     }
 
     public static int getDurationByEnd(String durationStr) {
