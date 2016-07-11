@@ -22,5 +22,10 @@ public interface UserApi {
     Call<BaseBean> modifyPwd(@Query("UserId") int UserId, @Query("Pwd") String Pwd, @Query("NewPwd") String NewPwd);
 
     @POST("api/Account/UpdataStudent")
-    Call<BaseBean> updateStudent(@Query("id") int UserId,@Query("Photo") String Photo);
+    Call<BaseBean> updateStudent(@Query("Id") int UserId,@Query("Photo") String Photo);
+
+    @POST("api/Feedback/SubmitFeedback")
+    Call<BaseBean> submitFeedBk(@Query("WriteUserId") int WriteUserId, @Query("WriteUserName") String WriteUserName,
+                                @Query("Title") String Title, @Query("Countent") String Countent,
+                                @Query("Classify") String Classify, @Query("Serial") String Serial);
 }

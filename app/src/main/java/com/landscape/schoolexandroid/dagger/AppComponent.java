@@ -3,6 +3,7 @@ package com.landscape.schoolexandroid.dagger;
 import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.presenter.home.MainPresenterImpl;
 import com.landscape.schoolexandroid.presenter.useraccount.ChartPresenterImpl;
+import com.landscape.schoolexandroid.presenter.useraccount.FeedBkPresenterImpl;
 import com.landscape.schoolexandroid.presenter.useraccount.PasswdModifyPresenterImpl;
 import com.landscape.schoolexandroid.presenter.useraccount.UserAccountPresenterImpl;
 import com.landscape.schoolexandroid.presenter.useraccount.UserModifyPresenterImpl;
@@ -35,4 +36,5 @@ public interface AppComponent {
     void inject(PasswdModifyPresenterImpl passwdModifyPresenter);
     void inject(ChartPresenterImpl chartPresenter);
     void inject(ShowPicPresenterImpl showPicPresenter);
+    void inject(FeedBkPresenterImpl feedBkPresenter);
 }

@@ -29,7 +29,6 @@
             android:id="@+id/action_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
             android:layout_gravity="right|center_vertical"
             android:orientation="horizontal">
             <TextView
@@ -39,14 +38,21 @@
                 android:textColor="@color/toolbar_right_text_color"
                 android:textSize="13sp"
                 android:padding="5dp"
+                android:layout_marginRight="15dp"
                 android:visibility="gone" />
-            <ImageView
+
+            <RelativeLayout
                 android:id="@+id/toolbar_right_second"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginLeft="10dp"
-                android:visibility="gone"
-                android:src="@drawable/icon_feedback"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/icon_feedback"/>
+            </RelativeLayout>
         </LinearLayout>
 
 

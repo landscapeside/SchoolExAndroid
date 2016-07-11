@@ -7,15 +7,19 @@ import android.view.View;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.landscape.event.RefreshListEvent;
+import com.landscape.event.RefreshUserEvent;
 import com.landscape.schoolexandroid.R;
+import com.landscape.schoolexandroid.api.BaseCallBack;
 import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.enums.PagerType;
+import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskListInfo;
 import com.landscape.schoolexandroid.ui.activity.MainSlideMenuActivity;
 import com.landscape.schoolexandroid.ui.activity.PagerActivity;
 import com.landscape.schoolexandroid.ui.fragment.home.DragContentFragment;
 import com.landscape.schoolexandroid.ui.fragment.home.MenuFragment;
 import com.landscape.schoolexandroid.ui.fragment.home.WorkTaskFragment;
+import com.landscape.schoolexandroid.ui.fragment.worktask.PreviewTaskFragment;
 import com.orhanobut.logger.Logger;
 import com.squareup.otto.Subscribe;
 import com.utils.behavior.FragmentsUtils;
@@ -35,6 +39,7 @@ public class MainSlideMenuPresenterImpl extends MainPresenterImpl {
         dragContent = new DragContentFragment();
         menuView = new MenuFragment();
         workTaskListView = new WorkTaskFragment();
+        collectView = new PreviewTaskFragment();
         ((BaseApp)mainSlideMenuActivity.getApplication()).getAppComponent().inject(this);
         FragmentsUtils.addFragmentToActivity(mainSlideMenuActivity.getSupportFragmentManager(), (Fragment) dragContent, R.id.main_slide_content);
         initSlideMenu();
@@ -87,9 +92,32 @@ public class MainSlideMenuPresenterImpl extends MainPresenterImpl {
         super.onRefreshEvent(refreshListEvent);
     }
 
+    @Subscribe
+    public void onRefreshAvatar(RefreshUserEvent refreshAvatarEvent) {
+        super.onRefreshAvatar(refreshAvatarEvent);
+    }
+
     @Override
     public void toUserCenter() {
         mainSlideMenuActivity.startActivity(new Intent(mainSlideMenuActivity,PagerActivity.class)
                 .putExtra(Constant.PAGER_TYPE, PagerType.USER_CENTER.getType()));
+    }
+
+    @Override
+    protected void refreshWorkTask() {
+        BaseCallBack<ExaminationTaskListInfo> callBack = new BaseCallBack<ExaminationTaskListInfo>(mainSlideMenuActivity) {
+            @Override
+            public void response(ExaminationTaskListInfo response) {
+                workTaskResult(response);
+            }
+
+            @Override
+            public void err() {
+                workTaskListView.cancelRefresh();
+            }
+        };
+        workTaskListView.setRefreshListener(() -> workTaskDataSource.request(callBack.setContext(mainSlideMenuActivity)));
+        workTaskListView.startRefresh();
+        workTaskDataSource.request(callBack);
     }
 }

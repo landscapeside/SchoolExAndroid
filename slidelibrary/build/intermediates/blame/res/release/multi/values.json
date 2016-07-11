@@ -22,29 +22,5 @@
                 }
             }
         ]
-    },
-    {
-        "outputFile": "E:\\project\\schoolExAdnrd\\slidelibrary\\build\\intermediates\\res\\merged\\release\\values\\values.xml",
-        "map": [
-            {
-                "to": {
-                    "startLine": 3,
-                    "startColumn": 4,
-                    "startOffset": 903,
-                    "endColumn": 42,
-                    "endOffset": 941
-                },
-                "from": {
-                    "file": "E:\\project\\schoolExAdnrd\\slidelibrary\\src\\main\\res\\values\\ids.xml",
-                    "position": {
-                        "startLine": 2,
-                        "startColumn": 4,
-                        "startOffset": 57,
-                        "endColumn": 42,
-                        "endOffset": 95
-                    }
-                }
-            }
-        ]
     }
 ]

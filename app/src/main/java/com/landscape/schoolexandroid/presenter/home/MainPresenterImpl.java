@@ -4,10 +4,11 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 
 import com.jsware.draglayout.DragCallBack;
+import com.landscape.event.RefreshUserEvent;
 import com.landscape.event.RefreshListEvent;
 import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.api.BaseCallBack;
-import com.landscape.schoolexandroid.api.RetrofitService;
+import com.landscape.schoolexandroid.common.AppConfig;
 import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
@@ -20,11 +21,12 @@ import com.landscape.schoolexandroid.ui.activity.PagerActivity;
 import com.landscape.schoolexandroid.ui.fragment.home.DragContentFragment;
 import com.landscape.schoolexandroid.ui.fragment.home.MenuFragment;
 import com.landscape.schoolexandroid.ui.fragment.home.WorkTaskFragment;
+import com.landscape.schoolexandroid.ui.fragment.worktask.PreviewTaskFragment;
 import com.landscape.schoolexandroid.views.BaseView;
 import com.landscape.schoolexandroid.views.home.DragContentView;
 import com.landscape.schoolexandroid.views.home.MenuView;
 import com.landscape.schoolexandroid.views.home.WorkTaskListView;
-import com.orhanobut.logger.Logger;
+import com.landscape.schoolexandroid.views.worktask.PreviewTaskView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.utils.behavior.FragmentsUtils;
@@ -40,6 +42,13 @@ import javax.inject.Inject;
  * Created by Administrator on 2016/4/26.
  */
 public class MainPresenterImpl implements MainPresenter {
+    /**
+     * ===============================
+     * const
+     * ===============================
+     */
+    protected static final String collectUrlFormat = "studentCollect/StudentCollectList?studentid=%s";
+
     /**
      * ===============================
      * module-layer
@@ -68,6 +77,7 @@ public class MainPresenterImpl implements MainPresenter {
      * 内容视图
      * */
     WorkTaskListView workTaskListView;
+    PreviewTaskView collectView;
 
     /**
      * 数据
@@ -80,6 +90,7 @@ public class MainPresenterImpl implements MainPresenter {
         dragContent = new DragContentFragment();
         menuView = new MenuFragment();
         workTaskListView = new WorkTaskFragment();
+        collectView = new PreviewTaskFragment();
         ((BaseApp)mainActivity.getApplication()).getAppComponent().inject(this);
         this.mainActivity = mainActivity;
         mBus.register(this);
@@ -153,10 +164,14 @@ public class MainPresenterImpl implements MainPresenter {
                 case 4:
                     // 收藏
                     dragContent.setTitle("收藏");
+                    dragContent.setContentFragment((Fragment) collectView);
                     break;
             }
         });
 
+        /**
+         * 作业本
+         */
         workTaskListView.setLifeListener(new BaseView.ViewLifeListener() {
             @Override
             public void onInitialized() {
@@ -170,6 +185,25 @@ public class MainPresenterImpl implements MainPresenter {
                     gotoPreviewTask(position);
                 });
                 refreshWorkTask();
+            }
+
+            @Override
+            public void onDestroy() {
+
+            }
+        });
+
+        /**
+         * 收藏
+         */
+        collectView.setLifeListener(new BaseView.ViewLifeListener() {
+            @Override
+            public void onInitialized() {
+                collectView.startEnable(false);
+                collectView.previewTask(
+                        AppConfig.BASE_WEB_URL +
+                        String.format(collectUrlFormat,
+                                userAccountDataSource.getUserAccount().getData().getStudentId()));
             }
 
             @Override
@@ -230,6 +264,11 @@ public class MainPresenterImpl implements MainPresenter {
     @Subscribe
     public void onRefreshEvent(RefreshListEvent refreshListEvent) {
         refreshList();
+    }
+
+    @Subscribe
+    public void onRefreshAvatar(RefreshUserEvent refreshAvatarEvent) {
+        menuView.loadUserAccount(userAccountDataSource.getUserAccount());
     }
 
     @Override

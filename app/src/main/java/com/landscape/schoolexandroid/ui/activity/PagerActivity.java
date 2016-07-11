@@ -32,7 +32,7 @@ public class PagerActivity extends BaseActivity {
     @Bind(R.id.toolbar_right)
     TextView toolbarRight;
     @Bind(R.id.toolbar_right_second)
-    ImageView toolbarRightImg;
+    View toolbarRightImg;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

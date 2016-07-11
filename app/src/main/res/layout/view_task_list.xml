@@ -13,8 +13,8 @@
             android:id="@+id/list_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="@color/text_color_gray"
-            android:dividerHeight="1dp" />
+            android:divider="@color/vertical_divider"
+            android:dividerHeight="0.5dp" />
 
     </com.baoyz.widget.PullRefreshLayout>
 </FrameLayout>

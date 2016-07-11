@@ -8,6 +8,7 @@ import com.baoyz.widget.PullRefreshLayout;
 import com.joanzapata.android.BaseAdapterHelper;
 import com.joanzapata.android.QuickAdapter;
 import com.landscape.schoolexandroid.R;
+import com.landscape.schoolexandroid.adapter.home.WorkTaskAdapter;
 import com.landscape.schoolexandroid.common.BaseFragment;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskInfo;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
@@ -24,7 +25,7 @@ import butterknife.Bind;
  */
 public class WorkTaskFragment extends BaseFragment implements WorkTaskListView<BasePresenter> {
     RefreshListener refreshListener;
-    QuickAdapter adapter;
+    WorkTaskAdapter adapter;
 
     @Bind(R.id.list_task)
     ListView listTask;
@@ -44,12 +45,14 @@ public class WorkTaskFragment extends BaseFragment implements WorkTaskListView<B
         } else {
             if (adapter == null) {
                 // TODO: 2016/6/22 更新数据
-                adapter = new QuickAdapter<ExaminationTaskInfo>(getActivity(),R.layout.item_worktask,listData) {
-                    @Override
-                    protected void convert(BaseAdapterHelper helper, ExaminationTaskInfo item) {
-                        helper.setText(R.id.tv_name, item.getName());
-                    }
-                };
+                adapter = new WorkTaskAdapter(getActivity(),listData);
+                listTask.setAdapter(adapter);
+//                adapter = new QuickAdapter<ExaminationTaskInfo>(getActivity(),R.layout.item_worktask,listData) {
+//                    @Override
+//                    protected void convert(BaseAdapterHelper helper, ExaminationTaskInfo item) {
+//                        helper.setText(R.id.tv_name, item.getName());
+//                    }
+//                };
                 listTask.setAdapter(adapter);
             } else {
                 adapter.replaceAll(listData);

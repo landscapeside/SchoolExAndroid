@@ -36,7 +36,7 @@ public class TimeConversion {
     }
 
     public static String getData(long timeMillis) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-HH:mm");
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timeMillis);
@@ -56,7 +56,7 @@ public class TimeConversion {
     }
 
     public static String getYearsMonthsData(long timeMillis) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timeMillis);
@@ -131,5 +131,42 @@ public class TimeConversion {
 
         }
         return 0;
+    }
+
+    public static long getDurationWithGMT(String dateStr) {
+        if (TextUtils.isEmpty(dateStr)) {
+            return System.currentTimeMillis();
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date date = new Date();
+        try{
+            date = formatter.parse(dateStr);
+            return date.getTime();
+        }catch (Exception e) {
+
+        }
+        return System.currentTimeMillis();
+    }
+
+    public static Date getDate(String strDate) {
+        Date date = null;
+        if (strDate!= null) {
+            Calendar startTime = Calendar.getInstance();
+            int year = startTime.get(Calendar.YEAR) - 20;
+            // 这里初始化时间，然后设置年份。只以年份为基准，不看时间
+            startTime.clear();
+            startTime.set(Calendar.YEAR, year);
+
+            SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-HH:mm");
+            formatter.setLenient(false);
+            formatter.set2DigitYearStart(startTime.getTime());
+
+            try {
+                date = formatter.parse(strDate);
+            }
+            catch (Exception e) {
+            }
+        }
+        return date;
     }
 }

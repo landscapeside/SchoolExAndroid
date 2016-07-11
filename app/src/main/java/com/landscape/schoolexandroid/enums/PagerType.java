@@ -1,6 +1,7 @@
 package com.landscape.schoolexandroid.enums;
 
 import com.landscape.schoolexandroid.presenter.useraccount.ChartPresenterImpl;
+import com.landscape.schoolexandroid.presenter.useraccount.FeedBkPresenterImpl;
 import com.landscape.schoolexandroid.presenter.useraccount.PasswdModifyPresenterImpl;
 import com.landscape.schoolexandroid.presenter.useraccount.UserAccountPresenterImpl;
 import com.landscape.schoolexandroid.presenter.useraccount.UserModifyPresenterImpl;
@@ -29,6 +30,8 @@ public enum PagerType {
     CHART(7, ChartPresenterImpl.class),
 
     SHOW_PIC(8, ShowPicPresenterImpl.class),
+
+    FEEDBK(9, FeedBkPresenterImpl.class),
 
     NONE(-1,Object.class);
 
@@ -67,6 +70,8 @@ public enum PagerType {
                 return CHART;
             case 8:
                 return SHOW_PIC;
+            case 9:
+                return FEEDBK;
             default:
                 return NONE;
         }

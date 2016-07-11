@@ -7,6 +7,8 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
+import com.landscape.event.FinishPagerEvent;
+import com.landscape.event.RefreshUserEvent;
 import com.landscape.netedge.account.IUser;
 import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.api.BaseCallBack;
@@ -24,6 +26,7 @@ import com.landscape.schoolexandroid.utils.PhotoHelper;
 import com.landscape.schoolexandroid.views.BaseView;
 import com.landscape.schoolexandroid.views.useraccount.UserAccountView;
 import com.orhanobut.logger.Logger;
+import com.squareup.otto.Bus;
 import com.tu.crop.BitmapUtil;
 import com.tu.crop.CropHelper;
 import com.utils.behavior.FragmentsUtils;
@@ -41,6 +44,8 @@ public class UserAccountPresenterImpl implements BasePresenter,PhotoHelper.Photo
 
     @Inject
     UserAccountDataSource userAccountDataSource;
+    @Inject
+    Bus mBus;
 
     UserAccountView userAccountView;
 
@@ -49,6 +54,7 @@ public class UserAccountPresenterImpl implements BasePresenter,PhotoHelper.Photo
     IUser mOptions;
     Bitmap simpleBitmap = null;
     File picFile = null;
+    String Photo;
 
     /**
      * parent
@@ -137,7 +143,8 @@ public class UserAccountPresenterImpl implements BasePresenter,PhotoHelper.Photo
     }
 
     private void FeedBk(View view) {
-
+        pagerActivity.startActivity(new Intent(pagerActivity,PagerActivity.class)
+                .putExtra(Constant.PAGER_TYPE, PagerType.FEEDBK.getType()));
     }
 
     @Override
@@ -184,6 +191,7 @@ public class UserAccountPresenterImpl implements BasePresenter,PhotoHelper.Photo
 
     @Override
     public void updateUser(String Photo) {
+        this.Photo = Photo;
         userAccountDataSource.updateStudent(Photo, new BaseCallBack<BaseBean>(pagerActivity) {
             @Override
             public void response(BaseBean response) {
@@ -200,7 +208,10 @@ public class UserAccountPresenterImpl implements BasePresenter,PhotoHelper.Photo
     @Override
     public void updateSuc(BaseBean result) {
         if (result.isIsSuccess()) {
-
+            UserAccount userAccount = userAccountDataSource.getUserAccount();
+            userAccount.getData().setPhoto(Photo);
+            userAccountDataSource.saveUserAccount(userAccount);
+            mBus.post(new RefreshUserEvent());
         } else {
             ToastUtil.show(pagerActivity,result.getMessage());
         }

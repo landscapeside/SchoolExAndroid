@@ -107,4 +107,17 @@ public class UserAccountDataSource implements BaseDataSource {
         return call;
     }
 
+    public Call<BaseBean> submitFeedBk(String Countent,String Classify,BaseCallBack<BaseBean> callBack) {
+        UserAccount userAccount = getUserAccount();
+        Call<BaseBean> call = null;
+        call = RetrofitService.createApi(UserApi.class)
+                .submitFeedBk(
+                        userAccount.getData().getStudentId(),
+                        userAccount.getData().getName(),"",Countent,Classify,"android");
+        RetrofitService.addCall(call);
+        callBack.setCall(call);
+        call.enqueue(callBack);
+        return call;
+    }
+
 }
