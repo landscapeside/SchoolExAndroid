@@ -10,16 +10,15 @@ import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.adapter.SectionedBaseAdapter;
 import com.landscape.schoolexandroid.enums.SubjectType;
 import com.landscape.schoolexandroid.enums.TaskStatus;
+import com.landscape.schoolexandroid.mode.mistake.MistakeInfo;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskInfo;
-import com.landscape.schoolexandroid.utils.WorkTaskHelper;
-import com.orhanobut.logger.Logger;
+import com.landscape.schoolexandroid.utils.MistakeHelper;
 import com.utils.datahelper.TimeConversion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,30 +26,30 @@ import butterknife.ButterKnife;
 /**
  * Created by 1 on 2016/7/11.
  */
-public class WorkTaskAdapter extends SectionedBaseAdapter {
+public class MistakeAdapter extends SectionedBaseAdapter {
 
     Context mContext;
 
     private final static int ITEM_TYPE_COUNT = 1;
 
-    private final static int TYPE_TASK = 0;
+    private final static int TYPE_MISTAKE = 0;
     private final static int TYPE_TITLE = 1;
 
-    Map<String, List<ExaminationTaskInfo>> data = new HashMap<>();
+    Map<String, List<MistakeInfo>> data = new HashMap<>();
     List<String> dates = new ArrayList<>();
 
-    public WorkTaskAdapter(Context context, List<ExaminationTaskInfo> data) {
+    public MistakeAdapter(Context context, List<MistakeInfo> data) {
         mContext = context;
-        this.data = WorkTaskHelper.sortTaskByDate(data);
-        dates = WorkTaskHelper.sortDate(this.data.keySet());
+        this.data = MistakeHelper.sortMistakeByDate(data);
+        dates = MistakeHelper.sortDate(this.data.keySet());
 
     }
 
-    public void replaceAll(List<ExaminationTaskInfo> data) {
+    public void replaceAll(List<MistakeInfo> data) {
         this.data.clear();
         dates.clear();
-        this.data = WorkTaskHelper.sortTaskByDate(data);
-        dates = WorkTaskHelper.sortDate(this.data.keySet());
+        this.data = MistakeHelper.sortMistakeByDate(data);
+        dates = MistakeHelper.sortDate(this.data.keySet());
         notifyDataSetChanged();
     }
 
@@ -83,7 +82,7 @@ public class WorkTaskAdapter extends SectionedBaseAdapter {
         TaskViewHolder viewHolder = null;
         if (convertView == null || ((Integer) convertView.getTag(R.id.list_item_type)) != type) {
             switch (type) {
-                case TYPE_TASK:
+                case TYPE_MISTAKE:
                     viewHolder = new TaskViewHolder();
                     convertView = viewHolder.mItemView;
                     break;
@@ -92,7 +91,7 @@ public class WorkTaskAdapter extends SectionedBaseAdapter {
             convertView.setTag(R.id.list_item_view, viewHolder);
         } else {
             switch (type) {
-                case TYPE_TASK:
+                case TYPE_MISTAKE:
                     viewHolder = (TaskViewHolder) convertView.getTag(R.id.list_item_view);
                     break;
             }
@@ -131,6 +130,8 @@ public class WorkTaskAdapter extends SectionedBaseAdapter {
 
     public class TaskViewHolder {
 
+        static final String errCountFormat = "做错%s题";
+
         public View mItemView;
 
         @Bind(R.id.icon_class)
@@ -150,27 +151,16 @@ public class WorkTaskAdapter extends SectionedBaseAdapter {
         }
 
         public void bindData(int section,int position) {
-            ExaminationTaskInfo info = data.get(dates.get(section)).get(position);
+            MistakeInfo info = data.get(dates.get(section)).get(position);
             tvName.setText(info.getName());
-            tvFinishTime.setText("截止时间：" + TimeConversion.getData(TimeConversion.getDurationWithGMT(info.getCanEndDateTime())));
-            if (TaskStatus.getStatus(info.getStatus()) == TaskStatus.INIT) {
-                tvState.setText(String.format(TaskStatus.INIT.getName(),info.getCount()));
-            } else {
-                tvState.setText(TaskStatus.getStatus(info.getStatus()).getName());
-            }
-            if (TaskStatus.getStatus(info.getStatus()) == TaskStatus.INIT) {
-                tvState.setTextColor(mContext.getResources().getColor(R.color.text_color_gray));
-            } else if (TaskStatus.getStatus(info.getStatus()) == TaskStatus.COMPLETE) {
-                tvState.setTextColor(mContext.getResources().getColor(R.color.colorPrimary));
-            } else if (TaskStatus.getStatus(info.getStatus()) == TaskStatus.RUN) {
-                tvState.setTextColor(mContext.getResources().getColor(R.color.state_red));
-            } else if (TaskStatus.getStatus(info.getStatus()) == TaskStatus.READED) {
-                tvState.setTextColor(mContext.getResources().getColor(R.color.state_blue));
-            }
+            tvFinishTime.setText("错题时间：" + TimeConversion.getData(TimeConversion.getDurationWithGMT(info.getDateTime())));
+            tvFinishTime.setVisibility(View.GONE);
+            tvState.setText(String.format(errCountFormat,info.getErrorCount()));
+            tvState.setTextColor(mContext.getResources().getColor(R.color.state_red));
             iconClass.setImageResource(SubjectType.getSubjectType(info.getSubjectTypeName()).getDrawableResId());
             mItemView.setOnClickListener(v -> {
                 if (onItemClickListener != null) {
-                    onItemClickListener.onItemClick((ExaminationTaskInfo) v.getTag(R.id.list_item_obj));
+                    onItemClickListener.onItemClick((MistakeInfo) v.getTag(R.id.list_item_obj));
                 }
             });
             mItemView.setTag(R.id.list_item_obj,info);
@@ -179,7 +169,7 @@ public class WorkTaskAdapter extends SectionedBaseAdapter {
     }
 
     public interface OnItemClickListener{
-        void onItemClick(ExaminationTaskInfo info);
+        void onItemClick(MistakeInfo info);
     }
     OnItemClickListener onItemClickListener = null;
 

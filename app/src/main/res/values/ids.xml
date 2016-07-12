@@ -3,6 +3,7 @@
     <item type="id" name="position"/>
     <item type="id" name="list_item_type"/>
     <item type="id" name="list_item_view"/>
+    <item type="id" name="list_item_obj"/>
     <item type="id" name="image_url" />
     <item type="id" name="image_file_path" />
 </resources>

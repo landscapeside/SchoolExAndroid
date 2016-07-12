@@ -17,9 +17,9 @@ public interface HomeWorkApi {
     @POST("api/Students/GetExaminationTasks")
     Call<ExaminationTaskListInfo> getExaminationTasks(
             @Query("userid") int userid,
-            @Query("SubjectTypeID") String SubjectTypeID,
-            @Query("ExaminationPapersTypeID") String ExaminationPapersTypeID,
-            @Query("status") String status);
+            @Query("SubjectTypeID") Integer SubjectTypeID,
+            @Query("ExaminationPapersTypeID") Integer ExaminationPapersTypeID,
+            @Query("status") Integer status);
 
     @GET("api/Students/GetExaminationPapersByID")
     Call<ExaminationPaperListInfo> getExaminationPaper(@Query("id") int id, @Query("tasksid") int tasksid);

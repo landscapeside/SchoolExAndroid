@@ -1,11 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/ll_filter"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_subject"
+            style="@style/ListFilterText"
+            android:text="默认"/>
+
+        <TextView
+            android:id="@+id/tv_type"
+            style="@style/ListFilterText"
+            android:text="默认"/>
+
+        <TextView
+            android:id="@+id/tv_state"
+            style="@style/ListFilterText"
+            android:text="默认"/>
+    </LinearLayout>
+
     <com.baoyz.widget.PullRefreshLayout
         android:id="@+id/swipeRefreshLayout"
+        android:layout_below="@+id/ll_filter"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -17,4 +39,8 @@
             android:dividerHeight="0.5dp" />
 
     </com.baoyz.widget.PullRefreshLayout>
-</FrameLayout>
+
+    <View
+        android:layout_below="@+id/ll_filter"
+        style="@style/verticalDivider" />
+</RelativeLayout>

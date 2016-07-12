@@ -10,6 +10,7 @@ import com.landscape.event.RefreshListEvent;
 import com.landscape.event.RefreshUserEvent;
 import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.api.BaseCallBack;
+import com.landscape.schoolexandroid.common.BaseActivity;
 import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.enums.PagerType;
@@ -29,27 +30,20 @@ import com.utils.behavior.FragmentsUtils;
  */
 public class MainSlideMenuPresenterImpl extends MainPresenterImpl {
 
-    MainSlideMenuActivity mainSlideMenuActivity;
-
     SlidingMenu mSlideMenu;
 
-    public MainSlideMenuPresenterImpl(MainSlideMenuActivity mainSlideMenuActivity) {
-        this.mainSlideMenuActivity = mainSlideMenuActivity;
-
-        dragContent = new DragContentFragment();
-        menuView = new MenuFragment();
-        workTaskListView = new WorkTaskFragment();
-        collectView = new PreviewTaskFragment();
-        ((BaseApp)mainSlideMenuActivity.getApplication()).getAppComponent().inject(this);
-        FragmentsUtils.addFragmentToActivity(mainSlideMenuActivity.getSupportFragmentManager(), (Fragment) dragContent, R.id.main_slide_content);
+    public MainSlideMenuPresenterImpl(BaseActivity mainSlideMenuActivity) {
+        super(mainSlideMenuActivity);
         initSlideMenu();
-        initViews();
-        refreshData(mainSlideMenuActivity.getIntent());
-        mBus.register(this);
+    }
+
+    @Override
+    protected void attachToActivity() {
+        FragmentsUtils.addFragmentToActivity(mainActivity.getSupportFragmentManager(), (Fragment) dragContent, R.id.main_slide_content);
     }
 
     private void initSlideMenu() {
-        mSlideMenu = new SlidingMenu(mainSlideMenuActivity);
+        mSlideMenu = new SlidingMenu(mainActivity);
         mSlideMenu.setMode(SlidingMenu.LEFT);
         // 设置触摸屏幕的模式
         mSlideMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
@@ -62,10 +56,10 @@ public class MainSlideMenuPresenterImpl extends MainPresenterImpl {
          * section of the SlidingMenu, while SLIDING_CONTENT does not.
          */
         //把滑动菜单添加进所有的Activity中，可选值SLIDING_CONTENT ， SLIDING_WINDOW
-        mSlideMenu.attachToActivity(mainSlideMenuActivity, SlidingMenu.SLIDING_WINDOW);
+        mSlideMenu.attachToActivity(mainActivity, SlidingMenu.SLIDING_WINDOW);
         mSlideMenu.setMenu(R.layout.menu_setting);
         //为侧滑菜单设置布局
-        FragmentsUtils.addFragmentToActivityStateLoss(mainSlideMenuActivity.getSupportFragmentManager(), (Fragment) menuView, R.id.setting_content);
+        FragmentsUtils.addFragmentToActivityStateLoss(mainActivity.getSupportFragmentManager(), (Fragment) menuView, R.id.setting_content);
     }
 
     @Override
@@ -80,13 +74,6 @@ public class MainSlideMenuPresenterImpl extends MainPresenterImpl {
         mSlideMenu.showMenu();
     }
 
-    @Override
-    public void gotoPreviewTask(int position) {
-        mainSlideMenuActivity.startActivity(new Intent(mainSlideMenuActivity, PagerActivity.class)
-                .putExtra(Constant.PAGER_TYPE, PagerType.PREVIEW_TASK.getType())
-                .putExtra(Constant.TASK_INFO,taskInfos.get(position)));
-    }
-
     @Subscribe
     public void onRefreshEvent(RefreshListEvent refreshListEvent) {
         super.onRefreshEvent(refreshListEvent);
@@ -95,29 +82,5 @@ public class MainSlideMenuPresenterImpl extends MainPresenterImpl {
     @Subscribe
     public void onRefreshAvatar(RefreshUserEvent refreshAvatarEvent) {
         super.onRefreshAvatar(refreshAvatarEvent);
-    }
-
-    @Override
-    public void toUserCenter() {
-        mainSlideMenuActivity.startActivity(new Intent(mainSlideMenuActivity,PagerActivity.class)
-                .putExtra(Constant.PAGER_TYPE, PagerType.USER_CENTER.getType()));
-    }
-
-    @Override
-    protected void refreshWorkTask() {
-        BaseCallBack<ExaminationTaskListInfo> callBack = new BaseCallBack<ExaminationTaskListInfo>(mainSlideMenuActivity) {
-            @Override
-            public void response(ExaminationTaskListInfo response) {
-                workTaskResult(response);
-            }
-
-            @Override
-            public void err() {
-                workTaskListView.cancelRefresh();
-            }
-        };
-        workTaskListView.setRefreshListener(() -> workTaskDataSource.request(callBack.setContext(mainSlideMenuActivity)));
-        workTaskListView.startRefresh();
-        workTaskDataSource.request(callBack);
     }
 }

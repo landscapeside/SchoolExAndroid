@@ -19,6 +19,7 @@ public class Constant {
     public static final String CHART_TYPE = "CHART_TYPE";
     public static final String PIC_PATH = "PIC_PATH";
     public static final String PIC_IS_HTTP = "PIC_IS_HTTP";
+    public static final String MISTAKE_INFO = "MISTAKE_INFO";
 
     public static final String INTENT_REQUEST = "INTENT_REQUEST";
     public static final String INTENT_RESULT = "INTENT_RESULT";

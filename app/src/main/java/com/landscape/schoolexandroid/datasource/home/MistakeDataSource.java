@@ -1,12 +1,13 @@
 package com.landscape.schoolexandroid.datasource.home;
 
-import android.content.Context;
-
 import com.landscape.schoolexandroid.api.BaseCallBack;
 import com.landscape.schoolexandroid.api.HomeWorkApi;
+import com.landscape.schoolexandroid.api.MistakeApi;
 import com.landscape.schoolexandroid.api.RetrofitService;
 import com.landscape.schoolexandroid.datasource.BaseDataSource;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
+import com.landscape.schoolexandroid.mode.BaseBean;
+import com.landscape.schoolexandroid.mode.mistake.MistakeListInfo;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskListInfo;
 
 import javax.inject.Inject;
@@ -15,18 +16,18 @@ import javax.inject.Singleton;
 import retrofit2.Call;
 
 /**
- * Created by 1 on 2016/6/27.
+ * Created by 1 on 2016/7/12.
  */
 @Singleton
-public class WorkTaskDataSource implements BaseDataSource {
+public class MistakeDataSource implements BaseDataSource {
 
     @Inject
     UserAccountDataSource userAccountDataSource;
 
     @Inject
-    public WorkTaskDataSource() {}
+    public MistakeDataSource() {}
 
-    public Call<ExaminationTaskListInfo> request(Integer SubjectTypeID,Integer ExaminationPapersTypeID,Integer status,BaseCallBack<ExaminationTaskListInfo> callBack) {
+    public Call<MistakeListInfo> request(Integer SubjectTypeID,Integer ExaminationPapersTypeID,Integer status,BaseCallBack<MistakeListInfo> callBack) {
         if (SubjectTypeID != null) {
             SubjectTypeID = SubjectTypeID == -1?null:SubjectTypeID;
         }
@@ -37,9 +38,9 @@ public class WorkTaskDataSource implements BaseDataSource {
             status = status==10?null:status;
         }
 
-        Call<ExaminationTaskListInfo> call = null;
-        call = RetrofitService.createApi(HomeWorkApi.class)
-                .getExaminationTasks(userAccountDataSource.getUserAccount().getData().getStudentId(),SubjectTypeID,ExaminationPapersTypeID,status);
+        Call<MistakeListInfo> call = null;
+        call = RetrofitService.createApi(MistakeApi.class)
+                .getErrQuestionList(userAccountDataSource.getUserAccount().getData().getStudentId(),SubjectTypeID,ExaminationPapersTypeID,status);
         RetrofitService.addCall(call);
         callBack.setCall(call);
         call.enqueue(callBack);

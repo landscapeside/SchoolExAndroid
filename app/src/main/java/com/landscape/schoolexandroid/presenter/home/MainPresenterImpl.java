@@ -9,29 +9,38 @@ import com.landscape.event.RefreshListEvent;
 import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.api.BaseCallBack;
 import com.landscape.schoolexandroid.common.AppConfig;
+import com.landscape.schoolexandroid.common.BaseActivity;
 import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
+import com.landscape.schoolexandroid.datasource.home.MistakeDataSource;
 import com.landscape.schoolexandroid.datasource.home.WorkTaskDataSource;
 import com.landscape.schoolexandroid.enums.PagerType;
+import com.landscape.schoolexandroid.enums.TaskStatus;
+import com.landscape.schoolexandroid.mode.account.UserAccount;
+import com.landscape.schoolexandroid.mode.mistake.MistakeInfo;
+import com.landscape.schoolexandroid.mode.mistake.MistakeListInfo;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskInfo;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskListInfo;
 import com.landscape.schoolexandroid.ui.activity.MainActivity;
 import com.landscape.schoolexandroid.ui.activity.PagerActivity;
 import com.landscape.schoolexandroid.ui.fragment.home.DragContentFragment;
 import com.landscape.schoolexandroid.ui.fragment.home.MenuFragment;
+import com.landscape.schoolexandroid.ui.fragment.home.MistakeFragment;
 import com.landscape.schoolexandroid.ui.fragment.home.WorkTaskFragment;
 import com.landscape.schoolexandroid.ui.fragment.worktask.PreviewTaskFragment;
+import com.landscape.schoolexandroid.utils.WorkTaskHelper;
 import com.landscape.schoolexandroid.views.BaseView;
+import com.landscape.schoolexandroid.views.home.BaseListView;
 import com.landscape.schoolexandroid.views.home.DragContentView;
 import com.landscape.schoolexandroid.views.home.MenuView;
+import com.landscape.schoolexandroid.views.home.MistakeListView;
 import com.landscape.schoolexandroid.views.home.WorkTaskListView;
 import com.landscape.schoolexandroid.views.worktask.PreviewTaskView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.utils.behavior.FragmentsUtils;
 import com.utils.behavior.ToastUtil;
-import com.utils.datahelper.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +67,8 @@ public class MainPresenterImpl implements MainPresenter {
     WorkTaskDataSource workTaskDataSource;
     @Inject
     UserAccountDataSource userAccountDataSource;
+    @Inject
+    MistakeDataSource mistakeDataSource;
 
     /***
      * bus
@@ -70,9 +81,11 @@ public class MainPresenterImpl implements MainPresenter {
      * V-layer
      * ===============================
      */
-    MainActivity mainActivity;
+    BaseActivity mainActivity;
     DragContentView dragContent;
     MenuView menuView;
+    MistakeListView mistakeListView;
+
     /**
      * 内容视图
      * */
@@ -83,22 +96,45 @@ public class MainPresenterImpl implements MainPresenter {
      * 数据
      */
     List<ExaminationTaskInfo> taskInfos;
+    List<MistakeInfo> mistakeInfos;
+    List<UserAccount.DataBean.SubjectTypeBean> subjectTypes = new ArrayList<>();
+    List<UserAccount.DataBean.ExaminationPapersTypeBean> paperTypes = new ArrayList<>();
+    List<TaskStatus> taskStatusList = new ArrayList<>();
+    UserAccount.DataBean.SubjectTypeBean workTaskSubjectType,mistakeSubjectType;
+    UserAccount.DataBean.ExaminationPapersTypeBean workTaskExamPaperType,mistakeExamPaperType;
+    TaskStatus workTaskStatus,mistakeStatus;
 
     public MainPresenterImpl(){}
 
-    public MainPresenterImpl(MainActivity mainActivity) {
+    public MainPresenterImpl(BaseActivity mainActivity) {
         dragContent = new DragContentFragment();
         menuView = new MenuFragment();
         workTaskListView = new WorkTaskFragment();
         collectView = new PreviewTaskFragment();
+        mistakeListView  = new MistakeFragment();
         ((BaseApp)mainActivity.getApplication()).getAppComponent().inject(this);
+        initFilters();
         this.mainActivity = mainActivity;
         mBus.register(this);
-        FragmentsUtils.addFragmentToActivity(mainActivity.getSupportFragmentManager(), (Fragment) menuView, R.id.drag_menu);
-        FragmentsUtils.addFragmentToActivity(mainActivity.getSupportFragmentManager(), (Fragment) dragContent, R.id.drag_content);
         setDragLayout(dragContent);
         this.initViews();
         refreshData(mainActivity.getIntent());
+        attachToActivity();
+    }
+
+    protected void initFilters() {
+        subjectTypes = userAccountDataSource.getUserAccount().getData().getSubjectType();
+        subjectTypes = WorkTaskHelper.getValidSubjectType(subjectTypes);
+        paperTypes = userAccountDataSource.getUserAccount().getData().getExaminationPapersType();
+        taskStatusList = TaskStatus.getStatusFilters();
+
+        subjectTypes = WorkTaskHelper.addDefSubjectType(subjectTypes);
+        paperTypes = WorkTaskHelper.addDefPaperType(paperTypes);
+    }
+
+    protected void attachToActivity() {
+        FragmentsUtils.addFragmentToActivity(mainActivity.getSupportFragmentManager(), (Fragment) menuView, R.id.drag_menu);
+        FragmentsUtils.addFragmentToActivity(mainActivity.getSupportFragmentManager(), (Fragment) dragContent, R.id.drag_content);
     }
 
     public void initViews() {
@@ -152,6 +188,7 @@ public class MainPresenterImpl implements MainPresenter {
                 case 1:
                     // 错题本
                     dragContent.setTitle("错题本");
+                    dragContent.setContentFragment((Fragment) mistakeListView);
                     break;
                 case 2:
                     // 丢分统计
@@ -175,14 +212,33 @@ public class MainPresenterImpl implements MainPresenter {
         workTaskListView.setLifeListener(new BaseView.ViewLifeListener() {
             @Override
             public void onInitialized() {
-                workTaskListView.setListItemSelectListener(position -> {
-                    if (CollectionUtils.isEmpty(taskInfos)) {
-                        throw new ArrayIndexOutOfBoundsException("任务列表为空");
+                workTaskListView.subjectFilter(subjectTypes);
+                workTaskListView.typeFilter(paperTypes);
+                workTaskListView.stateFilter(taskStatusList);
+                workTaskListView.setOnFilterSelector(new BaseListView.OnFilterSelector() {
+                    @Override
+                    public void onSubjectSelect(UserAccount.DataBean.SubjectTypeBean subjectType) {
+                        workTaskSubjectType = subjectType;
+                        refreshWorkTask();
                     }
-                    if (position >= taskInfos.size()) {
-                        throw new ArrayIndexOutOfBoundsException("超出任务列表长度");
+
+                    @Override
+                    public void onTypeSelect(UserAccount.DataBean.ExaminationPapersTypeBean paperMode) {
+                        workTaskExamPaperType = paperMode;
+                        refreshWorkTask();
                     }
-                    gotoPreviewTask(position);
+
+                    @Override
+                    public void onStateSelect(TaskStatus status) {
+                        workTaskStatus = status;
+                        refreshWorkTask();
+                    }
+                });
+                workTaskListView.setListItemSelectListener(taskInfo -> {
+                    if (taskInfo == null) {
+                        throw new IllegalArgumentException("任务对象为空");
+                    }
+                    gotoPreviewTask(taskInfo);
                 });
                 refreshWorkTask();
             }
@@ -192,6 +248,50 @@ public class MainPresenterImpl implements MainPresenter {
 
             }
         });
+
+        /**
+         * 错题本
+         * */
+        mistakeListView.setLifeListener(new BaseView.ViewLifeListener() {
+            @Override
+            public void onInitialized() {
+                mistakeListView.subjectFilter(subjectTypes);
+                mistakeListView.typeFilter(paperTypes);
+                mistakeListView.stateFilter(taskStatusList);
+                mistakeListView.setOnFilterSelector(new BaseListView.OnFilterSelector() {
+                    @Override
+                    public void onSubjectSelect(UserAccount.DataBean.SubjectTypeBean subjectType) {
+                        workTaskSubjectType = subjectType;
+                        refreshMistake();
+                    }
+
+                    @Override
+                    public void onTypeSelect(UserAccount.DataBean.ExaminationPapersTypeBean paperMode) {
+                        workTaskExamPaperType = paperMode;
+                        refreshMistake();
+                    }
+
+                    @Override
+                    public void onStateSelect(TaskStatus status) {
+                        workTaskStatus = status;
+                        refreshMistake();
+                    }
+                });
+                mistakeListView.setListItemSelectListener(mistakeInfo -> {
+                    if (mistakeInfo == null) {
+                        throw new IllegalArgumentException("错题对象为空");
+                    }
+                    gotoPreviewMistake(mistakeInfo);
+                });
+                refreshMistake();
+            }
+
+            @Override
+            public void onDestroy() {
+
+            }
+        });
+
 
         /**
          * 收藏
@@ -217,28 +317,36 @@ public class MainPresenterImpl implements MainPresenter {
         // TODO: 2016/6/27 更新列表
         if (result.isIsSuccess()) {
             taskInfos = result.getData();
-            workTaskListView.listData(taskInfos);
+            workTaskListView.listWork(taskInfos);
         } else {
             ToastUtil.show(mainActivity,result.getMessage());
         }
     }
 
     public void shutDownSlideMenu() {
-        mainActivity.dl.close();
+        ((MainActivity)mainActivity).dl.close();
     }
 
     public void openSlideMenu() {
-        mainActivity.dl.open();
+        ((MainActivity)mainActivity).dl.open();
     }
 
     protected void setDragLayout(DragCallBack callBack) {
-        mainActivity.dl.setDragListener(callBack);
+        if (mainActivity instanceof MainActivity) {
+            ((MainActivity)mainActivity).dl.setDragListener(callBack);
+        }
     }
 
-    public void gotoPreviewTask(int position) {
+    public void gotoPreviewTask(ExaminationTaskInfo taskInfo) {
         mainActivity.startActivity(new Intent(mainActivity, PagerActivity.class)
                 .putExtra(Constant.PAGER_TYPE, PagerType.PREVIEW_TASK.getType())
-                .putExtra(Constant.TASK_INFO,taskInfos.get(position)));
+                .putExtra(Constant.TASK_INFO,taskInfo));
+    }
+
+    public void gotoPreviewMistake(MistakeInfo mistakeInfo) {
+        mainActivity.startActivity(new Intent(mainActivity, PagerActivity.class)
+                .putExtra(Constant.PAGER_TYPE, PagerType.PREVIEW_MISTAKE.getType())
+                .putExtra(Constant.MISTAKE_INFO,mistakeInfo));
     }
 
     @Override
@@ -278,6 +386,10 @@ public class MainPresenterImpl implements MainPresenter {
                 // 作业本
                 refreshWorkTask();
                 break;
+            case 1:
+                // 错题本
+                refreshMistake();
+                break;
         }
     }
 
@@ -293,8 +405,54 @@ public class MainPresenterImpl implements MainPresenter {
                 workTaskListView.cancelRefresh();
             }
         };
-        workTaskListView.setRefreshListener(() -> workTaskDataSource.request(callBack.setContext(mainActivity)));
+        workTaskListView.setRefreshListener(() -> {
+            workTaskDataSource.request(
+                    workTaskSubjectType==null?null:workTaskSubjectType.getId(),
+                    workTaskExamPaperType == null?null:workTaskExamPaperType.getId(),
+                    workTaskStatus==null?null:workTaskStatus.getStatus(),
+                    callBack.setContext(mainActivity));
+        });
         workTaskListView.startRefresh();
-        workTaskDataSource.request(callBack);
+        workTaskDataSource.request(
+                workTaskSubjectType==null?null:workTaskSubjectType.getId(),
+                workTaskExamPaperType == null?null:workTaskExamPaperType.getId(),
+                workTaskStatus==null?null:workTaskStatus.getStatus(),
+                callBack);
+    }
+
+    protected void refreshMistake(){
+        BaseCallBack<MistakeListInfo> callBack = new BaseCallBack<MistakeListInfo>(mainActivity) {
+            @Override
+            public void response(MistakeListInfo response) {
+                mistakeResult(response);
+            }
+
+            @Override
+            public void err() {
+                mistakeListView.cancelRefresh();
+            }
+        };
+        mistakeListView.setRefreshListener(() -> {
+            mistakeDataSource.request(
+                    workTaskSubjectType==null?null:workTaskSubjectType.getId(),
+                    workTaskExamPaperType == null?null:workTaskExamPaperType.getId(),
+                    workTaskStatus==null?null:workTaskStatus.getStatus(),
+                    callBack.setContext(mainActivity));
+        });
+        mistakeListView.startRefresh();
+        mistakeDataSource.request(
+                workTaskSubjectType==null?null:workTaskSubjectType.getId(),
+                workTaskExamPaperType == null?null:workTaskExamPaperType.getId(),
+                workTaskStatus==null?null:workTaskStatus.getStatus(),
+                callBack);
+    }
+
+    protected void mistakeResult(MistakeListInfo result) {
+        if (result.isIsSuccess()) {
+            mistakeInfos = result.getData();
+            mistakeListView.listMistake(mistakeInfos);
+        } else {
+            ToastUtil.show(mainActivity,result.getMessage());
+        }
     }
 }
