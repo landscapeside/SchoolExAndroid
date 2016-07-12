@@ -8,6 +8,8 @@ import com.landscape.schoolexandroid.datasource.BaseDataSource;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
 import com.landscape.schoolexandroid.mode.BaseBean;
 import com.landscape.schoolexandroid.mode.mistake.MistakeListInfo;
+import com.landscape.schoolexandroid.mode.mistake.MistakeQuestionBean;
+import com.landscape.schoolexandroid.mode.mistake.MistakeQuestionListInfo;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskListInfo;
 
 import javax.inject.Inject;
@@ -41,6 +43,16 @@ public class MistakeDataSource implements BaseDataSource {
         Call<MistakeListInfo> call = null;
         call = RetrofitService.createApi(MistakeApi.class)
                 .getErrQuestionList(userAccountDataSource.getUserAccount().getData().getStudentId(),SubjectTypeID,ExaminationPapersTypeID,status);
+        RetrofitService.addCall(call);
+        callBack.setCall(call);
+        call.enqueue(callBack);
+        return call;
+    }
+
+    public Call<MistakeQuestionBean> getQuestion(int taskId, BaseCallBack<MistakeQuestionBean> callBack) {
+        Call<MistakeQuestionBean> call = null;
+        call = RetrofitService.createApi(MistakeApi.class)
+                .getErrorQuestions(taskId);
         RetrofitService.addCall(call);
         callBack.setCall(call);
         call.enqueue(callBack);

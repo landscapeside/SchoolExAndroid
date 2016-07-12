@@ -2,6 +2,7 @@ package com.landscape.schoolexandroid.views.worktask;
 
 import com.landscape.schoolexandroid.presenter.BasePresenter;
 import com.landscape.schoolexandroid.views.BaseView;
+import com.landscape.weight.FlingRelativeLayout;
 
 /**
  * Created by 1 on 2016/6/27.
@@ -15,4 +16,6 @@ public interface PreviewTaskView<T extends BasePresenter> extends BaseView<T> {
     interface ClickListener{
         void start();
     }
+
+    void setFlingListener(FlingRelativeLayout.FlingListener flingListener);
 }
