@@ -1,5 +1,6 @@
 package com.landscape.schoolexandroid.ui.fragment.home;
 
+import android.view.View;
 import android.widget.ListView;
 
 import com.baoyz.widget.PullRefreshLayout;
@@ -34,7 +35,9 @@ public class MistakeFragment extends WorkTaskFragment implements MistakeListView
         pullRefreshLayout.setRefreshing(false);
         if (CollectionUtils.isEmpty(listData)) {
             ToastUtil.show(getActivity(),"没有错题");
+            emptyView.setVisibility(View.VISIBLE);
         } else {
+            emptyView.setVisibility(View.GONE);
             if (mistakeAdapter == null) {
                 // TODO: 2016/6/22 更新数据
                 mistakeAdapter = new MistakeAdapter(getActivity(),listData);

@@ -12,12 +12,12 @@
         <TextView
             android:id="@+id/tv_subject"
             style="@style/ListFilterText"
-            android:text="默认"/>
+            android:text="全部"/>
 
         <TextView
             android:id="@+id/tv_type"
             style="@style/ListFilterText"
-            android:text="默认"/>
+            android:text="全部"/>
 
         <TextView
             android:id="@+id/tv_state"
@@ -36,9 +36,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@color/vertical_divider"
-            android:dividerHeight="0.5dp" />
+            android:dividerHeight="0.5dp"
+            android:visibility="visible"/>
 
     </com.baoyz.widget.PullRefreshLayout>
+
+    <RelativeLayout
+        android:id="@+id/list_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ll_filter"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/icon_list_empty"/>
+    </RelativeLayout>
 
     <View
         android:layout_below="@+id/ll_filter"

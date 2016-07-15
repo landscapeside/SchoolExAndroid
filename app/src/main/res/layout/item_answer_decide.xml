@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_index"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="10dp"/>
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp">
+
+        <RadioButton
+            android:id="@+id/radio_def"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:button="@null"
+            android:drawableLeft="@drawable/radio_button_selector"
+            android:drawablePadding="5dp"
+            android:gravity="center"
+            android:textColor="@color/text_color_dark_gray"
+            android:layout_margin="20dp"
+            android:visibility="gone"/>
+
+        <RadioButton
+            android:id="@+id/radio_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:button="@null"
+            android:drawableLeft="@drawable/radio_button_selector"
+            android:drawablePadding="5dp"
+            android:gravity="center"
+            android:text="正确"
+            android:textColor="@color/text_color_dark_gray"
+            android:layout_margin="20dp" />
+
+        <RadioButton
+            android:id="@+id/radio_err"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:drawableLeft="@drawable/radio_button_selector"
+            android:drawablePadding="5dp"
+            android:gravity="center"
+            android:text="错误"
+            android:textColor="@color/text_color_dark_gray"
+            android:layout_margin="20dp" />
+
+    </RadioGroup>
+
+</LinearLayout>

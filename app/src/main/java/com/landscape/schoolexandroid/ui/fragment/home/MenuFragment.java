@@ -57,14 +57,14 @@ public class MenuFragment extends BaseFragment implements MenuView<BasePresenter
         if (!TextUtils.isEmpty(userAccount.getData().getPhoto())) {
             Picasso.with(getActivity())
                     .load(userAccount.getData().getPhoto())
-                    .placeholder(R.mipmap.ic_launcher)
-                    .error(R.mipmap.ic_launcher)
+                    .placeholder(R.drawable.icon_def_avatar)
+                    .error(R.drawable.icon_def_avatar)
                     .into(ivBottom);
         } else {
-            ivBottom.setImageResource(R.mipmap.ic_launcher);
+            ivBottom.setImageResource(R.drawable.icon_def_avatar);
         }
         tvName.setText(userAccount.getData().getName());
-        tvSchool.setText(userAccount.getData().getGradeName()+userAccount.getData().getTeamName()+userAccount.getData().getClassGroupName());
+        tvSchool.setText(userAccount.getData().getSchoolName());
     }
 
     @Override

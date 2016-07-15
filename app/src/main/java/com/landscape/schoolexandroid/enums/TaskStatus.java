@@ -7,7 +7,7 @@ import java.util.List;
  * Created by 1 on 2016/6/30.
  */
 public enum TaskStatus {
-    INIT(-1,"共%s题","未开始"),
+    INIT(-1,"共%s题","新作业"),
     RUN(0,"答题中","答题中"),
     COMPLETE(1,"已完成","已完成"),
     READED(2,"已批阅","已批阅"),

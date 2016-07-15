@@ -33,9 +33,6 @@ public class WorkTaskDataSource implements BaseDataSource {
         if (ExaminationPapersTypeID != null) {
             ExaminationPapersTypeID = ExaminationPapersTypeID==-1?null:ExaminationPapersTypeID;
         }
-        if (status != null) {
-            status = status==10?null:status;
-        }
 
         Call<ExaminationTaskListInfo> call = null;
         call = RetrofitService.createApi(HomeWorkApi.class)

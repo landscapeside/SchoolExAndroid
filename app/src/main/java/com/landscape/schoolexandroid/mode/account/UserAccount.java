@@ -17,6 +17,7 @@ public class UserAccount extends BaseBean {
      * NickName : null
      * Photo : http://images.cqebd.cn/vagerent/20160513/201605132240132227.jpg
      * Gender : 男
+     * SchoolName: 重庆教育大数据研究院
      * GradeName : 七年级
      * TeamName : 测试一班
      * ClassGroupName : 第二小组
@@ -44,6 +45,7 @@ public class UserAccount extends BaseBean {
         private Object NickName;
         private String Photo;
         private String Gender;
+        private String SchoolName;
         private String GradeName;
         private String TeamName;
         private String ClassGroupName;
@@ -120,6 +122,14 @@ public class UserAccount extends BaseBean {
 
         public void setGradeName(String GradeName) {
             this.GradeName = GradeName;
+        }
+
+        public String getSchoolName() {
+            return SchoolName;
+        }
+
+        public void setSchoolName(String schoolName) {
+            SchoolName = schoolName;
         }
 
         public String getTeamName() {

@@ -26,15 +26,15 @@ public class RxCounter {
      * @param to   结束计数处
      * @return observable
      */
-    public static Observable<Integer> counter(int from, int to) {
+    public static Observable<Long> counter(long from, long to) {
         return counter(from, to, 1, TimeUnit.SECONDS);
     }
 
-    public static Observable<Integer> counter(int from, int to, int delay, TimeUnit time) {
-        return from == to ? Observable.empty() : Observable.<Integer>create(subscriber -> {
+    public static Observable<Long> counter(long from, long to, int delay, TimeUnit time) {
+        return from == to ? Observable.empty() : Observable.<Long>create(subscriber -> {
             tick = true;
             int step = from > to ? -1 : 1;
-            int cursor = from;
+            long cursor = from;
             while (cursor != to && tick) {
                 subscriber.onNext(cursor);
                 cursor += step;

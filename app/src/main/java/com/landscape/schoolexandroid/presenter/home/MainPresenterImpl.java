@@ -56,7 +56,8 @@ public class MainPresenterImpl implements MainPresenter {
      * const
      * ===============================
      */
-    protected static final String collectUrlFormat = "studentCollect/StudentCollectList?studentid=%s";
+    protected static final String collectUrlNoSubject = "studentCollect/StudentCollectList?studentid=%s";
+    protected static final String collectUrlSubject = "studentCollect/StudentCollectList?studentid=%s&SubjectTypeId=%s";
 
     /**
      * ===============================
@@ -88,7 +89,7 @@ public class MainPresenterImpl implements MainPresenter {
 
     /**
      * 内容视图
-     * */
+     */
     WorkTaskListView workTaskListView;
     PreviewTaskView collectView;
 
@@ -100,19 +101,20 @@ public class MainPresenterImpl implements MainPresenter {
     List<UserAccount.DataBean.SubjectTypeBean> subjectTypes = new ArrayList<>();
     List<UserAccount.DataBean.ExaminationPapersTypeBean> paperTypes = new ArrayList<>();
     List<TaskStatus> taskStatusList = new ArrayList<>();
-    UserAccount.DataBean.SubjectTypeBean workTaskSubjectType,mistakeSubjectType;
-    UserAccount.DataBean.ExaminationPapersTypeBean workTaskExamPaperType,mistakeExamPaperType;
-    TaskStatus workTaskStatus,mistakeStatus;
+    UserAccount.DataBean.SubjectTypeBean workTaskSubjectType, mistakeSubjectType, collectSubjectType;
+    UserAccount.DataBean.ExaminationPapersTypeBean workTaskExamPaperType, mistakeExamPaperType;
+    TaskStatus workTaskStatus = TaskStatus.NONE, mistakeStatus;
 
-    public MainPresenterImpl(){}
+    public MainPresenterImpl() {
+    }
 
     public MainPresenterImpl(BaseActivity mainActivity) {
         dragContent = new DragContentFragment();
         menuView = new MenuFragment();
         workTaskListView = new WorkTaskFragment();
         collectView = new PreviewTaskFragment();
-        mistakeListView  = new MistakeFragment();
-        ((BaseApp)mainActivity.getApplication()).getAppComponent().inject(this);
+        mistakeListView = new MistakeFragment();
+        ((BaseApp) mainActivity.getApplication()).getAppComponent().inject(this);
         initFilters();
         this.mainActivity = mainActivity;
         mBus.register(this);
@@ -157,10 +159,10 @@ public class MainPresenterImpl implements MainPresenter {
         menuView.setLifeListener(new BaseView.ViewLifeListener() {
             @Override
             public void onInitialized() {
-                String[] menuNames = new String[]{"作业本", "错题本", "丢分统计", "答题卡","收藏"};
-                int[] menuDrawResIds = new int[]{R.mipmap.icon_zyb,R.mipmap.icon_ctb,R.mipmap.icon_dftj,R.mipmap.icon_dtk,R.mipmap.icon_sc};
+                String[] menuNames = new String[]{"作业本", "错题本", "丢分统计", "答题卡", "收藏"};
+                int[] menuDrawResIds = new int[]{R.mipmap.icon_zyb, R.mipmap.icon_ctb, R.mipmap.icon_dftj, R.mipmap.icon_dtk, R.mipmap.icon_sc};
                 List<MenuView.MenuItemBean> menuItemBeanList = new ArrayList<>();
-                for (int i = 0;i<menuNames.length;i++) {
+                for (int i = 0; i < menuNames.length; i++) {
                     MenuView.MenuItemBean bean = new MenuView.MenuItemBean();
                     bean.name = menuNames[i];
                     bean.drawResId = menuDrawResIds[i];
@@ -258,22 +260,23 @@ public class MainPresenterImpl implements MainPresenter {
                 mistakeListView.subjectFilter(subjectTypes);
                 mistakeListView.typeFilter(paperTypes);
                 mistakeListView.stateFilter(taskStatusList);
+                mistakeListView.setStateEnable(false);
                 mistakeListView.setOnFilterSelector(new BaseListView.OnFilterSelector() {
                     @Override
                     public void onSubjectSelect(UserAccount.DataBean.SubjectTypeBean subjectType) {
-                        workTaskSubjectType = subjectType;
+                        mistakeSubjectType = subjectType;
                         refreshMistake();
                     }
 
                     @Override
                     public void onTypeSelect(UserAccount.DataBean.ExaminationPapersTypeBean paperMode) {
-                        workTaskExamPaperType = paperMode;
+                        mistakeExamPaperType = paperMode;
                         refreshMistake();
                     }
 
                     @Override
                     public void onStateSelect(TaskStatus status) {
-                        workTaskStatus = status;
+                        mistakeStatus = status;
                         refreshMistake();
                     }
                 });
@@ -299,11 +302,14 @@ public class MainPresenterImpl implements MainPresenter {
         collectView.setLifeListener(new BaseView.ViewLifeListener() {
             @Override
             public void onInitialized() {
+                collectView.setFilterEnable(true);
+                collectView.subjectFilter(subjectTypes);
+                collectView.setOnFilterSelector(subjectType -> {
+                    collectSubjectType = subjectType;
+                    refreshCollect();
+                });
                 collectView.startEnable(false);
-                collectView.previewTask(
-                        AppConfig.BASE_WEB_URL +
-                        String.format(collectUrlFormat,
-                                userAccountDataSource.getUserAccount().getData().getStudentId()));
+                refreshCollect();
             }
 
             @Override
@@ -319,34 +325,34 @@ public class MainPresenterImpl implements MainPresenter {
             taskInfos = result.getData();
             workTaskListView.listWork(taskInfos);
         } else {
-            ToastUtil.show(mainActivity,result.getMessage());
+            ToastUtil.show(mainActivity, result.getMessage());
         }
     }
 
     public void shutDownSlideMenu() {
-        ((MainActivity)mainActivity).dl.close();
+        ((MainActivity) mainActivity).dl.close();
     }
 
     public void openSlideMenu() {
-        ((MainActivity)mainActivity).dl.open();
+        ((MainActivity) mainActivity).dl.open();
     }
 
     protected void setDragLayout(DragCallBack callBack) {
         if (mainActivity instanceof MainActivity) {
-            ((MainActivity)mainActivity).dl.setDragListener(callBack);
+            ((MainActivity) mainActivity).dl.setDragListener(callBack);
         }
     }
 
     public void gotoPreviewTask(ExaminationTaskInfo taskInfo) {
         mainActivity.startActivity(new Intent(mainActivity, PagerActivity.class)
                 .putExtra(Constant.PAGER_TYPE, PagerType.PREVIEW_TASK.getType())
-                .putExtra(Constant.TASK_INFO,taskInfo));
+                .putExtra(Constant.TASK_INFO, taskInfo));
     }
 
     public void gotoPreviewMistake(MistakeInfo mistakeInfo) {
         mainActivity.startActivity(new Intent(mainActivity, PagerActivity.class)
                 .putExtra(Constant.PAGER_TYPE, PagerType.PREVIEW_MISTAKE.getType())
-                .putExtra(Constant.MISTAKE_INFO,mistakeInfo));
+                .putExtra(Constant.MISTAKE_INFO, mistakeInfo));
     }
 
     @Override
@@ -365,7 +371,7 @@ public class MainPresenterImpl implements MainPresenter {
     }
 
     public void toUserCenter() {
-        mainActivity.startActivity(new Intent(mainActivity,PagerActivity.class)
+        mainActivity.startActivity(new Intent(mainActivity, PagerActivity.class)
                 .putExtra(Constant.PAGER_TYPE, PagerType.USER_CENTER.getType()));
     }
 
@@ -407,20 +413,20 @@ public class MainPresenterImpl implements MainPresenter {
         };
         workTaskListView.setRefreshListener(() -> {
             workTaskDataSource.request(
-                    workTaskSubjectType==null?null:workTaskSubjectType.getId(),
-                    workTaskExamPaperType == null?null:workTaskExamPaperType.getId(),
-                    workTaskStatus==null?null:workTaskStatus.getStatus(),
+                    workTaskSubjectType == null ? null : workTaskSubjectType.getId(),
+                    workTaskExamPaperType == null ? null : workTaskExamPaperType.getId(),
+                    workTaskStatus == null ? null : workTaskStatus.getStatus(),
                     callBack.setContext(mainActivity));
         });
         workTaskListView.startRefresh();
         workTaskDataSource.request(
-                workTaskSubjectType==null?null:workTaskSubjectType.getId(),
-                workTaskExamPaperType == null?null:workTaskExamPaperType.getId(),
-                workTaskStatus==null?null:workTaskStatus.getStatus(),
+                workTaskSubjectType == null ? null : workTaskSubjectType.getId(),
+                workTaskExamPaperType == null ? null : workTaskExamPaperType.getId(),
+                workTaskStatus == null ? null : workTaskStatus.getStatus(),
                 callBack);
     }
 
-    protected void refreshMistake(){
+    protected void refreshMistake() {
         BaseCallBack<MistakeListInfo> callBack = new BaseCallBack<MistakeListInfo>(mainActivity) {
             @Override
             public void response(MistakeListInfo response) {
@@ -434,17 +440,32 @@ public class MainPresenterImpl implements MainPresenter {
         };
         mistakeListView.setRefreshListener(() -> {
             mistakeDataSource.request(
-                    workTaskSubjectType==null?null:workTaskSubjectType.getId(),
-                    workTaskExamPaperType == null?null:workTaskExamPaperType.getId(),
-                    workTaskStatus==null?null:workTaskStatus.getStatus(),
+                    mistakeSubjectType == null ? null : mistakeSubjectType.getId(),
+                    mistakeExamPaperType == null ? null : mistakeExamPaperType.getId(),
+                    null,
                     callBack.setContext(mainActivity));
         });
         mistakeListView.startRefresh();
         mistakeDataSource.request(
-                workTaskSubjectType==null?null:workTaskSubjectType.getId(),
-                workTaskExamPaperType == null?null:workTaskExamPaperType.getId(),
-                workTaskStatus==null?null:workTaskStatus.getStatus(),
+                mistakeSubjectType == null ? null : mistakeSubjectType.getId(),
+                mistakeExamPaperType == null ? null : mistakeExamPaperType.getId(),
+                null,
                 callBack);
+    }
+
+    protected void refreshCollect() {
+        if (collectSubjectType == null || collectSubjectType.getId() == -1) {
+            collectView.previewTask(
+                    AppConfig.BASE_WEB_URL +
+                            String.format(collectUrlNoSubject,
+                                    userAccountDataSource.getUserAccount().getData().getStudentId()));
+        } else {
+            collectView.previewTask(
+                    AppConfig.BASE_WEB_URL +
+                            String.format(collectUrlSubject,
+                                    userAccountDataSource.getUserAccount().getData().getStudentId(),
+                                    collectSubjectType.getId()));
+        }
     }
 
     protected void mistakeResult(MistakeListInfo result) {
@@ -452,7 +473,7 @@ public class MainPresenterImpl implements MainPresenter {
             mistakeInfos = result.getData();
             mistakeListView.listMistake(mistakeInfos);
         } else {
-            ToastUtil.show(mainActivity,result.getMessage());
+            ToastUtil.show(mainActivity, result.getMessage());
         }
     }
 }

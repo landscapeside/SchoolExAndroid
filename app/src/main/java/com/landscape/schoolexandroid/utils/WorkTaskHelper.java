@@ -6,6 +6,7 @@ import com.utils.datahelper.TimeConversion;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,21 @@ public class WorkTaskHelper {
             }
             tempTasks.add(infos.get(i));
         }
+        Set<String> keys = taskMap.keySet();
+        for (String key : keys) {
+            List<ExaminationTaskInfo> taskInfoList = taskMap.get(key);
+            sortTaskListByTime(taskInfoList);
+        }
         return taskMap;
+    }
+
+    public static void sortTaskListByTime(List<ExaminationTaskInfo> source) {
+        Collections.sort(source, new Comparator<ExaminationTaskInfo>() {
+            @Override
+            public int compare(ExaminationTaskInfo lhs, ExaminationTaskInfo rhs) {
+                return lhs.getPuchDateTime().compareTo(rhs.getPuchDateTime());
+            }
+        });
     }
 
     public static List<String> sortDate(Set<String> keys) {
@@ -54,7 +69,7 @@ public class WorkTaskHelper {
     public static List<UserAccount.DataBean.SubjectTypeBean> addDefSubjectType(List<UserAccount.DataBean.SubjectTypeBean> source) {
         List<UserAccount.DataBean.SubjectTypeBean> result = new ArrayList<>();
         UserAccount.DataBean.SubjectTypeBean def = new UserAccount.DataBean.SubjectTypeBean();
-        def.setName("默认");
+        def.setName("全部");
         def.setStatus(0);
         def.setId(-1);
         result.add(def);
@@ -66,7 +81,7 @@ public class WorkTaskHelper {
         List<UserAccount.DataBean.ExaminationPapersTypeBean> result = new ArrayList<>();
         UserAccount.DataBean.ExaminationPapersTypeBean def = new UserAccount.DataBean.ExaminationPapersTypeBean();
         def.setId(-1);
-        def.setName("默认");
+        def.setName("全部");
         result.add(def);
         result.addAll(source);
         return result;

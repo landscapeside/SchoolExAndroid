@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,6 +42,7 @@ import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,7 +114,7 @@ public class AnswerCardView extends RelativeLayout {
         }
     }
 
-    public void loadAnswerCards(QuestionInfo questionInfo,int SubjectTypeId) {
+    public void loadAnswerCards(QuestionInfo questionInfo, int SubjectTypeId) {
         this.SubjectTypeId = SubjectTypeId;
         info = questionInfo;
         alternativeContent.clear();
@@ -201,7 +203,8 @@ public class AnswerCardView extends RelativeLayout {
         final int TYPE_MULTI = 2;
         final int TYPE_EDIT = 3;
         final int TYPE_RICH = 4;
-        final int TYPE_NONE = 5;
+        final int TYPE_DECIDE = 5;
+        final int TYPE_NONE = 6;
 
         public void refreshCards() {
             notifyDataSetChanged();
@@ -209,7 +212,7 @@ public class AnswerCardView extends RelativeLayout {
 
         @Override
         public int getViewTypeCount() {
-            return 5;
+            return 6;
         }
 
         @Override
@@ -217,13 +220,19 @@ public class AnswerCardView extends RelativeLayout {
             if (CollectionUtils.isIn(
                     CardType.getType(answerTypes.get(position).getTypeId()),
                     CardType.SINGLE_CHOOSE,
-                    CardType.DECIDE,
                     CardType.LISTEN_SINGLE_CHOOSE
             )) {
                 /**
                  * 单选
                  */
                 return TYPE_SINGLE;
+            } else if (CollectionUtils.isIn(
+                    CardType.getType(answerTypes.get(position).getTypeId()),
+                    CardType.DECIDE)) {
+                /**
+                 * 判断
+                 * */
+                return TYPE_DECIDE;
             } else if (CollectionUtils.isIn(
                     CardType.getType(answerTypes.get(position).getTypeId()),
                     CardType.MULTI_CHOOSE)) {
@@ -238,8 +247,8 @@ public class AnswerCardView extends RelativeLayout {
                 /**
                  * 填空
                  */
-                /*英语填空需要拍照*/
-                if (SubjectTypeId == 12) {
+                /*除了英语填空，其他都需要拍照*/
+                if (SubjectTypeId != 12) {
                     return TYPE_RICH;
                 }
                 return TYPE_EDIT;
@@ -283,6 +292,9 @@ public class AnswerCardView extends RelativeLayout {
                     break;
                 case TYPE_RICH:
                     convertView = buildEditView(convertView, position, true);
+                    break;
+                case TYPE_DECIDE:
+                    convertView = buildDecideView(convertView, position);
                     break;
                 default:
 
@@ -330,6 +342,19 @@ public class AnswerCardView extends RelativeLayout {
             return convertView;
         }
 
+        private View buildDecideView(View convertView, int position) {
+            DecideViewHolder viewHolder = null;
+            if (convertView == null) {
+                convertView = View.inflate(mContext, R.layout.item_answer_decide, null);
+                viewHolder = new DecideViewHolder(convertView);
+                convertView.setTag(R.id.list_item_view, viewHolder);
+            } else {
+                viewHolder = (DecideViewHolder) convertView.getTag(R.id.list_item_view);
+            }
+            viewHolder.build(answerTypes.get(position));
+            return convertView;
+        }
+
     }
 
     class AlternativeContent {
@@ -343,8 +368,58 @@ public class AnswerCardView extends RelativeLayout {
         public int TypeId;
     }
 
-    class SingleViewHolder {
+    class DecideViewHolder {
+        @Bind(R.id.radio_group)
+        RadioGroup group;
+        @Bind(R.id.radio_def)
+        RadioButton radioDef;
+        @Bind(R.id.radio_right)
+        RadioButton radioRight;
+        @Bind(R.id.radio_err)
+        RadioButton radioErr;
 
+        public DecideViewHolder(View container) {
+            ButterKnife.bind(this, container);
+        }
+
+        public void build(AnswerType type) {
+            radioDef.setChecked(true);
+            radioRight.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    StudentAnswer studentAnswer = answerMap.get(type.getId());
+                    if (studentAnswer == null) {
+                        studentAnswer = new StudentAnswer();
+                        studentAnswer.Id = type.getId();
+                        studentAnswer.TypeId = type.getTypeId();
+                    }
+                    studentAnswer.Answer = "T";
+                    answerMap.put(type.getId(), studentAnswer);
+                }
+            });
+            radioErr.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    StudentAnswer studentAnswer = answerMap.get(type.getId());
+                    if (studentAnswer == null) {
+                        studentAnswer = new StudentAnswer();
+                        studentAnswer.Id = type.getId();
+                        studentAnswer.TypeId = type.getTypeId();
+                    }
+                    studentAnswer.Answer = "F";
+                    answerMap.put(type.getId(), studentAnswer);
+                }
+            });
+            StudentAnswer studentAnswer = answerMap.get(type.getId());
+            if (studentAnswer != null) {
+                if (studentAnswer.Answer.equals("T")) {
+                    radioRight.setChecked(true);
+                } else {
+                    radioErr.setChecked(true);
+                }
+            }
+        }
+    }
+
+    class SingleViewHolder {
         @Bind(R.id.tv_index)
         TextView tvIndex;
         @Bind(R.id.radio_group)
@@ -359,11 +434,7 @@ public class AnswerCardView extends RelativeLayout {
             group.removeAllViews();
             for (int i = 0; i < alternativeContent.size(); i++) {
                 RadioButton radioButton = (RadioButton) View.inflate(mContext, R.layout.view_radio_button, null);
-                if (CardType.getType(type.getTypeId()) == CardType.DECIDE) {
-                    radioButton.setText(alternativeContent.get(i).Id.replace("T", "正确").replace("F", "错误"));
-                } else {
-                    radioButton.setText(alternativeContent.get(i).Id);
-                }
+                radioButton.setText(alternativeContent.get(i).Id);
                 group.addView(radioButton);
                 RadioGroup.LayoutParams layoutParams = (RadioGroup.LayoutParams) radioButton.getLayoutParams();
                 layoutParams.setMargins(20, 20, 20, 20);
@@ -429,19 +500,22 @@ public class AnswerCardView extends RelativeLayout {
                             String[] newAnswers = new String[answers.length + 1];
                             System.arraycopy(answers, 0, newAnswers, 0, answers.length);
                             newAnswers[newAnswers.length - 1] = radioButton.getText().toString();
+                            ArrayList<String> answerList = new ArrayList<>(Arrays.asList(newAnswers));
+                            Collections.sort(answerList);
+                            newAnswers = answerList.toArray(new String[0]);
                             studentAnswer.Answer = StringUtils.join(newAnswers, ",");
                         }
                     } else {
                         if (!TextUtils.isEmpty(studentAnswer.Answer)) {
                             String[] answers = studentAnswer.Answer.split(",");
-                            List<String> answerList = Arrays.asList(answers);
+                            ArrayList<String> answerList = new ArrayList<>(Arrays.asList(answers));
                             for (int i1 = 0; i1 < answerList.size(); i1++) {
                                 if (answerList.get(i1).equals(radioButton.getText().toString())) {
                                     answerList.remove(i1);
                                     break;
                                 }
                             }
-                            String[] newAnswers = (String[]) answerList.toArray();
+                            String[] newAnswers = answerList.toArray(new String[0]);
                             studentAnswer.Answer = StringUtils.join(newAnswers, ",");
                         }
                     }
@@ -565,7 +639,7 @@ public class AnswerCardView extends RelativeLayout {
                             String imgAnswer = studentAnswer.Answer.substring(studentAnswer.Answer.indexOf("<img src=\""));
                             imgAnswer = imgAnswer.replace("<img src=\"", "").replace("\"/>", "");
                             Picasso.with(mContext).load(imgAnswer).into(imgPic);
-                            imgPic.setTag(R.id.image_url,imgAnswer);
+                            imgPic.setTag(R.id.image_url, imgAnswer);
                         }
 
                         if (studentAnswer.Answer.contains("<img")) {

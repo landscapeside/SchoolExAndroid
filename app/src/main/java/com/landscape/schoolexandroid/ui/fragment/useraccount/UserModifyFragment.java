@@ -47,7 +47,7 @@ public class UserModifyFragment extends BaseFragment implements UserModifyView<B
     @Override
     public void refreshUserInfo(UserAccount userAccount) {
         tvName.setText(userAccount.getData().getName());
-        tvClass.setText(userAccount.getData().getGradeName()+userAccount.getData().getTeamName()+userAccount.getData().getClassGroupName());
+        tvClass.setText(userAccount.getData().getGradeName()+userAccount.getData().getTeamName());
         tvSex.setText(userAccount.getData().getGender());
     }
 

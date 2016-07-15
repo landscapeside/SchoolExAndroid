@@ -44,6 +44,8 @@ public class WorkTaskFragment extends BaseFragment implements WorkTaskListView<B
     TextView tvType;
     @Bind(R.id.tv_state)
     TextView tvState;
+    @Bind(R.id.list_empty)
+    View emptyView;
 
     @Override
     public int getLayoutResId() {
@@ -55,7 +57,11 @@ public class WorkTaskFragment extends BaseFragment implements WorkTaskListView<B
         pullRefreshLayout.setRefreshing(false);
         if (CollectionUtils.isEmpty(listData)) {
             ToastUtil.show(getActivity(),"没有任务");
+            emptyView.setVisibility(View.VISIBLE);
+            pullRefreshLayout.setVisibility(View.GONE);
         } else {
+            emptyView.setVisibility(View.GONE);
+            pullRefreshLayout.setVisibility(View.VISIBLE);
             if (workTaskAdapter == null) {
                 // TODO: 2016/6/22 更新数据
                 workTaskAdapter = new WorkTaskAdapter(getActivity(),listData);
@@ -145,6 +151,21 @@ public class WorkTaskFragment extends BaseFragment implements WorkTaskListView<B
         } else {
             stateFilterAdapter.replaceAll(taskStatusList);
         }
+    }
+
+    @Override
+    public void setSubjectEnable(boolean enable) {
+        tvSubject.setVisibility(enable?View.VISIBLE:View.GONE);
+    }
+
+    @Override
+    public void setTypeEnable(boolean enable) {
+        tvType.setVisibility(enable?View.VISIBLE:View.GONE);
+    }
+
+    @Override
+    public void setStateEnable(boolean enable) {
+        tvState.setVisibility(enable?View.VISIBLE:View.GONE);
     }
 
     @Override

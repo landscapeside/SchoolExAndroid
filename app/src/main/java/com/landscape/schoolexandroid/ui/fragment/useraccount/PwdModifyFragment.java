@@ -50,7 +50,7 @@ public class PwdModifyFragment extends BaseFragment implements PasswdModifyView<
             ToastUtil.show(getActivity(),"确认密码不能为空");
             return false;
         }
-        if (TextUtils.equals(editNewPwd.getText().toString(), editConfirmPwd.getText().toString())) {
+        if (!TextUtils.equals(editNewPwd.getText().toString(), editConfirmPwd.getText().toString())) {
             ToastUtil.show(getActivity(),"新密码与确认密码不一致");
             return false;
         }

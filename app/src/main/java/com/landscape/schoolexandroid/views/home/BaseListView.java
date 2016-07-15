@@ -15,6 +15,10 @@ public interface BaseListView<T extends BasePresenter> extends BaseView<T> {
     void typeFilter(List<UserAccount.DataBean.ExaminationPapersTypeBean> examPaperModes);
     void stateFilter(List<TaskStatus> taskStatusList);
 
+    void setSubjectEnable(boolean enable);
+    void setTypeEnable(boolean enable);
+    void setStateEnable(boolean enable);
+
     interface OnFilterSelector{
         void onSubjectSelect(UserAccount.DataBean.SubjectTypeBean subjectType);
         void onTypeSelect(UserAccount.DataBean.ExaminationPapersTypeBean paperMode);

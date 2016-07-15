@@ -16,4 +16,6 @@
 
     <string name="logout_ok">确定</string>
     <string name="logout_cancel">取消</string>
+
+    <string name="time_alerm_ok">知道了</string>
 </resources>

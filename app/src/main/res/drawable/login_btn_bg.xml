@@ -9,6 +9,14 @@
                 android:radius="20dp" />
         </shape>
     </item>
+    <item android:state_pressed="true">
+        <shape
+            android:shape="rectangle" >
+            <solid android:color="@color/btn_green_press" />
+            <corners
+                android:radius="20dp" />
+        </shape>
+    </item>
     <item>
         <shape
             android:shape="rectangle" >

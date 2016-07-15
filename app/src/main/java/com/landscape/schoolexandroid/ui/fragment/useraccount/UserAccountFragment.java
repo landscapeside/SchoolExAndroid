@@ -87,10 +87,10 @@ public class UserAccountFragment extends BaseFragment implements UserAccountView
         if (!TextUtils.isEmpty(userAccount.getData().getPhoto())) {
             Picasso.with(getActivity()).load(userAccount.getData().getPhoto()).into(iconAvatar);
         } else {
-            iconAvatar.setImageResource(R.mipmap.ic_launcher);
+            iconAvatar.setImageResource(R.drawable.icon_def_avatar);
         }
         tvName.setText(userAccount.getData().getName());
-        tvClass.setText(userAccount.getData().getGradeName()+userAccount.getData().getTeamName()+userAccount.getData().getClassGroupName());
+        tvClass.setText(userAccount.getData().getGradeName()+userAccount.getData().getTeamName());
         Drawable sexDrawable = getResources().getDrawable(
                 SexType.MALE == SexType.getSex(userAccount.getData().getGender()) ? R.drawable.icon_male : R.drawable.icon_female);
         sexDrawable.setBounds(0,0,sexDrawable.getMinimumWidth(),sexDrawable.getMinimumHeight());

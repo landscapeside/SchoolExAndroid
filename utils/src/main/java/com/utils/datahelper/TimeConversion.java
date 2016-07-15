@@ -30,9 +30,10 @@ public class TimeConversion {
     }
 
     public static String getHourMinSecondsData(long timeMillis) {
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+        long hours = timeMillis/1000l/3600l;
+        SimpleDateFormat formatter = new SimpleDateFormat(":mm:ss");
         formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return formatter.format(new Date(timeMillis));
+        return hours + formatter.format(new Date(timeMillis));
     }
 
     public static String getData(long timeMillis) {

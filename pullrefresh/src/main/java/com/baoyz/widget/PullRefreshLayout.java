@@ -21,6 +21,7 @@ import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import java.security.InvalidParameterException;
 
@@ -40,7 +41,7 @@ public class PullRefreshLayout extends ViewGroup {
     public static final int STYLE_RING = 3;
     public static final int STYLE_SMARTISAN = 4;
 
-    private View mTarget;
+    private View mTarget,scrollChild,emptyChild;
     Context mContext;
     private ImageView mRefreshView, mLoadView;
     private Interpolator mDecelerateInterpolator;
@@ -58,6 +59,7 @@ public class PullRefreshLayout extends ViewGroup {
     private OnRefreshListener mListener;
     private OnCancelRefreshListener mCancelRefreshListener;
     private int[] mColorSchemeColors;
+    private int type = STYLE_MATERIAL;
 
     public int mDurationToStartPosition;
     public int mDurationToCorrectPosition;
@@ -72,7 +74,7 @@ public class PullRefreshLayout extends ViewGroup {
     public PullRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.refresh_PullRefreshLayout);
-        final int type = a.getInteger(R.styleable.refresh_PullRefreshLayout_refreshType, STYLE_MATERIAL);
+        type = a.getInteger(R.styleable.refresh_PullRefreshLayout_refreshType, STYLE_MATERIAL);
         final int colorsId = a.getResourceId(R.styleable.refresh_PullRefreshLayout_refreshColors, 0);
         final int colorId = a.getResourceId(R.styleable.refresh_PullRefreshLayout_refreshColor, 0);
         a.recycle();
@@ -174,9 +176,24 @@ public class PullRefreshLayout extends ViewGroup {
         widthMeasureSpec = MeasureSpec.makeMeasureSpec(getMeasuredWidth() - getPaddingRight() - getPaddingLeft(), MeasureSpec.EXACTLY);
         heightMeasureSpec = MeasureSpec.makeMeasureSpec(getMeasuredHeight() - getPaddingTop() - getPaddingBottom(), MeasureSpec.EXACTLY);
         mTarget.measure(widthMeasureSpec, heightMeasureSpec);
+        if (scrollChild != null) {
+            scrollChild.measure(widthMeasureSpec, heightMeasureSpec);
+        }
+        if (emptyChild != null) {
+            emptyChild.measure(widthMeasureSpec, heightMeasureSpec);
+        }
         mRefreshView.measure(widthMeasureSpec, heightMeasureSpec);
         mLoadView.measure(widthMeasureSpec, heightMeasureSpec);
 //        mRefreshView.measure(MeasureSpec.makeMeasureSpec(mRefreshViewWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(mRefreshViewHeight, MeasureSpec.EXACTLY));
+    }
+
+    private boolean isReset = false;
+
+    public void resetTarget(boolean reset) {
+        isReset = reset;
+        mTarget = null;
+        ensureTarget();
+//        requestLayout();
     }
 
     private void ensureTarget() {
@@ -185,9 +202,16 @@ public class PullRefreshLayout extends ViewGroup {
         if (getChildCount() > 0) {
             for (int i = 0; i < getChildCount(); i++) {
                 View child = getChildAt(i);
-                if (child != mRefreshView) {
-                    mTarget = child;
+                if (child != mRefreshView && child != mLoadView) {
+                    if (child instanceof RelativeLayout) {
+                        emptyChild = child;
+                    } else {
+                        scrollChild = child;
+                    }
+                    if (child.isShown()) {
+                        mTarget = child;
 //                    return;
+                    }
                 }
             }
         }
@@ -252,7 +276,7 @@ public class PullRefreshLayout extends ViewGroup {
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
 
-        if (!mIsBeingDragged) {
+        if (!mIsBeingDragged && !isReset) {
             return super.onTouchEvent(ev);
         }
 
@@ -668,7 +692,12 @@ public class PullRefreshLayout extends ViewGroup {
 
     private void setTargetOffsetTop(int offset, boolean requiresUpdate) {
 //        mRefreshView.bringToFront();
-        mTarget.offsetTopAndBottom(offset);
+        if (scrollChild != null) {
+            scrollChild.offsetTopAndBottom(offset);
+        }
+        if (emptyChild != null) {
+            emptyChild.offsetTopAndBottom(offset);
+        }
         mCurrentOffsetTop = mTarget.getTop();
         mCurrentOffsetBottom = mTarget.getBottom();
         mRefreshDrawable.offsetTopAndBottom(offset);
@@ -679,7 +708,12 @@ public class PullRefreshLayout extends ViewGroup {
 
     private void setTargetOffsetBottom(int offset, boolean requiresUpdate) {
 //        mRefreshView.bringToFront();
-        mTarget.offsetTopAndBottom(offset);
+        if (scrollChild != null) {
+            scrollChild.offsetTopAndBottom(offset);
+        }
+        if (emptyChild != null) {
+            emptyChild.offsetTopAndBottom(offset);
+        }
         mCurrentOffsetTop = mTarget.getTop();
         mCurrentOffsetBottom = mTarget.getBottom();
         mLoadDrawable.offsetTopAndBottom(offset);
@@ -814,6 +848,12 @@ public class PullRefreshLayout extends ViewGroup {
         int bottom = getPaddingBottom();
 
         mTarget.layout(left, top + mTarget.getTop(), left + width - right, top + height - bottom + mTarget.getTop());
+        if (scrollChild != null) {
+            scrollChild.layout(left, top + mTarget.getTop(), left + width - right, top + height - bottom + mTarget.getTop());
+        }
+        if (emptyChild != null) {
+            emptyChild.layout(left, top + mTarget.getTop(), left + width - right, top + height - bottom + mTarget.getTop());
+        }
         mRefreshView.layout(left, top, left + width - right, top + height - bottom);
         mLoadView.layout(left, top, left + width - right, top + height - bottom);
         if (mLoadDrawable != null && !resetLoadTop) {
