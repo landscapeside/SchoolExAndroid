@@ -13,6 +13,7 @@ import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.worktask.TaskOptionDataSource;
 import com.landscape.schoolexandroid.db.TaskDb;
+import com.landscape.schoolexandroid.dialog.PreviewAlertDialog;
 import com.landscape.schoolexandroid.enums.AnswerMode;
 import com.landscape.schoolexandroid.enums.PagerType;
 import com.landscape.schoolexandroid.enums.TaskStatus;
@@ -39,6 +40,8 @@ import javax.inject.Inject;
  * Created by 1 on 2016/6/27.
  */
 public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
+
+    private static String previewPromptFormat = "此为计时%s分钟限时答题，中途不能退出 ，是否答题";
 
     IWorkTask mOptions;
 
@@ -89,6 +92,7 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
         } else {
             // 答题模式
             answerMode = AnswerMode.EXAM;
+            previewPromptFormat = String.format(previewPromptFormat, taskInfo.getDuration()/60);
             taskInfo.setDuration(TimeConversion.getDurationByStart(
                     taskInfo.getStartTime(),taskInfo.getDuration()));
         }
@@ -111,19 +115,23 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
             @Override
             public void onInitialized() {
                 previewTaskView.setClickListener(() -> {
-                    taskOptionDataSource.startWork(taskInfo, new BaseCallBack<BaseBean>(pagerActivity) {
-                        @Override
-                        public void response(BaseBean response) {
 
-                        }
+                    if (answerMode == AnswerMode.EXAM) {
+                        PreviewAlertDialog dialog = new PreviewAlertDialog(pagerActivity,previewPromptFormat) {
+                            @Override
+                            public void onOk() {
+                                startAnswer();
+                            }
 
-                        @Override
-                        public void err() {
+                            @Override
+                            public void cancel() {
 
-                        }
-                    });
-                    mOptions.getExaminationPaper(taskInfo);
-
+                            }
+                        };
+                        dialog.show();
+                    } else {
+                        startAnswer();
+                    }
                 });
                 if (CollectionUtils.isIn(
                         TaskStatus.getStatus(taskInfo.getStatus()),
@@ -151,6 +159,21 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
 
             }
         });
+    }
+
+    private void startAnswer() {
+        taskOptionDataSource.startWork(taskInfo, new BaseCallBack<BaseBean>(pagerActivity) {
+            @Override
+            public void response(BaseBean response) {
+
+            }
+
+            @Override
+            public void err() {
+
+            }
+        });
+        mOptions.getExaminationPaper(taskInfo);
     }
 
     @Override

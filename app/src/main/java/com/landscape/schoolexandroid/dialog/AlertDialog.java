@@ -29,7 +29,7 @@ public abstract class AlertDialog extends Dialog {
         tittlevTv.setText(title);
         setCancelable(true);
         setCanceledOnTouchOutside(true);
-        setOnCancelListener(dialog -> onOkClick(null));
+        setOnCancelListener(dialog -> onOk());
     }
 
     @OnClick(R.id.sure)

@@ -14,6 +14,9 @@
     <string name="ignore_record">不想看</string>
     <string name="check_record">查看记录</string>
 
+    <string name="yes">是</string>
+    <string name="no">否</string>
+
     <string name="logout_ok">确定</string>
     <string name="logout_cancel">取消</string>
 

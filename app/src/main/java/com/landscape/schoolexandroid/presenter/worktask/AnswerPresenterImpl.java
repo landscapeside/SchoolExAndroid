@@ -193,7 +193,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
                     alertDialog = new AlertDialog(pagerActivity,"答题时间已过，你已不能继续答题") {
                         @Override
                         public void onOk() {
-                            submitClick();
+                            mOptions.finish();
                         }
                     };
                     alertDialog.show();
