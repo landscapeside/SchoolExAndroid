@@ -284,7 +284,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
                 }
 
                 @Override
-                public void cancel() {
+                public void onCancel() {
                     checkDialog = null;
                     pagerActivity.finish();
                 }

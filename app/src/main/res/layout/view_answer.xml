@@ -105,14 +105,14 @@
                     android:src="@drawable/icon_answer_handle_close" />
             </RelativeLayout>
 
-            <com.landscape.weight.AnswerCardView
+            <com.landscape.weight.answer.AnswerCardViewNew
                 android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/answer_view_bg">
 
 
-            </com.landscape.weight.AnswerCardView>
+            </com.landscape.weight.answer.AnswerCardViewNew>
 
         </com.landscape.slidinguppanel.WrapSlidingDrawer>
 

@@ -1,8 +1,9 @@
-package com.landscape.weight;
+package com.landscape.weight.answer;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -12,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,17 +24,23 @@ import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.landscape.schoolexandroid.R;
+import com.landscape.schoolexandroid.common.BaseActivity;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.enums.CardType;
 import com.landscape.schoolexandroid.enums.PagerType;
+import com.landscape.schoolexandroid.mode.worktask.AlternativeContent;
 import com.landscape.schoolexandroid.mode.worktask.AnswerType;
 import com.landscape.schoolexandroid.mode.worktask.QuestionInfo;
+import com.landscape.schoolexandroid.mode.worktask.StudentAnswer;
+import com.landscape.schoolexandroid.presenter.worktask.AnswerCardPresenterImpl;
 import com.landscape.schoolexandroid.ui.activity.PagerActivity;
 import com.landscape.schoolexandroid.utils.PhotoHelper;
+import com.landscape.weight.AvatarImageView;
 import com.squareup.picasso.Picasso;
 import com.utils.datahelper.CollectionUtils;
 import com.utils.datahelper.JSONS;
 import com.utils.system.ScreenParam;
+import com.viewpagerindicator.CirclePageIndicator;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -55,12 +61,15 @@ import butterknife.OnClick;
 /**
  * Created by landscape on 2016/7/2.
  */
-public class AnswerCardView extends RelativeLayout {
+public class AnswerCardViewNew extends RelativeLayout {
 
     Context mContext;
 
-    ListView listCard;
-    ImageView iconIndicator;
+    AnswerCardPresenterImpl presenter;
+
+
+    ViewPager pager;
+    CirclePageIndicator indicator;
 
     CardAdapter adapter = null;
 
@@ -72,129 +81,29 @@ public class AnswerCardView extends RelativeLayout {
     List<AnswerType> answerTypes = new ArrayList<>();
     Map<Integer, Map<String, String>> imageMap = new HashMap<>();
 
-    public AnswerCardView(Context context, AttributeSet attrs) {
+    public AnswerCardViewNew(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-        LayoutInflater.from(context).inflate(R.layout.view_answer_card, this, true);
+        LayoutInflater.from(context).inflate(R.layout.view_answer_card_new, this, true);
         init();
     }
 
     private void init() {
-        listCard = (ListView) findViewById(R.id.list_card);
-        iconIndicator = (ImageView) findViewById(R.id.icon_indicator);
-        listCard.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                switch (scrollState) {
-                    case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                        initIndicatorState();
-                        break;
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-            }
-        });
-    }
-
-    private void initIndicatorState() {
-        if (listCard.getFirstVisiblePosition() == 0 && adapter.getCount() > 1) {
-            // 显示向下的图标
-            iconIndicator.setImageResource(R.drawable.icon_answer_card_down);
-            iconIndicator.setVisibility(VISIBLE);
-        } else if (adapter.getCount() > 1 && listCard.getLastVisiblePosition() == (adapter.getCount() - 1)) {
-            // 显示向上的图标
-            iconIndicator.setImageResource(R.drawable.icon_answer_card_up);
-            iconIndicator.setVisibility(VISIBLE);
-        } else {
-            // 不显示图标
-            iconIndicator.setVisibility(INVISIBLE);
-        }
+        pager = (ViewPager) findViewById(R.id.pager);
+        indicator = (CirclePageIndicator) findViewById(R.id.indicator);
+        presenter = new AnswerCardPresenterImpl((BaseActivity) mContext,pager,indicator);
     }
 
     public void loadAnswerCards(QuestionInfo questionInfo, int SubjectTypeId) {
-        this.SubjectTypeId = SubjectTypeId;
-        info = questionInfo;
-        alternativeContent.clear();
-        studentAnswers.clear();
-        answerMap.clear();
-        if (imageMap.get(info.getId()) == null) {
-            imageMap.put(info.getId(), new HashMap<>());
-        }
-        if (!TextUtils.isEmpty(questionInfo.getAlternativeContent())) {
-            Type alterType = new TypeToken<ArrayList<AlternativeContent>>() {
-            }.getType();
-            alternativeContent = JSONS.parseObject(questionInfo.getAlternativeContent(), alterType);
-        }
-        if (!TextUtils.isEmpty(questionInfo.getStudentsAnswer())) {
-            Type studentType = new TypeToken<ArrayList<StudentAnswer>>() {
-            }.getType();
-            studentAnswers = JSONS.parseObject(questionInfo.getStudentsAnswer(), studentType);
-        }
-        for (StudentAnswer studentAnswer : studentAnswers) {
-            answerMap.put(studentAnswer.Id, studentAnswer);
-        }
-        Type type = new TypeToken<ArrayList<AnswerType>>() {
-        }.getType();
-        answerTypes = JSONS.parseObject(questionInfo.getAnswerType(), type);
-        if (adapter == null) {
-            adapter = new CardAdapter();
-            listCard.setAdapter(adapter);
-            adapter.refreshCards();
-        } else {
-            adapter.refreshCards();
-        }
-        initIndicatorState();
+        presenter.loadAnswerCards(questionInfo,SubjectTypeId);
     }
 
-    /**
-     * 答案是否变换
-     *
-     * @return
-     */
     public boolean isChanged() {
-        List<StudentAnswer> oldAnswers = new ArrayList<>();
-        Map<String, StudentAnswer> oldAnswerMap = new HashMap<>();
-        if (!TextUtils.isEmpty(info.getStudentsAnswer())) {
-            Type studentType = new TypeToken<ArrayList<StudentAnswer>>() {
-            }.getType();
-            oldAnswers = JSONS.parseObject(info.getStudentsAnswer(), studentType);
-        }
-        for (StudentAnswer studentAnswer : oldAnswers) {
-            oldAnswerMap.put(studentAnswer.Id, studentAnswer);
-        }
-        for (AnswerType type : answerTypes) {
-            StudentAnswer studentAnswer = answerMap.get(type.getId());
-            StudentAnswer oldStudentAnswer = oldAnswerMap.get(type.getId());
-            if (studentAnswer != null) {
-                if (oldStudentAnswer == null && TextUtils.isEmpty(studentAnswer.Answer)) {
-                    continue;
-                }
-                if (oldStudentAnswer == null) {
-                    return true;
-                }
-                if (!studentAnswer.Answer.equals(oldStudentAnswer.Answer)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return presenter.isChanged();
     }
 
-    /**
-     * 答案内容
-     *
-     * @return
-     */
     public String getAnswer() {
-        Set<String> keys = answerMap.keySet();
-        List<StudentAnswer> answerList = new ArrayList<>();
-        for (String key : keys) {
-            answerList.add(answerMap.get(key));
-        }
-        return JSONS.parseJson(answerList);
+        return presenter.getAnswer();
     }
 
     class CardAdapter extends BaseAdapter {
@@ -355,17 +264,6 @@ public class AnswerCardView extends RelativeLayout {
             return convertView;
         }
 
-    }
-
-    class AlternativeContent {
-        public String Id;
-        public String Content;
-    }
-
-    class StudentAnswer {
-        public String Answer = "";
-        public String Id = "";
-        public int TypeId;
     }
 
     class DecideViewHolder {

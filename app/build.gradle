@@ -59,4 +59,5 @@ dependencies {
     compile project(':slidelibrary')
     compile project(':crop')
     compile project(':photoview')
+    compile project(':indicator')
 }

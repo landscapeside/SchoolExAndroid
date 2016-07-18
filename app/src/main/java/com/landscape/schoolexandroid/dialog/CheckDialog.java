@@ -28,13 +28,13 @@ public abstract class CheckDialog extends Dialog {
         tittlevTv.setText(title);
         setCancelable(true);
         setCanceledOnTouchOutside(true);
-        setOnCancelListener(dialog -> cancel());
+        setOnCancelListener(dialog -> onCancel());
     }
 
     @OnClick(R.id.cancle)
     public void onCancel(View view){
         dismiss();
-        cancel();
+        onCancel();
     }
 
     @OnClick(R.id.sure)
@@ -44,5 +44,5 @@ public abstract class CheckDialog extends Dialog {
     }
 
     public abstract void onOk();
-    public abstract void cancel();
+    public abstract void onCancel();
 }

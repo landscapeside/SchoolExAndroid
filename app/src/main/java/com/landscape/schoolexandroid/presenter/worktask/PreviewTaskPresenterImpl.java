@@ -14,6 +14,7 @@ import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.worktask.TaskOptionDataSource;
 import com.landscape.schoolexandroid.db.TaskDb;
 import com.landscape.schoolexandroid.dialog.PreviewAlertDialog;
+import com.landscape.schoolexandroid.dialog.PromptDialog;
 import com.landscape.schoolexandroid.enums.AnswerMode;
 import com.landscape.schoolexandroid.enums.PagerType;
 import com.landscape.schoolexandroid.enums.TaskStatus;
@@ -41,11 +42,13 @@ import javax.inject.Inject;
  */
 public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
 
-    private static String previewPromptFormat = "此为计时%s分钟限时答题，中途不能退出 ，是否答题";
+    private String previewPromptFormat = "此为计时%s分钟限时答题，中途不能退出 ，是否答题";
 
     IWorkTask mOptions;
 
     AnswerMode answerMode;
+
+    PreviewAlertDialog dialog;
 
     @Inject
     TaskOptionDataSource taskOptionDataSource;
@@ -117,14 +120,14 @@ public class PreviewTaskPresenterImpl implements BasePresenter,IWorkTask {
                 previewTaskView.setClickListener(() -> {
 
                     if (answerMode == AnswerMode.EXAM) {
-                        PreviewAlertDialog dialog = new PreviewAlertDialog(pagerActivity,previewPromptFormat) {
+                        dialog = new PreviewAlertDialog(pagerActivity,previewPromptFormat) {
                             @Override
                             public void onOk() {
                                 startAnswer();
                             }
 
                             @Override
-                            public void cancel() {
+                            public void onCancel() {
 
                             }
                         };

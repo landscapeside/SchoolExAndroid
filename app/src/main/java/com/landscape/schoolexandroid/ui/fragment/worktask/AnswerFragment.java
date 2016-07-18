@@ -5,26 +5,21 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.SlidingDrawer;
 import android.widget.TextView;
 
 import com.landscape.schoolexandroid.R;
-import com.landscape.schoolexandroid.common.BaseFragment;
 import com.landscape.schoolexandroid.common.BaseWebFragment;
 import com.landscape.schoolexandroid.dialog.TimeAlertDialog;
 import com.landscape.schoolexandroid.mode.worktask.QuestionInfo;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
 import com.landscape.schoolexandroid.views.worktask.AnswerView;
-import com.landscape.slidinguppanel.SlidingUpPanelLayout;
 import com.landscape.slidinguppanel.WrapSlidingDrawer;
-import com.landscape.weight.AnswerCardView;
+import com.landscape.weight.answer.AnswerCardView;
 import com.landscape.weight.FlingRelativeLayout;
+import com.landscape.weight.answer.AnswerCardViewNew;
 import com.orhanobut.logger.Logger;
-import com.utils.behavior.ToastUtil;
 import com.utils.datahelper.RxCounter;
 import com.utils.datahelper.TimeConversion;
-
-import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -57,7 +52,7 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     @Bind(R.id.handlebg)
     ImageView handlebg;
     @Bind(R.id.content)
-    AnswerCardView answerCardView;
+    AnswerCardViewNew answerCardView;
 
     @Override
     public int getLayoutResId() {

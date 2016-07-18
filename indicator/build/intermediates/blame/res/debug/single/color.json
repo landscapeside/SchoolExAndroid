@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "D:\\project\\schoolExAdnrd\\indicator\\build\\intermediates\\res\\merged\\debug\\color\\vpi__light_theme.xml",
+        "source": "D:\\project\\schoolExAdnrd\\indicator\\src\\main\\res\\color\\vpi__light_theme.xml"
+    },
+    {
+        "merged": "D:\\project\\schoolExAdnrd\\indicator\\build\\intermediates\\res\\merged\\debug\\color\\vpi__dark_theme.xml",
+        "source": "D:\\project\\schoolExAdnrd\\indicator\\src\\main\\res\\color\\vpi__dark_theme.xml"
+    }
+]

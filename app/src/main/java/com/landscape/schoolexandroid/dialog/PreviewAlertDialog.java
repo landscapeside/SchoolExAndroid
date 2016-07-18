@@ -3,6 +3,7 @@ package com.landscape.schoolexandroid.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
@@ -29,21 +30,22 @@ public abstract class PreviewAlertDialog extends Dialog {
         tittlevTv.setText(title);
         setCancelable(true);
         setCanceledOnTouchOutside(true);
-        setOnCancelListener(dialog -> cancel());
+        setOnCancelListener(dialog -> onCancel());
     }
 
     @OnClick(R.id.cancle)
-    public void onCancel(View view){
+    public void onCancel(View view) {
         dismiss();
-        cancel();
+        onCancel();
     }
 
     @OnClick(R.id.sure)
-    public void onOkClick(View view){
+    public void onOkClick(View view) {
         dismiss();
         onOk();
     }
 
     public abstract void onOk();
-    public abstract void cancel();
+
+    public abstract void onCancel();
 }
