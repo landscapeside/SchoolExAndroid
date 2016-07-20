@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.landscape.schoolexandroid.dialog.BottomListMenuDialog;
 import com.landscape.schoolexandroid.dialog.BottomPopWindow;
+import com.landscape.schoolexandroid.dialog.CropDialog;
 import com.landscape.schoolexandroid.ui.activity.PagerActivity;
 import com.squareup.otto.Subscribe;
 import com.tu.crop.CropHandler;
@@ -48,6 +49,8 @@ public class PhotoHelper implements CropHandler {
 
     public static final int SERVER_CROP_PHOTO = 102;
     public static final int REQUST_DETAIL = 101;
+
+    int requstCodeTmp = -1;
 
     static List<BottomPopWindow.PopViewData> add_pic_container = new ArrayList<>();
 
@@ -89,10 +92,16 @@ public class PhotoHelper implements CropHandler {
         dialog.setOnItemClick(position1 -> {
             switch (position1) {
                 case 0:
+                    requstCodeTmp = CropHelper.REQUEST_CAMERA;
+                    mCropParams = CropParams.initCropParams();
+                    mCropParams.crop = "false";
                     ((Activity)context).startActivityForResult(CropHelper.buildCaptureIntent(mCropParams.uri),
                             CropHelper.REQUEST_CAMERA);
                     break;
                 case 1:
+                    requstCodeTmp = CropHelper.REQUEST_GALLERY;
+                    mCropParams = CropParams.initCropParams();
+                    mCropParams.crop = "false";
                     ((Activity)context).startActivityForResult(CropHelper.buildGalleryIntent(), CropHelper.REQUEST_GALLERY);
                     break;
                 case 2:
@@ -135,8 +144,10 @@ public class PhotoHelper implements CropHandler {
         //设置图片数据
         newBmp.setPixels(pixels, 0, width, 0, 0, width, height);
 
-        Bitmap resizeBmp = ThumbnailUtils.extractThumbnail(newBmp, 380, 460);
-        return resizeBmp;
+//        Bitmap resizeBmp = ThumbnailUtils.extractThumbnail(newBmp, 380, 460);
+//        return resizeBmp;
+        return newBmp;
+//        return bmp;
     }
 
     public void saveFileByBitmap(Bitmap bitmap,File tempFile) throws IOException {
@@ -186,8 +197,41 @@ public class PhotoHelper implements CropHandler {
 
     @Override
     public void onPhotoCropped(Uri uri) {
-        if (photoCallbk != null) {
-            photoCallbk.onPhotoCropped(uri);
+        if (requstCodeTmp != CropHelper.REQUEST_CROP) {
+            CropDialog dialog = new CropDialog(context, "是否需要裁剪？") {
+                @Override
+                public void onOk() {
+                    switch (requstCodeTmp) {
+                        case CropHelper.REQUEST_GALLERY:
+                            if (CropHelper.isKitKat()) {
+                                PhotoHelper.this.getCropParams().uri = CropHelper.uriFormat(context, PhotoHelper.this.getCropParams().uri);
+                            }
+                            ((Activity) context).startActivityForResult(
+                                    CropHelper.buildCropFromUriIntent(PhotoHelper.this),
+                                    CropHelper.REQUEST_CROP);
+                            requstCodeTmp = CropHelper.REQUEST_CROP;
+                            break;
+                        case CropHelper.REQUEST_CAMERA:
+                            ((Activity) context).startActivityForResult(
+                                    CropHelper.buildCropFromUriIntent(PhotoHelper.this),
+                                    CropHelper.REQUEST_CROP);
+                            requstCodeTmp = CropHelper.REQUEST_CROP;
+                            break;
+                    }
+                }
+
+                @Override
+                public void onCancel() {
+                    if (photoCallbk != null) {
+                        photoCallbk.onPhotoCropped(uri);
+                    }
+                }
+            };
+            dialog.show();
+        } else {
+            if (photoCallbk != null) {
+                photoCallbk.onPhotoCropped(uri);
+            }
         }
     }
 

@@ -40,6 +40,7 @@ import com.landscape.schoolexandroid.utils.AnswerUtils;
 import com.landscape.schoolexandroid.utils.PhotoHelper;
 import com.landscape.schoolexandroid.views.worktask.AnswerView;
 import com.landscape.weight.FlingRelativeLayout;
+import com.landscape.weight.ScrollWebView;
 import com.orhanobut.logger.Logger;
 import com.squareup.otto.Bus;
 import com.squareup.sqlbrite.BriteDatabase;
@@ -136,9 +137,9 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
                                         questionInfos.get(currentQuestion).getId(),
                                         taskInfo.getExaminationPapersId(),
                                         userAccountDataSource.getUserAccount().getData().getStudentId()));
-                answerView.setFlingListener(new FlingRelativeLayout.FlingListener() {
+                answerView.setDragListener(new ScrollWebView.DragHorizontalListener() {
                     @Override
-                    public void prev() {
+                    public void leftDrag() {
                         if (currentQuestion - 1 < 0) {
                             ToastUtil.show(pagerActivity, "前面没有了");
                         } else {
@@ -155,7 +156,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
                     }
 
                     @Override
-                    public void next() {
+                    public void rightDrag() {
                         if (currentQuestion + 1 >= questionInfos.size()) {
                             submitClick();
                         } else {
@@ -171,6 +172,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
                         answerView.setAnswerCard(questionInfos.get(currentQuestion),subjectTypeId);
                     }
                 });
+
                 answerView.setBtnClickListener(new AnswerView.BtnClickListener() {
                     @Override
                     public void finish() {

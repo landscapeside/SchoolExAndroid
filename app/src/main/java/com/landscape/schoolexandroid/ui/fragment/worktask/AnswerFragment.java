@@ -14,6 +14,7 @@ import com.landscape.schoolexandroid.mode.worktask.QuestionInfo;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
 import com.landscape.schoolexandroid.views.worktask.AnswerView;
 import com.landscape.slidinguppanel.WrapSlidingDrawer;
+import com.landscape.weight.ScrollWebView;
 import com.landscape.weight.answer.AnswerCardView;
 import com.landscape.weight.FlingRelativeLayout;
 import com.landscape.weight.answer.AnswerCardViewNew;
@@ -194,7 +195,7 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     }
 
     @Override
-    public void setFlingListener(FlingRelativeLayout.FlingListener flingListener) {
-        webViewLayout.setFlingListener(flingListener);
+    public void setDragListener(ScrollWebView.DragHorizontalListener dragListener) {
+        mWebView.setDragHorizontalListener(dragListener);
     }
 }

@@ -5,6 +5,7 @@ import com.landscape.schoolexandroid.mode.account.UserAccount;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
 import com.landscape.schoolexandroid.views.BaseView;
 import com.landscape.weight.FlingRelativeLayout;
+import com.landscape.weight.ScrollWebView;
 
 import java.util.List;
 
@@ -28,5 +29,5 @@ public interface PreviewTaskView<T extends BasePresenter> extends BaseView<T> {
         void start();
     }
 
-    void setFlingListener(FlingRelativeLayout.FlingListener flingListener);
+    void setDragListener(ScrollWebView.DragHorizontalListener dragListener);
 }

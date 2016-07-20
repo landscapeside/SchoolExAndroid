@@ -2,6 +2,7 @@ package com.landscape.schoolexandroid.presenter.home;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.jsware.draglayout.DragCallBack;
 import com.landscape.event.RefreshUserEvent;
@@ -24,6 +25,7 @@ import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskInfo;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskListInfo;
 import com.landscape.schoolexandroid.ui.activity.MainActivity;
 import com.landscape.schoolexandroid.ui.activity.PagerActivity;
+import com.landscape.schoolexandroid.ui.fragment.home.CollectFragment;
 import com.landscape.schoolexandroid.ui.fragment.home.DragContentFragment;
 import com.landscape.schoolexandroid.ui.fragment.home.MenuFragment;
 import com.landscape.schoolexandroid.ui.fragment.home.MistakeFragment;
@@ -32,6 +34,7 @@ import com.landscape.schoolexandroid.ui.fragment.worktask.PreviewTaskFragment;
 import com.landscape.schoolexandroid.utils.WorkTaskHelper;
 import com.landscape.schoolexandroid.views.BaseView;
 import com.landscape.schoolexandroid.views.home.BaseListView;
+import com.landscape.schoolexandroid.views.home.CollectView;
 import com.landscape.schoolexandroid.views.home.DragContentView;
 import com.landscape.schoolexandroid.views.home.MenuView;
 import com.landscape.schoolexandroid.views.home.MistakeListView;
@@ -85,13 +88,13 @@ public class MainPresenterImpl implements MainPresenter {
     BaseActivity mainActivity;
     DragContentView dragContent;
     MenuView menuView;
-    MistakeListView mistakeListView;
 
     /**
      * 内容视图
      */
     WorkTaskListView workTaskListView;
-    PreviewTaskView collectView;
+    CollectView collectView;
+    MistakeListView mistakeListView;
 
     /**
      * 数据
@@ -112,7 +115,7 @@ public class MainPresenterImpl implements MainPresenter {
         dragContent = new DragContentFragment();
         menuView = new MenuFragment();
         workTaskListView = new WorkTaskFragment();
-        collectView = new PreviewTaskFragment();
+        collectView = new CollectFragment();
         mistakeListView = new MistakeFragment();
         ((BaseApp) mainActivity.getApplication()).getAppComponent().inject(this);
         initFilters();
@@ -295,20 +298,17 @@ public class MainPresenterImpl implements MainPresenter {
             }
         });
 
-
         /**
          * 收藏
          */
         collectView.setLifeListener(new BaseView.ViewLifeListener() {
             @Override
             public void onInitialized() {
-                collectView.setFilterEnable(true);
                 collectView.subjectFilter(subjectTypes);
                 collectView.setOnFilterSelector(subjectType -> {
                     collectSubjectType = subjectType;
                     refreshCollect();
                 });
-                collectView.startEnable(false);
                 refreshCollect();
             }
 
@@ -395,6 +395,10 @@ public class MainPresenterImpl implements MainPresenter {
             case 1:
                 // 错题本
                 refreshMistake();
+                break;
+            case 4:
+                // 收藏
+                refreshCollect();
                 break;
         }
     }

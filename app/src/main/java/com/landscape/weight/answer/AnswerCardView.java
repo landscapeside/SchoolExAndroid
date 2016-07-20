@@ -422,6 +422,7 @@ public class AnswerCardView extends RelativeLayout {
         }
 
         public void build(AnswerType type) {
+            tvIndex.setVisibility(VISIBLE);
             tvIndex.setText("" + type.getId());
             group.removeAllViews();
             for (int i = 0; i < alternativeContent.size(); i++) {
@@ -471,6 +472,7 @@ public class AnswerCardView extends RelativeLayout {
         }
 
         public void build(AnswerType type) {
+            tvIndex.setVisibility(VISIBLE);
             tvIndex.setText("" + type.getId());
             multiContent.removeAllViews();
             for (int i = 0; i < alternativeContent.size(); i++) {
@@ -555,6 +557,7 @@ public class AnswerCardView extends RelativeLayout {
 
         public void build(AnswerType type, boolean picEnable) {
             this.type = type;
+            tvIndex.setVisibility(VISIBLE);
             tvIndex.setText(type.getId());
             final String strFormat = "<img src=\"%s\"/>";
             llPics.setVisibility(picEnable ? VISIBLE : GONE);

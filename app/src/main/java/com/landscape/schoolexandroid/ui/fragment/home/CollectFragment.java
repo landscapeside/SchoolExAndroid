@@ -1,5 +1,8 @@
-package com.landscape.schoolexandroid.ui.fragment.worktask;
+package com.landscape.schoolexandroid.ui.fragment.home;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -12,9 +15,9 @@ import com.landscape.schoolexandroid.R;
 import com.landscape.schoolexandroid.common.BaseWebFragment;
 import com.landscape.schoolexandroid.mode.account.UserAccount;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
+import com.landscape.schoolexandroid.views.home.CollectView;
 import com.landscape.schoolexandroid.views.worktask.PreviewTaskView;
 import com.landscape.weight.FlingRelativeLayout;
-import com.landscape.weight.ScrollWebView;
 import com.orhanobut.logger.Logger;
 import com.utils.behavior.PopupWindowUtil;
 
@@ -26,7 +29,7 @@ import butterknife.OnClick;
 /**
  * Created by 1 on 2016/6/27.
  */
-public class PreviewTaskFragment extends BaseWebFragment implements PreviewTaskView<BasePresenter> {
+public class CollectFragment extends BaseWebFragment implements CollectView<BasePresenter> {
 
     String url = "";
 
@@ -34,16 +37,15 @@ public class PreviewTaskFragment extends BaseWebFragment implements PreviewTaskV
     protected QuickAdapter subjectFilterAdapter;
     protected OnFilterSelector onFilterSelector;
 
-    @Bind(R.id.startTask)
-    Button startTask;
-    @Bind(R.id.ll_filter)
-    View filterContent;
     @Bind(R.id.tv_subject)
     TextView tvSubject;
+    @Bind(R.id.swipe_content)
+    SwipeRefreshLayout refreshLayout;
 
     @Override
-    public int getLayoutResId() {
-        return getResId();
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        refreshLayout.setOnRefreshListener(this::refresh);
     }
 
     @Override
@@ -54,21 +56,6 @@ public class PreviewTaskFragment extends BaseWebFragment implements PreviewTaskV
         Logger.i(url);
         this.url = url;
         mWebView.loadUrl(url);
-    }
-
-    @Override
-    public void startEnable(boolean isEnable) {
-        startTask.setVisibility(isEnable? View.VISIBLE:View.GONE);
-    }
-
-    @Override
-    public void setClickListener(ClickListener clickListener) {
-        startTask.setOnClickListener(v -> clickListener.start());
-    }
-
-    @Override
-    public void setFilterEnable(boolean enable) {
-        filterContent.setVisibility(enable?View.VISIBLE:View.GONE);
     }
 
     @Override
@@ -102,23 +89,29 @@ public class PreviewTaskFragment extends BaseWebFragment implements PreviewTaskV
         this.onFilterSelector = onFilterSelector;
     }
 
-    @Override
-    public void setDragListener(ScrollWebView.DragHorizontalListener dragListener) {
-        mWebView.setDragHorizontalListener(dragListener);
-    }
-
     @OnClick(R.id.tv_subject)
     void subjectFilterClick(View view){
         PopupWindowUtil.showPopupWindow(getActivity(),tvSubject,SubjectFilterContent);
     }
 
     @Override
+    public int getLayoutResId() {
+        return getResId();
+    }
+
+    @Override
     public int getResId() {
-        return R.layout.view_preview_task;
+        return R.layout.view_collect;
     }
 
     @Override
     public void refresh() {
         previewTask(url);
+    }
+
+    @Override
+    public void onLoadSuc() {
+        super.onLoadSuc();
+        refreshLayout.setRefreshing(false);
     }
 }

@@ -16,7 +16,7 @@ public class FlingRelativeLayout extends RelativeLayout {
 
     private float mInitialMotionX,mInitialMotionY;
     private int mTouchSlop;
-    private int mActivePointerId;
+    private int mActivePointerId = INVALID_POINTER;
     private static final int FLING_SLOP = 50;
 
     public FlingRelativeLayout(Context context, AttributeSet attrs) {

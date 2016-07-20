@@ -20,6 +20,7 @@ import android.widget.ZoomButtonsController;
 
 import com.landscape.schoolexandroid.R;
 import com.landscape.weight.FlingRelativeLayout;
+import com.landscape.weight.ScrollWebView;
 
 import java.lang.reflect.Field;
 
@@ -28,7 +29,7 @@ import java.lang.reflect.Field;
  */
 public abstract class BaseWebFragment extends BaseFragment implements View.OnClickListener{
     protected LinearLayout mErrorLayout;
-    protected WebView mWebView;
+    protected ScrollWebView mWebView;
     protected ProgressBar mProgressBar;
     protected View note_online_error;
     protected FlingRelativeLayout webViewLayout;
@@ -56,7 +57,7 @@ public abstract class BaseWebFragment extends BaseFragment implements View.OnCli
         webViewLayout = (FlingRelativeLayout) view.findViewById(R.id.weblayout);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         mProgressBar.setMax(100);
-        mWebView = (WebView) view.findViewById(R.id.webView);
+        mWebView = (ScrollWebView) view.findViewById(R.id.webView);
         mWebView.canGoBack();
         mErrorLayout =(LinearLayout)view.findViewById(R.id.web_error_layout);
         note_online_error = view.findViewById(R.id.note_online_error);
@@ -118,6 +119,7 @@ public abstract class BaseWebFragment extends BaseFragment implements View.OnCli
                     mProgressBar.setVisibility(View.GONE);
                     if(!isError){
                         mWebView.setVisibility(View.VISIBLE);
+                        onLoadSuc();
                     }
                 } else {
                     if (mProgressBar.getVisibility() != View.VISIBLE) {
@@ -178,4 +180,6 @@ public abstract class BaseWebFragment extends BaseFragment implements View.OnCli
     }
 
     public abstract void refresh();
+
+    public void onLoadSuc(){}
 }

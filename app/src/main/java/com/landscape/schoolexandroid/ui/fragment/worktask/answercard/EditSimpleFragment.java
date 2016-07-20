@@ -40,7 +40,7 @@ public class EditSimpleFragment extends BaseFragment implements EditSimpleView<B
 
     @Override
     public int getResId() {
-        return R.layout.item_answer_edit;
+        return R.layout.item_answer_edit_pager;
     }
 
     @Override

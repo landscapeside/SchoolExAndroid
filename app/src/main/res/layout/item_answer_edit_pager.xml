@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/tv_index"
+        android:padding="10dp"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:id="@+id/ll_pics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:orientation="vertical">
+
+            <com.landscape.weight.AvatarImageView
+                android:id="@+id/img_pic"
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
+
+            <ImageView
+                android:id="@+id/icon_camera"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/icon_camera"/>
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/edit_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/ll_pics"
+            android:lines="5"
+            android:scrollbars="none"
+            android:overScrollMode="always"
+            android:gravity="top|left"
+            android:textColor="@color/text_color_dark_gray"
+            android:background="@color/transparent"/>
+
+    </RelativeLayout>
+</RelativeLayout>

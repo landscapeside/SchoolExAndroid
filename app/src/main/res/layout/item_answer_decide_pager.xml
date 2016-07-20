@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_def"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:button="@null"
+            android:drawableLeft="@drawable/radio_button_selector"
+            android:drawablePadding="5dp"
+            android:gravity="center"
+            android:textColor="@color/text_color_dark_gray"
+            android:visibility="gone"/>
+
+        <RadioButton
+            android:id="@+id/radio_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:button="@null"
+            android:drawableLeft="@drawable/radio_button_selector"
+            android:drawablePadding="5dp"
+            android:gravity="center"
+            android:text="正确"
+            android:textColor="@color/text_color_dark_gray"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="60dp"/>
+
+        <RadioButton
+            android:id="@+id/radio_err"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:drawableLeft="@drawable/radio_button_selector"
+            android:drawablePadding="5dp"
+            android:gravity="center"
+            android:text="错误"
+            android:textColor="@color/text_color_dark_gray"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="60dp" />
+
+    </RadioGroup>
+
+</LinearLayout>

@@ -119,6 +119,7 @@
                 android:id="@+id/icon_user_modify"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:src="@drawable/icon_user_modify"
                 android:layout_margin="20dp"/>
 
@@ -153,6 +154,7 @@
                 android:id="@+id/icon_flower_chart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:src="@drawable/icon_flower_chart"
                 android:layout_margin="20dp"/>
 
@@ -187,6 +189,7 @@
                 android:id="@+id/icon_wonder_chart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:src="@drawable/icon_wonder_chart"
                 android:layout_margin="20dp"/>
 

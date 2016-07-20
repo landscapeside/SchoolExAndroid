@@ -14,6 +14,7 @@ import com.landscape.schoolexandroid.mode.worktask.AnswerType;
 import com.landscape.schoolexandroid.mode.worktask.StudentAnswer;
 import com.landscape.schoolexandroid.presenter.BasePresenter;
 import com.landscape.schoolexandroid.views.worktask.answercard.SingleView;
+import com.orhanobut.logger.Logger;
 import com.utils.system.ScreenParam;
 
 import java.util.List;
@@ -38,19 +39,20 @@ public class SingleFragment extends BaseFragment implements SingleView<BasePrese
 
     @Override
     public int getResId() {
-        return R.layout.item_answer_single;
+        return R.layout.item_answer_single_pager;
     }
 
     @Override
     public void build(AnswerType type, List<AlternativeContent> alternativeContents, StudentAnswer studentAnswer) {
         this.studentAnswer = studentAnswer;
         group.removeAllViews();
+        int radioMargin = ((ScreenParam.screenWidth-ScreenParam.dp2px(getActivity(), 20))/alternativeContents.size()-ScreenParam.dp2px(getActivity(), 30))/2;
         for (int i = 0; i < alternativeContents.size(); i++) {
             RadioButton radioButton = (RadioButton) View.inflate(getActivity(), R.layout.view_radio_button, null);
             radioButton.setText(alternativeContents.get(i).Id);
             group.addView(radioButton);
             RadioGroup.LayoutParams layoutParams = (RadioGroup.LayoutParams) radioButton.getLayoutParams();
-            layoutParams.setMargins(20, 20, 20, 20);
+            layoutParams.setMargins(radioMargin, radioMargin, radioMargin, radioMargin);
             layoutParams.width = ScreenParam.dp2px(getActivity(), 30);
             layoutParams.height = ScreenParam.dp2px(getActivity(), 30);
             radioButton.setLayoutParams(layoutParams);

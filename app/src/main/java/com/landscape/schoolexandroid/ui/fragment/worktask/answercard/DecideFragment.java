@@ -34,7 +34,7 @@ public class DecideFragment extends BaseFragment implements DecideView<BasePrese
 
     @Override
     public int getResId() {
-        return R.layout.item_answer_decide;
+        return R.layout.item_answer_decide_pager;
     }
 
     @Override

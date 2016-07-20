@@ -20,6 +20,7 @@ import com.landscape.schoolexandroid.ui.fragment.worktask.PreviewTaskFragment;
 import com.landscape.schoolexandroid.views.BaseView;
 import com.landscape.schoolexandroid.views.worktask.PreviewTaskView;
 import com.landscape.weight.FlingRelativeLayout;
+import com.landscape.weight.ScrollWebView;
 import com.utils.behavior.FragmentsUtils;
 import com.utils.behavior.ToastUtil;
 
@@ -67,9 +68,9 @@ public class PreviewMistakePresenterImpl implements BasePresenter,IMistake {
         previewTaskView.setLifeListener(new BaseView.ViewLifeListener() {
             @Override
             public void onInitialized() {
-                previewTaskView.setFlingListener(new FlingRelativeLayout.FlingListener() {
+                previewTaskView.setDragListener(new ScrollWebView.DragHorizontalListener() {
                     @Override
-                    public void prev() {
+                    public void leftDrag() {
                         if (currentQuestion - 1 < 0) {
                             ToastUtil.show(pagerActivity, "前面没有了");
                         } else {
@@ -79,7 +80,7 @@ public class PreviewMistakePresenterImpl implements BasePresenter,IMistake {
                     }
 
                     @Override
-                    public void next() {
+                    public void rightDrag() {
                         if (currentQuestion + 1 >= mistakeQuestionListInfo.getErrorList().size()) {
                             ToastUtil.show(pagerActivity, "后面没有了");
                         } else {

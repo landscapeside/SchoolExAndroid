@@ -44,7 +44,7 @@ public class QuestionInfo implements Parcelable {
     private String AlternativeContent;
     private String AnswerType;
     private String Answer;
-    private int Fraction;
+    private float Fraction;
     private int Sort;
     private String StudentsAnswer;
 
@@ -88,11 +88,11 @@ public class QuestionInfo implements Parcelable {
         this.Answer = Answer;
     }
 
-    public int getFraction() {
+    public float getFraction() {
         return Fraction;
     }
 
-    public void setFraction(int Fraction) {
+    public void setFraction(float Fraction) {
         this.Fraction = Fraction;
     }
 
@@ -125,7 +125,7 @@ public class QuestionInfo implements Parcelable {
         dest.writeString(this.AlternativeContent);
         dest.writeString(this.AnswerType);
         dest.writeString(this.Answer);
-        dest.writeInt(this.Fraction);
+        dest.writeFloat(this.Fraction);
         dest.writeInt(this.Sort);
         dest.writeString(this.StudentsAnswer);
     }
@@ -139,7 +139,7 @@ public class QuestionInfo implements Parcelable {
         this.AlternativeContent = in.readString();
         this.AnswerType = in.readString();
         this.Answer = in.readString();
-        this.Fraction = in.readInt();
+        this.Fraction = in.readFloat();
         this.Sort = in.readInt();
         this.StudentsAnswer = in.readString();
     }

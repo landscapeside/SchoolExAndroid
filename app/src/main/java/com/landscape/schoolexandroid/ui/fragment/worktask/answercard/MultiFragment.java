@@ -41,13 +41,14 @@ public class MultiFragment extends BaseFragment implements MultiView<BasePresent
 
     @Override
     public int getResId() {
-        return R.layout.item_answer_multi;
+        return R.layout.item_answer_multi_pager;
     }
 
     @Override
     public void build(AnswerType type, List<AlternativeContent> alternativeContents, StudentAnswer studentAnswer) {
         this.studentAnswer = studentAnswer;
         multiContent.removeAllViews();
+        int radioMargin = ((ScreenParam.screenWidth-ScreenParam.dp2px(getActivity(), 20))/alternativeContents.size()-ScreenParam.dp2px(getActivity(), 30))/2;
         for (int i = 0; i < alternativeContents.size(); i++) {
             TextView radioButton = (TextView) View.inflate(getActivity(), R.layout.view_multi_button, null);
             radioButton.setText(alternativeContents.get(i).Id);
@@ -91,7 +92,7 @@ public class MultiFragment extends BaseFragment implements MultiView<BasePresent
             });
             multiContent.addView(radioButton);
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) radioButton.getLayoutParams();
-            layoutParams.setMargins(20, 20, 20, 20);
+            layoutParams.setMargins(radioMargin, radioMargin, radioMargin, radioMargin);
             layoutParams.width = ScreenParam.dp2px(getActivity(), 30);
             layoutParams.height = ScreenParam.dp2px(getActivity(), 30);
             radioButton.setLayoutParams(layoutParams);

@@ -58,7 +58,7 @@ public class EditRichFragment extends BaseFragment implements EditRichView<BaseP
 
     @Override
     public int getResId() {
-        return R.layout.item_answer_edit;
+        return R.layout.item_answer_edit_pager;
     }
 
     @Override
@@ -91,7 +91,7 @@ public class EditRichFragment extends BaseFragment implements EditRichView<BaseP
                         studentAnswer.Answer = editContent.getText().toString() + imgAnswer;
                     }
                     if (changeListener != null) {
-                        changeListener.onDataChanged(studentanswer);
+                        changeListener.onDataChanged(studentAnswer);
                     }
                 }
                 if (key == R.id.image_file_path && !TextUtils.isEmpty((String) tag)) {
