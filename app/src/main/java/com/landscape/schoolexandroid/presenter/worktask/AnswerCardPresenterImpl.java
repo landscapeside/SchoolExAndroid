@@ -354,4 +354,15 @@ public class AnswerCardPresenterImpl implements BasePresenter {
     public void back() {
 
     }
+
+    public void hideSoftKeyBord() {
+        for (Fragment card : cards) {
+            if (card instanceof EditRichFragment) {
+                ((EditRichView)card).hideSoftKeyBord();
+            }
+            if (card instanceof EditSimpleFragment) {
+                ((EditSimpleView)card).hideSoftKeyBord();
+            }
+        }
+    }
 }

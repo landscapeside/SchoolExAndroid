@@ -10,6 +10,7 @@ import com.landscape.schoolexandroid.views.BaseView;
  */
 public interface EditSimpleView<T extends BasePresenter> extends BaseView<T> {
     void build(AnswerType type,StudentAnswer studentAnswer);
+    void hideSoftKeyBord();
 
     void setDataChangeListener(DataChangeListener listener);
     interface DataChangeListener{

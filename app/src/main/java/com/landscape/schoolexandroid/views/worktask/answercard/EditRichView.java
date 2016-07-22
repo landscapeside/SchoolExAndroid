@@ -12,6 +12,7 @@ import java.util.Map;
  */
 public interface EditRichView<T extends BasePresenter> extends BaseView<T> {
     void build(AnswerType type, StudentAnswer studentAnswer, Map<String,String> localeImageMap);
+    void hideSoftKeyBord();
 
     void setDataChangeListener(DataChangeListener listener);
     interface DataChangeListener{

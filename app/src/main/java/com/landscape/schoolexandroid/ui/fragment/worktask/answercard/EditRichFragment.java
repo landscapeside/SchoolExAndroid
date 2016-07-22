@@ -1,11 +1,13 @@
 package com.landscape.schoolexandroid.ui.fragment.worktask.answercard;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.landscape.schoolexandroid.R;
@@ -101,6 +103,12 @@ public class EditRichFragment extends BaseFragment implements EditRichView<BaseP
         });
         initFlag = true;
         editContent.setText("");
+    }
+
+    @Override
+    public void hideSoftKeyBord() {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editContent.getWindowToken(), 0); //强制隐藏键盘
     }
 
     @Override

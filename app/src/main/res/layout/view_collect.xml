@@ -23,7 +23,7 @@
         android:layout_below="@+id/ll_filter">
 
         <include
-            layout="@layout/view_base_web"
+            layout="@layout/view_scroll_web"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 

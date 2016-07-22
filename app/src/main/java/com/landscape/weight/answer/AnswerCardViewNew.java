@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -90,6 +91,10 @@ public class AnswerCardViewNew extends RelativeLayout {
 
     public String getAnswer() {
         return presenter.getAnswer();
+    }
+
+    public void hideSoftKeyBord() {
+        presenter.hideSoftKeyBord();
     }
 
 }

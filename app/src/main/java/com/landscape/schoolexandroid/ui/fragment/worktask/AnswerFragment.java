@@ -68,7 +68,10 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        webViewLayout.setTouchListener(() -> slidingDrawer.close());
+        webViewLayout.setTouchListener(() -> {
+            slidingDrawer.close();
+            answerCardView.hideSoftKeyBord();
+        });
         slidingDrawer.setOnDrawerOpenListener(() -> handlebg.setImageResource(R.drawable.icon_answer_handle_open));
         slidingDrawer.setOnDrawerCloseListener(() -> handlebg.setImageResource(R.drawable.icon_answer_handle_close));
     }
