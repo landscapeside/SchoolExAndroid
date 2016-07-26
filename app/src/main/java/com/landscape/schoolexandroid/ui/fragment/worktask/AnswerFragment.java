@@ -70,10 +70,12 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
         super.onViewCreated(view, savedInstanceState);
         webViewLayout.setTouchListener(() -> {
             slidingDrawer.close();
-            answerCardView.hideSoftKeyBord();
         });
         slidingDrawer.setOnDrawerOpenListener(() -> handlebg.setImageResource(R.drawable.icon_answer_handle_open));
-        slidingDrawer.setOnDrawerCloseListener(() -> handlebg.setImageResource(R.drawable.icon_answer_handle_close));
+        slidingDrawer.setOnDrawerCloseListener(() -> {
+            handlebg.setImageResource(R.drawable.icon_answer_handle_close);
+            answerCardView.hideSoftKeyBord();
+        });
     }
 
     @Override
@@ -107,18 +109,18 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     }
 
     @Override
-    public void setLocation(int idx,int total) {
-        tvLocation.setText(idx+"/"+total);
+    public void setLocation(int idx, int total) {
+        tvLocation.setText(idx + "/" + total);
     }
 
     @Override
     public void setTimeEnable(boolean isEnable) {
-        llTime.setVisibility(isEnable?View.VISIBLE:View.GONE);
+        llTime.setVisibility(isEnable ? View.VISIBLE : View.GONE);
     }
 
     @Override
-    public void setAnswerCard(QuestionInfo info,int SubjectTypeId) {
-        answerCardView.loadAnswerCards(info,SubjectTypeId);
+    public void setAnswerCard(QuestionInfo info, int SubjectTypeId) {
+        answerCardView.loadAnswerCards(info, SubjectTypeId);
     }
 
     @Override
@@ -137,10 +139,10 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     }
 
     private void tick(long time) {
-        duration = ""+time;
+        duration = "" + time;
         tvTime.setText(TimeConversion.getHourMinSecondsData(time * 1000));
         if (time == 3 * 60) {
-            dialog = new TimeAlertDialog(getActivity(),alertTitle) {
+            dialog = new TimeAlertDialog(getActivity(), alertTitle) {
                 @Override
                 public void onOk() {
 

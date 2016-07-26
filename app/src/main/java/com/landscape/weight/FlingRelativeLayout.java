@@ -21,8 +21,6 @@ public class FlingRelativeLayout extends RelativeLayout {
     private int mActivePointerId = INVALID_POINTER;
     private static final int FLING_SLOP = 50;
 
-    private WebView mTarget;
-
     public FlingRelativeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
@@ -92,25 +90,6 @@ public class FlingRelativeLayout extends RelativeLayout {
             return -1;
         }
         return MotionEventCompat.getY(ev, index);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        ensureTarget();
-    }
-
-    private void ensureTarget() {
-        if (mTarget != null)
-            return;
-        if (getChildCount() > 0) {
-            for (int i = 0; i < getChildCount(); i++) {
-                View child = getChildAt(i);
-                if (child instanceof WebView) {
-                    mTarget = (WebView) child;
-                }
-            }
-        }
     }
 
     public interface FlingListener{

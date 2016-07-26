@@ -9,11 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.landscape.weight.ScrollWebView
-        android:id="@+id/webView"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="none" />
+        android:layout_height="match_parent">
+
+        <com.landscape.weight.ScrollWebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"
