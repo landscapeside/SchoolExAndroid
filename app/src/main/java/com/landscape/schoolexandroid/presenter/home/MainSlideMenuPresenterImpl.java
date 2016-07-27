@@ -58,6 +58,8 @@ public class MainSlideMenuPresenterImpl extends MainPresenterImpl {
         //把滑动菜单添加进所有的Activity中，可选值SLIDING_CONTENT ， SLIDING_WINDOW
         mSlideMenu.attachToActivity(mainActivity, SlidingMenu.SLIDING_WINDOW);
         mSlideMenu.setMenu(R.layout.menu_setting);
+        mSlideMenu.setShadowWidthRes(R.dimen.slide_shadow_width);
+        mSlideMenu.setShadowDrawable(R.drawable.slide_shadow);
         //为侧滑菜单设置布局
         FragmentsUtils.addFragmentToActivityStateLoss(mainActivity.getSupportFragmentManager(), (Fragment) menuView, R.id.setting_content);
     }

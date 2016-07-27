@@ -11,6 +11,6 @@
     <dimen name="cart_cover_height">40dp</dimen>
 
     <dimen name="slidingmenu_offset">50dp</dimen>
-    <dimen name="shadow_width">2dp</dimen>
+    <dimen name="slide_shadow_width">8dp</dimen>
 
 </resources>

@@ -107,8 +107,10 @@ public class EditRichFragment extends BaseFragment implements EditRichView<BaseP
 
     @Override
     public void hideSoftKeyBord() {
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(editContent.getWindowToken(), 0); //强制隐藏键盘
+        if (getActivity() != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(editContent.getWindowToken(), 0); //强制隐藏键盘
+        }
     }
 
     @Override
