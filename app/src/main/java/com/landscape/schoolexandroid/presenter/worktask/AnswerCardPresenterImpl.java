@@ -108,12 +108,10 @@ public class AnswerCardPresenterImpl implements BasePresenter {
             }.getType();
             studentAnswers = JSONS.parseObject(questionInfo.getStudentsAnswer(), studentType);
         }
-        for (StudentAnswer studentAnswer : studentAnswers) {
-            answerMap.put(studentAnswer.Id, studentAnswer);
-        }
         Type type = new TypeToken<ArrayList<AnswerType>>() {
         }.getType();
         answerTypes = JSONS.parseObject(questionInfo.getAnswerType(), type);
+        initAnswerMap();
         buildCardFragments();
         adapter = new AnswerCardFragmentAdapter(parentContext.getSupportFragmentManager(), cards);
         pager.setAdapter(adapter);
@@ -126,6 +124,18 @@ public class AnswerCardPresenterImpl implements BasePresenter {
 //            indicator.setCurrentItem(0);
 //        }
 
+    }
+
+    private void initAnswerMap() {
+        for (AnswerType answerType : answerTypes) {
+            StudentAnswer answer = new StudentAnswer();
+            answer.Id = answerType.getId();
+            answer.TypeId = answerType.getTypeId();
+            answerMap.put(answer.Id, answer);
+        }
+        for (StudentAnswer studentAnswer : studentAnswers) {
+            answerMap.put(studentAnswer.Id, studentAnswer);
+        }
     }
 
     private void buildCardFragments() {
