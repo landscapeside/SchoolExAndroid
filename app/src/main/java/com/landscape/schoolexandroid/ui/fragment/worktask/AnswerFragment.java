@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.landscape.schoolexandroid.R;
@@ -54,6 +55,8 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
     ImageView handlebg;
     @Bind(R.id.content)
     AnswerCardViewNew answerCardView;
+    @Bind(R.id.scroll_view)
+    ScrollView scrollView;
 
     @Override
     public int getLayoutResId() {
@@ -94,6 +97,8 @@ public class AnswerFragment extends BaseWebFragment implements AnswerView<BasePr
         Logger.i(url);
         this.url = url;
         mWebView.loadUrl(url);
+        mWebView.scrollTo(0,0);
+        scrollView.scrollTo(0,0);
     }
 
     @Override

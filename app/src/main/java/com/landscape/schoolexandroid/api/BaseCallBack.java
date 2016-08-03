@@ -7,6 +7,7 @@ import com.orhanobut.logger.Logger;
 import com.utils.behavior.ToastUtil;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Set;
 
 import okhttp3.Headers;
@@ -55,6 +56,10 @@ public abstract class BaseCallBack<T> extends CallContext implements Callback<T>
 
     @Override
     public void onFailure(Call call, Throwable t) {
+        //java.net.UnknownHostException: Unable to resolve host "service.ex.cqebd.cn": No address associated with hostname
+        if (t instanceof UnknownHostException) {
+            ToastUtil.show(mContext,"网络请求失败，请稍后重试");
+        }
         Logger.e("BaseCallBack======>onFailure");
         RetrofitService.netErr(mCall,t);
         if (RetrofitService.isLive(mCall)) {
