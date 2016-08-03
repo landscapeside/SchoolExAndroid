@@ -41,19 +41,19 @@ public class WorkTaskHelper {
         Collections.sort(source, new Comparator<ExaminationTaskInfo>() {
             @Override
             public int compare(ExaminationTaskInfo lhs, ExaminationTaskInfo rhs) {
-                return lhs.getPuchDateTime().compareTo(rhs.getPuchDateTime());
+                return rhs.getPuchDateTime().compareTo(lhs.getPuchDateTime());
             }
         });
     }
 
-    public static List<String> sortDate(Set<String> keys) {
-        List<String> dates = new ArrayList<>();
+    public static List<String> sortMonth(Set<String> keys) {
+        List<String> months = new ArrayList<>();
         for (String key : keys) {
-            dates.add(key);
+            months.add(key);
         }
-        Collections.sort(dates);
-        Collections.reverse(dates);
-        return dates;
+        Collections.sort(months);
+        Collections.reverse(months);
+        return months;
     }
 
     public static List<UserAccount.DataBean.SubjectTypeBean> getValidSubjectType(List<UserAccount.DataBean.SubjectTypeBean> source) {

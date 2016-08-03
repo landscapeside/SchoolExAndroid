@@ -12,14 +12,12 @@ import com.landscape.schoolexandroid.enums.SubjectType;
 import com.landscape.schoolexandroid.enums.TaskStatus;
 import com.landscape.schoolexandroid.mode.worktask.ExaminationTaskInfo;
 import com.landscape.schoolexandroid.utils.WorkTaskHelper;
-import com.orhanobut.logger.Logger;
 import com.utils.datahelper.TimeConversion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -42,7 +40,7 @@ public class WorkTaskAdapter extends SectionedBaseAdapter {
     public WorkTaskAdapter(Context context, List<ExaminationTaskInfo> data) {
         mContext = context;
         this.data = WorkTaskHelper.sortTaskByDate(data);
-        dates = WorkTaskHelper.sortDate(this.data.keySet());
+        dates = WorkTaskHelper.sortMonth(this.data.keySet());
 
     }
 
@@ -50,7 +48,7 @@ public class WorkTaskAdapter extends SectionedBaseAdapter {
         this.data.clear();
         dates.clear();
         this.data = WorkTaskHelper.sortTaskByDate(data);
-        dates = WorkTaskHelper.sortDate(this.data.keySet());
+        dates = WorkTaskHelper.sortMonth(this.data.keySet());
         notifyDataSetChanged();
     }
 

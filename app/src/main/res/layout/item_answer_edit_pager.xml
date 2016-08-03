@@ -41,6 +41,7 @@
             android:id="@+id/edit_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textNoSuggestions|textMultiLine"
             android:layout_toLeftOf="@+id/ll_pics"
             android:lines="5"
             android:scrollbars="none"
