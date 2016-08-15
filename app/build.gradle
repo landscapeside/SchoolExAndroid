@@ -60,4 +60,6 @@ dependencies {
     compile project(':crop')
     compile project(':photoview')
     compile project(':indicator')
+    compile group: 'com.google.guava', name: 'guava', version: '19.0'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 }

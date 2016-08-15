@@ -190,6 +190,7 @@ public class WorkTaskFragment extends BaseFragment implements WorkTaskListView<B
 
     @Override
     public void startRefresh() {
+        listTask.setSelectionAfterHeaderView();
         pullRefreshLayout.setRefreshing(true);
     }
 

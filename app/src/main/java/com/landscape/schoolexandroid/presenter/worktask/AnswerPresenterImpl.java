@@ -331,7 +331,8 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
 
     private void submitClick() {
         checkSubmit();
-        promptDialog = new PromptDialog(pagerActivity, String.format(promptStrFormat, AnswerUtils.getUndoQuestionNum(questionInfos))) {
+        int undoAnswer = AnswerUtils.getUndoQuestionNum(questionInfos);
+        promptDialog = new PromptDialog(pagerActivity, undoAnswer ==0 ?"你确定要现在交卷吗？":String.format(promptStrFormat, undoAnswer)) {
             @Override
             public void onOk() {
                 mOptions.finish();
@@ -340,22 +341,26 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
         promptDialog.show();
     }
 
+    int lastDoIdx = currentQuestion;
+    QuestionInfo submitInfo;
+
     private void checkSubmit() {
         if (answerView.isAnswerChanged()) {
             // TODO: 2016/7/3 提交答案
-            questionInfos.get(currentQuestion).setStudentsAnswer(answerView.getAnswer());
+            lastDoIdx = currentQuestion;
+            submitInfo = questionInfos.get(currentQuestion).clone();
+            submitInfo.setStudentsAnswer(answerView.getAnswer());
             taskOptionDataSource.submitAnswer(
                     taskInfo, answerView.getAnswer(),
-                    questionInfos.get(currentQuestion), new BaseCallBack<BaseBean>(pagerActivity) {
+                    submitInfo, new BaseCallBack<BaseBean>(pagerActivity) {
                         @Override
                         public void response(BaseBean response) {
-
+                            Logger.i("================");
+                            questionInfos.get(lastDoIdx).setStudentsAnswer(submitInfo.getStudentsAnswer());
                         }
 
                         @Override
-                        public void err() {
-
-                        }
+                        public void err() {}
                     });
         }
     }

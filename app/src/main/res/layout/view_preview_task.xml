@@ -33,6 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/startTask"
-        android:layout_below="@+id/ll_filter"/>
+        android:layout_below="@+id/ll_filter"
+        android:id="@+id/include" />
 
 </RelativeLayout>

@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by 1 on 2016/6/28.
  */
-public class QuestionInfo implements Parcelable {
+public class QuestionInfo implements Parcelable,Cloneable {
 
 
     /**
@@ -155,4 +155,15 @@ public class QuestionInfo implements Parcelable {
             return new QuestionInfo[size];
         }
     };
+
+    @Override
+    public QuestionInfo clone() {
+        QuestionInfo info = new QuestionInfo();
+        try {
+            info = (QuestionInfo) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return info;
+    }
 }

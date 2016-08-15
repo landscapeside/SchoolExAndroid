@@ -33,7 +33,7 @@ public class FullBaseDialogDialog extends Dialog {
     }
 
     public static void getSize(WindowManager wm, Point p) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             wm.getDefaultDisplay().getSize(p);
         } else {
             p.x = wm.getDefaultDisplay().getWidth();

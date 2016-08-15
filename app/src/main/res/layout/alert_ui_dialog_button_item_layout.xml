@@ -16,7 +16,7 @@
         android:layout_width="0.7dp"
         android:layout_height="40dp"
         android:layout_gravity="right"
-        android:background="#ffdddddd" />
+        android:background="#ffdddddd"/>
 
     <TextView
         android:id="@+id/line_bottom"
