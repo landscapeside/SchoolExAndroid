@@ -1,11 +1,7 @@
 package com.landscape.schoolexandroid.presenter.worktask;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -20,8 +16,6 @@ import com.landscape.schoolexandroid.common.BaseApp;
 import com.landscape.schoolexandroid.constant.Constant;
 import com.landscape.schoolexandroid.datasource.account.UserAccountDataSource;
 import com.landscape.schoolexandroid.datasource.worktask.TaskOptionDataSource;
-import com.landscape.schoolexandroid.db.DbHelper;
-import com.landscape.schoolexandroid.db.LabelTable;
 import com.landscape.schoolexandroid.db.TaskDb;
 import com.landscape.schoolexandroid.dialog.AlertDialog;
 import com.landscape.schoolexandroid.dialog.CheckDialog;
@@ -39,29 +33,22 @@ import com.landscape.schoolexandroid.ui.fragment.worktask.AnswerFragment;
 import com.landscape.schoolexandroid.utils.AnswerUtils;
 import com.landscape.schoolexandroid.utils.PhotoHelper;
 import com.landscape.schoolexandroid.views.worktask.AnswerView;
-import com.landscape.weight.FlingRelativeLayout;
 import com.landscape.weight.ScrollWebView;
 import com.orhanobut.logger.Logger;
 import com.squareup.otto.Bus;
 import com.squareup.sqlbrite.BriteDatabase;
-import com.squareup.sqlbrite.SqlBrite;
 import com.tu.crop.BitmapUtil;
 import com.tu.crop.CropHelper;
 import com.utils.behavior.AppFileUtils;
 import com.utils.behavior.FragmentsUtils;
 import com.utils.behavior.ToastUtil;
-import com.utils.datahelper.CollectionUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import rx.Observable;
-import rx.functions.Action1;
 
 /**
  * Created by 1 on 2016/6/30.
@@ -143,7 +130,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
                         if (currentQuestion - 1 < 0) {
                             ToastUtil.show(pagerActivity, "前面没有了");
                         } else {
-                            checkSubmit();
+                            checkSubmit(false);
                             answerView.previewTask(
                                     AppConfig.BASE_WEB_URL +
                                             String.format(urlFormat,
@@ -160,7 +147,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
                         if (currentQuestion + 1 >= questionInfos.size()) {
                             submitClick();
                         } else {
-                            checkSubmit();
+                            checkSubmit(false);
                             answerView.previewTask(
                                     AppConfig.BASE_WEB_URL +
                                             String.format(urlFormat,
@@ -227,7 +214,7 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
             int requestCode = data.getIntExtra(Constant.INTENT_REQUEST, Constant.INTENT_INVALID_VALUE);
             switch (requestCode) {
                 case REQUEST_LOCATION:
-                    checkSubmit();
+                    checkSubmit(false);
                     currentQuestion = data.getIntExtra(Constant.LOCATION_INDEX, 0);
                     answerView.setLocation(currentQuestion + 1, questionInfos.size());
                     answerView.setAnswerCard(questionInfos.get(currentQuestion),subjectTypeId);
@@ -330,7 +317,54 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
     }
 
     private void submitClick() {
-        checkSubmit();
+        checkSubmit(true);
+    }
+
+    private void checkSubmit(boolean finish) {
+        if (finish) {
+            if (answerView.isAnswerChanged()) {
+                mOptions.submitAnswer(finish);
+            } else {
+                popFinishDialog();
+            }
+        } else {
+            if (answerView.isAnswerChanged()) {
+                submitAnswer(finish);
+            }
+        }
+    }
+
+    int lastDoIdx = currentQuestion;
+    QuestionInfo submitInfo;
+
+    @Override
+    public void submitAnswer(boolean finish) {
+        lastDoIdx = currentQuestion;
+        submitInfo = questionInfos.get(currentQuestion).clone();
+        submitInfo.setStudentsAnswer(answerView.getAnswer());
+        taskOptionDataSource.submitAnswer(
+                taskInfo, answerView.getAnswer(),
+                submitInfo, new BaseCallBack<BaseBean>(pagerActivity) {
+                    @Override
+                    public void response(BaseBean response) {
+                        questionInfos.get(lastDoIdx).setStudentsAnswer(submitInfo.getStudentsAnswer());
+                        if (finish) {
+                            mOptions.submitAnswerSuc();
+                            popFinishDialog();
+                        }
+                    }
+
+                    @Override
+                    public void err() {
+                        if (finish) {
+                            mOptions.netErr();
+                            popFinishDialog();
+                        }
+                    }
+                });
+    }
+
+    private void popFinishDialog() {
         int undoAnswer = AnswerUtils.getUndoQuestionNum(questionInfos);
         promptDialog = new PromptDialog(pagerActivity, undoAnswer ==0 ?"你确定要现在交卷吗？":String.format(promptStrFormat, undoAnswer)) {
             @Override
@@ -341,28 +375,9 @@ public class AnswerPresenterImpl implements BasePresenter, IAnswer,PhotoHelper.P
         promptDialog.show();
     }
 
-    int lastDoIdx = currentQuestion;
-    QuestionInfo submitInfo;
-
-    private void checkSubmit() {
-        if (answerView.isAnswerChanged()) {
-            // TODO: 2016/7/3 提交答案
-            lastDoIdx = currentQuestion;
-            submitInfo = questionInfos.get(currentQuestion).clone();
-            submitInfo.setStudentsAnswer(answerView.getAnswer());
-            taskOptionDataSource.submitAnswer(
-                    taskInfo, answerView.getAnswer(),
-                    submitInfo, new BaseCallBack<BaseBean>(pagerActivity) {
-                        @Override
-                        public void response(BaseBean response) {
-                            Logger.i("================");
-                            questionInfos.get(lastDoIdx).setStudentsAnswer(submitInfo.getStudentsAnswer());
-                        }
-
-                        @Override
-                        public void err() {}
-                    });
-        }
+    @Override
+    public void submitAnswerSuc() {
+        answerView.setAnswerCard(questionInfos.get(currentQuestion),subjectTypeId);
     }
 
     @Override
