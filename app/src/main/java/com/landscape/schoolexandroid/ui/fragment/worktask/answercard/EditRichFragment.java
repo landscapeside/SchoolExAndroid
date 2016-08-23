@@ -82,6 +82,9 @@ public class EditRichFragment extends BaseFragment implements EditRichView<BaseP
 
             @Override
             public void tagChanged(int key, Object tag) {
+                if (editContent == null) {
+                    return;
+                }
                 if (key == R.id.image_url && !initFlag) {
                     if (studentAnswer == null) {
                         studentAnswer = new StudentAnswer();

@@ -2,6 +2,7 @@ package com.landscape.schoolexandroid.common;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.landscape.schoolexandroid.dagger.AppComponent;
 import com.landscape.schoolexandroid.dagger.AppModule;
@@ -50,6 +51,12 @@ public class BaseApp extends Application {
 
     public AppComponent getAppComponent() {
         return mAppComponent;
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }
 
