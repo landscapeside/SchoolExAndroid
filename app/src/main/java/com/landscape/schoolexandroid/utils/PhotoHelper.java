@@ -35,7 +35,7 @@ import java.util.Map;
 import javax.inject.Singleton;
 
 /**
- * Created by jiangshun on 2015/10/20.
+ * Created by landscape on 2015/10/20.
  */
 public class PhotoHelper implements CropHandler {
     private CropParams mCropParams = new CropParams();

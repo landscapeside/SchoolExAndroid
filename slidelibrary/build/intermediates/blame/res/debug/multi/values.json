@@ -1,14 +1,14 @@
 [
     {
-        "outputFile": "D:\\project\\schoolExAdnrd\\slidelibrary\\build\\intermediates\\res\\merged\\debug\\values\\values.xml",
+        "outputFile": "D:\\project\\schoolExAdnrd\\slidelibrary\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
         "map": [
             {
                 "to": {
-                    "startLine": 3,
+                    "startLine": 12,
                     "startColumn": 4,
-                    "startOffset": 903,
+                    "startOffset": 1008,
                     "endColumn": 42,
-                    "endOffset": 941
+                    "endOffset": 1046
                 },
                 "from": {
                     "file": "D:\\project\\schoolExAdnrd\\slidelibrary\\src\\main\\res\\values\\ids.xml",

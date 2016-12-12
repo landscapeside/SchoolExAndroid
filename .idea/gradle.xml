@@ -3,9 +3,8 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="distributionType" value="LOCAL" />
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="E:\android-studio-ide-143.2739321-windows\android-studio\gradle\gradle-2.10" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
@@ -22,22 +21,7 @@
             <option value="$PROJECT_DIR$/utils" />
           </set>
         </option>
-        <option name="myModules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/aoplibrary" />
-            <option value="$PROJECT_DIR$/apigatewaysign" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/crop" />
-            <option value="$PROJECT_DIR$/draglayout" />
-            <option value="$PROJECT_DIR$/indicator" />
-            <option value="$PROJECT_DIR$/photoview" />
-            <option value="$PROJECT_DIR$/pullrefresh" />
-            <option value="$PROJECT_DIR$/slidelibrary" />
-            <option value="$PROJECT_DIR$/slidinguppanel" />
-            <option value="$PROJECT_DIR$/utils" />
-          </set>
-        </option>
+        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

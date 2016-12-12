@@ -11,19 +11,17 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by 1 on 2016/7/6.
  */
 public class TaskDb {
 
-    public static void update(BriteDatabase db,int taskId,String duration) {
-        Observable<SqlBrite.Query> tasks = db.createQuery(
-                LabelTable.TASK_TABLE,
-                "SELECT * FROM " + LabelTable.TASK_TABLE + " WHERE " + LabelTable.taskId + "=" + taskId);
-        tasks.map(query -> {
+    public static void update(BriteDatabase db, int taskId, String duration) {
+        Observable.just(1).map(integer -> {
             boolean hasTask = false;
-            Cursor cursor = query.run();
+            Cursor cursor = db.query("SELECT * FROM " + LabelTable.TASK_TABLE + " WHERE " + LabelTable.taskId + "=" + taskId);
             while (cursor.moveToNext()) {
                 hasTask = true;
                 break;
@@ -45,19 +43,23 @@ public class TaskDb {
                 values.put(LabelTable.taskId, taskBean.taskId);
                 values.put(LabelTable.duration, taskBean.duration);
                 if (taskBean.isExist) {
-                    subscriber.onNext((long)db.update(LabelTable.TASK_TABLE, values, LabelTable.taskId+" = ? ", new String[]{taskId+""}));
+                    subscriber.onNext((long) db.update(LabelTable.TASK_TABLE, values, LabelTable.taskId + " = ? ", new String[]{taskId + ""}));
                 } else {
                     subscriber.onNext(db.insert(LabelTable.TASK_TABLE, values));
                 }
             }
-        })).observeOn(AndroidSchedulers.mainThread()).subscribe(query -> {});
+        })).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(query -> {
+        });
     }
 
-    public static void query(BriteDatabase db,int taskId,QueryCallbk call) {
+    public static void query(BriteDatabase db, int taskId, QueryCallbk call) {
         Observable<SqlBrite.Query> tasks = db.createQuery(
                 LabelTable.TASK_TABLE,
                 "SELECT * FROM " + LabelTable.TASK_TABLE + " WHERE " + LabelTable.taskId + "=" + taskId);
-        tasks.subscribe(query -> {
+        tasks.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(query -> {
             boolean hasTask = false;
             Cursor cursor = query.run();
             while (cursor.moveToNext()) {
@@ -74,14 +76,16 @@ public class TaskDb {
     }
 
     static QueryCallbk callBk = null;
+
     public static void setQueryCallbk(QueryCallbk call) {
         callBk = call;
     }
+
     public interface QueryCallbk {
         void duration(String duration);
     }
 
-    static class TaskInfo{
+    static class TaskInfo {
         public boolean isExist = false;
         public int taskId;
         public String duration = "";
